@@ -17,14 +17,5 @@
         android:layout_centerHorizontal="true"/>
     
    
-         <!--android:layout_above="@+id/scan" -->  
-    <Button
-        android:id="@+id/scan"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:onClick="scanAgain"
-        android:text="Re-Scan" />
 
 </RelativeLayout>

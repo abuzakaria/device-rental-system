@@ -3,8 +3,11 @@ package com.example.devicerentalsystem;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,8 +20,6 @@ import com.abhi.barcode.frag.libv2.ScanResult;
 
 public class ScanFragment extends Fragment implements IScanResultHandler{
 	
-    Button btn;
-    String result = null;
 	public ScanFragment(){}
 	BarcodeFragment cameraFrag = new BarcodeFragment();
 	@Override
@@ -29,8 +30,6 @@ public class ScanFragment extends Fragment implements IScanResultHandler{
 		fragmentManager.beginTransaction()
 				.replace(R.id.sample, (Fragment)cameraFrag).commit();
 		cameraFrag.setScanResultHandler(this);
-        btn = ((Button)rootView.findViewById(R.id.scan));
-        btn.setEnabled(false); 
         
         return rootView;
     }
@@ -39,14 +38,10 @@ public class ScanFragment extends Fragment implements IScanResultHandler{
 	@Override
 	public void scanResult(ScanResult result) {
 		// Auto-generated method stub
-        btn.setEnabled(true);
-        this.result = result.getRawResult().getText();
-		Toast.makeText(getActivity(), this.result, Toast.LENGTH_LONG).show();
-		MainActivity a = (MainActivity)getActivity();
-		a.mScanResult = this.result;
+		Vibrator v = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
+		v.vibrate(50);
+		Toast.makeText(getActivity(), result.getRawResult().getText(), Toast.LENGTH_LONG).show();
+		((MainActivity)getActivity()).mScanResult = result.getRawResult().getText();
+		this.getFragmentManager().popBackStack();
 	}
-	
-	
-
-
 }

@@ -25,5 +25,6 @@
      
     <!-- Content Description -->
     <string name="desc_list_item_icon">Item Icon</string>
+    <string name="scan">Scan</string>
 
 </resources>
