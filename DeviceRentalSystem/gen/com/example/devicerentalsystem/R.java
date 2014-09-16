@@ -10,7 +10,8 @@ package com.example.devicerentalsystem;
 public final class R {
     public static final class array {
         /**  Nav Drawer List Item Icons 
- Keep them in order as the titles are in 
+ All icons generated from android stock icons and 
+    modified by http://romannurik.github.io/AndroidAssetStudio/index.html 
          */
         public static final int nav_drawer_icons=0x7f070001;
         /**  Nav Drawer Menu Items 
@@ -51,14 +52,16 @@ public final class R {
         public static final int list_selector=0x7f020009;
     }
     public static final class id {
-        public static final int action_settings=0x7f0a0007;
+        public static final int action_settings=0x7f0a0009;
         public static final int counter=0x7f0a0005;
         public static final int drawer_layout=0x7f0a0000;
         public static final int frame_container=0x7f0a0001;
         public static final int icon=0x7f0a0003;
         public static final int list_slidermenu=0x7f0a0002;
+        public static final int sample=0x7f0a0006;
+        public static final int scan=0x7f0a0007;
         public static final int title=0x7f0a0004;
-        public static final int txtLabel=0x7f0a0006;
+        public static final int txtLabel=0x7f0a0008;
     }
     public static final class layout {
         public static final int activity_main=0x7f030000;
@@ -67,6 +70,7 @@ public final class R {
         public static final int fragment_home=0x7f030003;
         public static final int fragment_rent=0x7f030004;
         public static final int fragment_return=0x7f030005;
+        public static final int fragment_scan=0x7f030006;
     }
     public static final class menu {
         public static final int main=0x7f090000;
