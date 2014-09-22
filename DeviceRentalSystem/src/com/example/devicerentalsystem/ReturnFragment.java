@@ -11,7 +11,7 @@ public class ReturnFragment extends Fragment {
 	public ReturnFragment(){}	
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
- 
+		getActivity().getActionBar().setTitle(((MainActivity)getActivity()).mDrawerTitle);
         View rootView = inflater.inflate(R.layout.fragment_return, container, false);
          
         return rootView;

@@ -29,7 +29,7 @@ public class MainActivity extends FragmentActivity {
 	
 	public String mScanResult;
 	// nav drawer title
-	private CharSequence mDrawerTitle;
+	public CharSequence mDrawerTitle;
 
 	// used to store app title
 	private CharSequence mTitle;

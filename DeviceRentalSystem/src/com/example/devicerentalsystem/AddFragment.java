@@ -24,7 +24,8 @@ public class AddFragment extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		Log.d("check","on createview");
-		super.onCreateView(inflater, container, savedInstanceState);
+		super.onCreateView(inflater, container, savedInstanceState);		
+		getActivity().getActionBar().setTitle(((MainActivity)getActivity()).mDrawerTitle);
         View rootView = inflater.inflate(R.layout.fragment_add, container, false);
         btn = ((Button)rootView.findViewById(R.id.scan));
         deviceSerial = ((EditText)rootView.findViewById(R.id.device_serial));
