@@ -11,7 +11,6 @@ public class RentFragment extends Fragment {
 	public RentFragment(){}	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		getActivity().getActionBar().setTitle(((MainActivity)getActivity()).mDrawerTitle); 
         View rootView = inflater.inflate(R.layout.fragment_rent, container, false);
 
         return rootView;

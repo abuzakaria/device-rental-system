@@ -19,7 +19,6 @@ public class ScanFragment extends Fragment implements ScannerListener {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		super.onCreateView(inflater, container, savedInstanceState);
 		isResultReceived = false;
-		getActivity().getActionBar().setTitle(((MainActivity)getActivity()).mDrawerTitle);
         View rootView = inflater.inflate(R.layout.fragment_scan, container, false);
         FragmentManager fragmentManager = getFragmentManager();
         SimpleScannerFragment ssFrag = new SimpleScannerFragment();

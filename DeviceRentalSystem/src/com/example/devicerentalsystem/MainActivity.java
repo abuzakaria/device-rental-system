@@ -29,7 +29,7 @@ public class MainActivity extends FragmentActivity {
 	
 	public String mScanResult;
 	// nav drawer title
-	public CharSequence mDrawerTitle;
+	private CharSequence mDrawerTitle;
 
 	// used to store app title
 	private CharSequence mTitle;
@@ -181,7 +181,7 @@ public class MainActivity extends FragmentActivity {
 			FragmentManager fragmentManager = getSupportFragmentManager();
 			fragmentManager.beginTransaction()
 					.replace(R.id.frame_container, fragment)
-					.addToBackStack(null)
+					//.addToBackStack(null)
 					.commit();
 
 			// update selected item and title, then close the drawer
