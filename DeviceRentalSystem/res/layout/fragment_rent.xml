@@ -3,12 +3,44 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     
-    <TextView
-        android:id="@+id/txtLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:text="Rent"
-        android:textSize="16dp" />
+     <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_above="@+id/buttons_container"
+            android:id="@+id/signature_pad_container">
+            
+		    <src.com.github.gcacace.signaturepad.views.SignaturePad
+			   xmlns:android="http://schemas.android.com/apk/res/android"
+			   xmlns:app="http://schemas.android.com/apk/res-auto"
+			   android:id="@+id/signature_pad"
+			   android:layout_width="wrap_content"
+			   android:layout_height="wrap_content"
+		   />
+    </RelativeLayout>
+    <LinearLayout
+            android:id="@+id/buttons_container"
+            android:paddingTop="16dp"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_alignParentBottom="true">
+
+        <Button
+                android:id="@+id/clear_button"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="Clear Pad"
+                android:enabled="false" />
+
+        <Button
+                android:id="@+id/save_button"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="Save Signature"
+                android:enabled="false" />
+
+    </LinearLayout>
 
 </RelativeLayout>
