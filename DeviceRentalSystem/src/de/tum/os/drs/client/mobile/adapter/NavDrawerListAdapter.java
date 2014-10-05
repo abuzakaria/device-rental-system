@@ -1,7 +1,4 @@
-package com.example.devicerentalsystem.adapter;
-
-import com.example.devicerentalsystem.R;
-import com.example.devicerentalsystem.model.NavDrawerItem;
+package de.tum.os.drs.client.mobile.adapter;
 
 import java.util.ArrayList;
 
@@ -13,6 +10,8 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+import de.tum.os.drs.client.mobile.R;
+import de.tum.os.drs.client.mobile.model.NavDrawerItem;
 
 public class NavDrawerListAdapter extends BaseAdapter {
 	

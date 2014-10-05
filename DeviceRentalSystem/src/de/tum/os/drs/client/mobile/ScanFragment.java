@@ -1,16 +1,15 @@
-package com.example.devicerentalsystem;
-
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.content.Context;
-import android.os.Bundle;
-import android.os.Vibrator;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+package de.tum.os.drs.client.mobile;
 
 import garin.artemiy.simplescanner.library.fragments.SimpleScannerFragment;
 import garin.artemiy.simplescanner.library.listeners.ScannerListener;
+import android.content.Context;
+import android.os.Bundle;
+import android.os.Vibrator;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 public class ScanFragment extends Fragment implements ScannerListener {
 	boolean isResultReceived = false;

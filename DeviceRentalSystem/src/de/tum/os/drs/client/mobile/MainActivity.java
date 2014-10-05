@@ -1,18 +1,14 @@
-package com.example.devicerentalsystem;
-
-import com.example.devicerentalsystem.adapter.NavDrawerListAdapter;
-import com.example.devicerentalsystem.model.NavDrawerItem;
+package de.tum.os.drs.client.mobile;
 
 import java.util.ArrayList;
 
-import android.app.Activity;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.Menu;
@@ -20,6 +16,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import de.tum.os.drs.client.mobile.adapter.NavDrawerListAdapter;
+import de.tum.os.drs.client.mobile.model.NavDrawerItem;
 
 public class MainActivity extends FragmentActivity {
 	
@@ -41,6 +39,7 @@ public class MainActivity extends FragmentActivity {
 	private ArrayList<NavDrawerItem> navDrawerItems;
 	private NavDrawerListAdapter adapter;
 
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -107,7 +106,8 @@ public class MainActivity extends FragmentActivity {
 			mDrawerLayout.openDrawer(mDrawerList);
 			setTitle(R.string.app_name);
 		}
-	}
+		
+		}
 
 	/**
 	 * Slide menu item click listener

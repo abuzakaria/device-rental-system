@@ -1,4 +1,4 @@
-package com.example.devicerentalsystem.model;
+package de.tum.os.drs.client.mobile.model;
 
 public class NavDrawerItem {
 	
