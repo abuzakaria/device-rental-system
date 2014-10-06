@@ -26,14 +26,14 @@ public class Renter {
 	List<String> rentedDevices;
 
 	public Renter(String name, String matriculationNumber, String email,
-			String phoneNumber, String comments, List<String> rentedDevices) {
+			String phoneNumber, String comments) {
 
 		this.name = name;
 		this.matriculationNumber = matriculationNumber;
 		this.email = email;
 		this.phoneNumber = phoneNumber;
 		this.comments = comments;
-		this.rentedDevices = rentedDevices;
+
 	}
 
 	public String getName() {

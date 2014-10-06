@@ -17,7 +17,7 @@ import de.tum.os.drs.client.parsers.SingleDeviceParser;
 
 public class RentalServiceImpl implements RentalService {
 
-	private static final String BASE_URL = "http://192.168.2.2:8080";
+	private static final String BASE_URL = "http://131.159.204.49:8080";
 	private static final String BASE_PATH = "/rental-server-mobile/rest/";
 
 	// The singleton instance
@@ -62,7 +62,7 @@ public class RentalServiceImpl implements RentalService {
 			new ServerCommunication(serverCallback).execute(request);
 
 		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}
 
@@ -89,7 +89,7 @@ public class RentalServiceImpl implements RentalService {
 			new ServerCommunication(serverCallback).execute(request);
 
 		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}
 
@@ -115,7 +115,7 @@ public class RentalServiceImpl implements RentalService {
 			new ServerCommunication(serverCallback).execute(request);
 
 		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}
 
@@ -141,19 +141,19 @@ public class RentalServiceImpl implements RentalService {
 			new ServerCommunication(serverCallback).execute(request);
 
 		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}
 
 	}
 
 	@Override
-	public void updateDevice(Device device, Callback<String> callback) {
+	public void updateDevice(String Imei, Device device, Callback<String> callback) {
 
 		Uri.Builder builder = getBaseBuilder();
 		builder.appendPath("devices");
 		builder.appendPath("update");
-		builder.appendPath(device.getImei());
+		builder.appendPath(Imei);
 
 		URL url;
 
@@ -171,7 +171,7 @@ public class RentalServiceImpl implements RentalService {
 			new ServerCommunication(serverCallback).execute(request);
 
 		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}
 
@@ -198,7 +198,7 @@ public class RentalServiceImpl implements RentalService {
 			new ServerCommunication(serverCallback).execute(request);
 
 		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}
 
@@ -228,15 +228,39 @@ public class RentalServiceImpl implements RentalService {
 			new ServerCommunication(serverCallback).execute(request);
 
 		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}
 
 	}
 
 	@Override
-	public void updateRenter(Renter renter, Callback<String> callBack) {
-		// TODO Auto-generated method stub
+	public void updateRenter(String mtrNr, Renter renter, Callback<String> callback) {
+
+		Uri.Builder builder = getBaseBuilder();
+		builder.appendPath("renters");
+		builder.appendPath("update");
+		builder.appendPath(mtrNr);
+
+		URL url;
+
+		try {
+			url = new URL(builder.build().toString());
+
+			ServerRequestCallback<String> serverCallback = new GenericPOSTMethodParser(
+					callback);
+
+			ServerRequest request = new ServerRequest(url,
+					ServerRequest.HTTP_METHODS.POST);
+
+			request.setJson(renter.asJson());
+
+			new ServerCommunication(serverCallback).execute(request);
+
+		} catch (MalformedURLException e) {
+			
+			e.printStackTrace();
+		}
 
 	}
 
@@ -267,21 +291,57 @@ public class RentalServiceImpl implements RentalService {
 	}
 
 	@Override
-	public void getAllActiveRenters(Callback<List<Renter>> callBack) {
-		// TODO Auto-generated method stub
+	public void getAllActiveRenters(Callback<List<Renter>> callback) {
+		Uri.Builder builder = getBaseBuilder();
+		builder.appendPath("renters");
+		builder.appendPath("active");
+
+		URL url;
+
+		try {
+			url = new URL(builder.build().toString());
+
+			ServerRequestCallback<List<Renter>> serverCallback = new ListRentersParser(
+					callback);
+
+			ServerRequest request = new ServerRequest(url,
+					ServerRequest.HTTP_METHODS.GET);
+
+			new ServerCommunication(serverCallback).execute(request);
+
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		}
 
 	}
 
 	@Override
-	public void getRenter(Callback<Renter> callBack) {
-		// TODO Auto-generated method stub
+	public void rentDevices(RentRequest request, Callback<String> callback) {
+		
+		Uri.Builder builder = getBaseBuilder();
+		builder.appendPath("rental-service");
+		builder.appendPath("rent");
 
-	}
+		URL url;
 
-	@Override
-	public void rentDevices(RentRequest request, Callback<String> callBack) {
-		// TODO Auto-generated method stub
+		try {
+			url = new URL(builder.build().toString());
 
+			ServerRequestCallback<String> serverCallback = new GenericPOSTMethodParser(
+					callback);
+
+			ServerRequest serverRequest = new ServerRequest(url,
+					ServerRequest.HTTP_METHODS.POST);
+
+			serverRequest.setJson(request.asJson());
+
+			new ServerCommunication(serverCallback).execute(serverRequest);
+
+		} catch (MalformedURLException e) {
+			
+			e.printStackTrace();
+		}
+		
 	}
 
 	@Override

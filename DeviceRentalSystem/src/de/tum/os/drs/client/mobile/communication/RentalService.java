@@ -18,7 +18,7 @@ public interface RentalService {
 	
 	void getRentedDevices(Callback<List<Device>> callback);
 	
-	void updateDevice(Device device, Callback<String> callback);
+	void updateDevice(String IMEI, Device device, Callback<String> callback);
 	
 	void getDeviceByImei(String Imei, Callback<Device> callback);
 	
@@ -30,15 +30,14 @@ public interface RentalService {
 	
 	void addRenter(Renter renter, Callback<String> callBack);
 	
-	void updateRenter(Renter renter, Callback<String> callBack);
+	void updateRenter(String mtrNr, Renter renter, Callback<String> callBack);
 	
 	void getAllRenters(Callback<List<Renter>> callBack);
 	
 	void getAllActiveRenters(Callback<List<Renter>> callBack);
 	
-	void getRenter(Callback<Renter> callBack);
-	
 	//TODO needed?
+	//void getRenter(Callback<Renter> callBack);
 	//void deleteRenter();
 	
 	//------------Renting Service-------------

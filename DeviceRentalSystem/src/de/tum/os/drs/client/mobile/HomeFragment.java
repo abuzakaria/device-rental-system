@@ -1,5 +1,6 @@
 package de.tum.os.drs.client.mobile;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -16,7 +17,7 @@ import de.tum.os.drs.client.mobile.communication.RentalService;
 import de.tum.os.drs.client.mobile.communication.RentalServiceImpl;
 import de.tum.os.drs.client.mobile.model.Device;
 import de.tum.os.drs.client.mobile.model.DeviceType;
-import de.tum.os.drs.client.mobile.model.Renter;
+import de.tum.os.drs.client.mobile.model.RentRequest;
 
 public class HomeFragment extends Fragment {
 
@@ -40,10 +41,41 @@ public class HomeFragment extends Fragment {
 			public void onClick(View arg0) {
 
 				RentalService service = RentalServiceImpl.getInstance();
-				
-				Device device = new Device("88888", "ynasy device", "tested description","very old", DeviceType.Other, new Date(), false);
 		
-				/*service.addDevice(device, new Callback<String>(){
+				List<String> imeis = new ArrayList<String>();
+				
+				imeis.add("500");
+				imeis.add("6.548201885173421E7");
+				
+				service.rentDevices(new RentRequest("1111111", imeis, new Date(), "some comments", "Signature"), new Callback<String>(){
+
+					@Override
+					public void onSuccess(String result) {
+						// TODO Auto-generated method stub
+						
+					}
+
+					@Override
+					public void onFailure(int code, String error) {
+						Log.i("RentService", error);
+						
+					}
+					
+					
+					
+					
+				});
+				
+				
+				
+				
+				
+				
+				
+				
+				Device device = new Device("7777", "whatever device", "tes7e32 description","very old", DeviceType.DesktopPC, new Date(), false);
+		/*
+				service.addDevice(device, new Callback<String>(){
 
 					@Override
 					public void onSuccess(String result) {
@@ -61,11 +93,11 @@ public class HomeFragment extends Fragment {
 					
 					
 					
-				});*/
-				
+				});
+				*/
 				/*
-				service.addRenter(new Renter("Test1", "72162", "test@test.com",
-						"173627322", "some comments bla bla", null), new Callback<String>(){
+				service.updateRenter("3111111", new Renter("Test renter", "3222222", "test1@test1.com",
+						"+49173627322", "canged the comments"), new Callback<String>(){
 
 							@Override
 							public void onSuccess(String result) {
@@ -79,10 +111,9 @@ public class HomeFragment extends Fragment {
 								
 							}
 					
-					
 				});
-*/				
 				
+			*/	
 		/*		
 		service.getDeviceByImei("600", new Callback<Device>(){
 
@@ -128,7 +159,7 @@ public class HomeFragment extends Fragment {
 					
 				});
 */
-				/*
+		/*		
 				service.getAllDevices(new Callback<List<Device>>(){
 
 					@Override
@@ -151,8 +182,8 @@ public class HomeFragment extends Fragment {
 					
 					
 				});
-			
-				*/
+	*/		
+				
 				
 			}
 
