@@ -345,9 +345,31 @@ public class RentalServiceImpl implements RentalService {
 	}
 
 	@Override
-	public void returnDevices(ReturnRequest request, Callback<String> callBack) {
-		// TODO Auto-generated method stub
+	public void returnDevices(ReturnRequest request, Callback<String> callback) {
+		
+		Uri.Builder builder = getBaseBuilder();
+		builder.appendPath("rental-service");
+		builder.appendPath("return");
 
+		URL url;
+
+		try {
+			url = new URL(builder.build().toString());
+
+			ServerRequestCallback<String> serverCallback = new GenericPOSTMethodParser(
+					callback);
+
+			ServerRequest serverRequest = new ServerRequest(url,
+					ServerRequest.HTTP_METHODS.POST);
+
+			serverRequest.setJson(request.asJson());
+
+			new ServerCommunication(serverCallback).execute(serverRequest);
+
+		} catch (MalformedURLException e) {
+			
+			e.printStackTrace();
+		}
 	}
 
 	private Uri.Builder getBaseBuilder() {

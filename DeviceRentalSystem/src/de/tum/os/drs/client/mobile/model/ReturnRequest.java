@@ -2,6 +2,8 @@ package de.tum.os.drs.client.mobile.model;
 
 import java.util.List;
 
+import de.tum.os.drs.client.parsers.GsonHelper;
+
 public class ReturnRequest {
 
 	private String renterMatrNr;
@@ -48,6 +50,12 @@ public class ReturnRequest {
 
 	public void setSignatureHTML(String signatureHTML) {
 		this.signatureHTML = signatureHTML;
+	}
+
+	public String asJson() {
+
+		return GsonHelper.getGson().toJson(this);
+
 	}
 
 }
