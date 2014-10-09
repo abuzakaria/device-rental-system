@@ -2,6 +2,7 @@ package de.tum.os.drs.client.mobile;
 
 import java.util.ArrayList;
 
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.os.Bundle;
@@ -107,7 +108,15 @@ public class MainActivity extends FragmentActivity {
 			setTitle(R.string.app_name);
 		}
 		
+		
+				
 		}
+
+	private void startAuthenticationActivity() {
+		
+		Intent intent = new Intent(this, AuthenticationActivity.class);
+		startActivity(intent);
+	}
 
 	/**
 	 * Slide menu item click listener
