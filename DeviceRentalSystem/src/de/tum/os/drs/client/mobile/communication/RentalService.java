@@ -14,7 +14,7 @@ public interface RentalService {
 	//--------------Session------------------
 	
 	void login(LoginRequest request, Callback<LoginResponse> callback);
-	//void logout(Callback<String> callback);
+	void logout(Callback<String> callback);
 	
 	//---------------Devices-----------------
 	void addDevice(Device device, Callback<String> callback);

@@ -48,7 +48,7 @@ public class HomeFragment extends Fragment {
 				imeis.add("600");
 				//imeis.add("6.548201885173421E7");
 				
-				
+				/*
 				service.returnDevices(new ReturnRequest("1111111", imeis, "bla bla bla", "signature"), new Callback<String>(){
 
 					@Override
@@ -65,7 +65,7 @@ public class HomeFragment extends Fragment {
 					
 				});
 				
-				
+				*/
 				/*
 				service.rentDevices(new RentRequest("1111111", imeis, new Date(), "some comments", "Signature"), new Callback<String>(){
 
@@ -161,13 +161,14 @@ public class HomeFragment extends Fragment {
 				});
 				
 			*/	
-		/*		
+			
 		service.getDeviceByImei("600", new Callback<Device>(){
 
 			@Override
 			public void onSuccess(Device result) {
 				
 				Log.i("Device", result.getDeviceType().toString());
+				Log.i("Device", result.getEstimatedReturnDate().toLocaleString());
 				
 				
 			}
@@ -181,7 +182,7 @@ public class HomeFragment extends Fragment {
 			
 			
 		});
-*/				
+				
 				/*service.getAllRenters(new Callback<List<Renter>>(){
 
 					@Override

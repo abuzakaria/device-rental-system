@@ -13,6 +13,7 @@ import java.util.Scanner;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import de.tum.os.drs.client.mobile.authentication.SessionManager;
 import de.tum.os.drs.client.parsers.ServerRequestCallback;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -47,6 +48,7 @@ public class ServerCommunication extends
 			// connection.setRequestProperty("Authorization",basicAuth);
 			urlConnection.setConnectTimeout(CONNECTION_TIMEOUT);
 			urlConnection.setReadTimeout(DATARETRIEVAL_TIMEOUT);
+			urlConnection.setRequestProperty("Authorization", ""+request[0].getSessionId());
 			urlConnection.setDoOutput(false);
 
 			if (request[0].getMethod() == ServerRequest.HTTP_METHODS.POST) {

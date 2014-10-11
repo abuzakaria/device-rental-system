@@ -1,8 +1,7 @@
 package de.tum.os.drs.client.mobile.model;
 
-import de.tum.os.drs.client.mobile.R;
-import de.tum.os.drs.client.mobile.authentication.Authenticator;
 import android.content.SharedPreferences;
+import de.tum.os.drs.client.mobile.authentication.Authenticator;
 
 public class CredentialStore {
 

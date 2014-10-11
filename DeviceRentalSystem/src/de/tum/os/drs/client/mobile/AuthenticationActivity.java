@@ -36,6 +36,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 import de.tum.os.drs.client.mobile.authentication.Authenticator;
 import de.tum.os.drs.client.mobile.authentication.SessionManager;
 import de.tum.os.drs.client.mobile.communication.Callback;
@@ -100,10 +101,9 @@ public class AuthenticationActivity extends Activity {
 		store = new CredentialStore(
 				PreferenceManager.getDefaultSharedPreferences(this));
 
-		/*
-		 * dialog = ProgressDialog.show(this, "Please wait ...", "Login in...",
-		 * true); dialog.setCancelable(false);
-		 */
+		dialog = ProgressDialog.show(this, "Please wait ...", "Login in...",
+				true);
+		dialog.setCancelable(false);
 
 		// Try to login the user
 		login();
@@ -118,14 +118,15 @@ public class AuthenticationActivity extends Activity {
 	private void login() {
 
 		Log.i(TAG, "Attempting to login the user");
-		store.clearCredentials();
+		 store.clearCredentials();
 		// Check if token exists
 		Credentials c = store.getStoredCredentials();
 
 		if (c == null) {
-			
+
 			Log.i(TAG, "No token found, user has to login");
 
+			dialog.dismiss();
 			// We need to start from the beginning, no current token was found
 			showLoginOptions();
 
@@ -147,6 +148,8 @@ public class AuthenticationActivity extends Activity {
 	 */
 	private void checkTokenValidity(final String currentToken) {
 
+		Log.i(TAG, "Checking token validity");
+
 		(new AsyncTask<Void, Void, Boolean>() {
 
 			@Override
@@ -154,7 +157,15 @@ public class AuthenticationActivity extends Activity {
 				URL url;
 				HttpsURLConnection conn = null;
 				try {
-					url = new URL(mAuthenticator.getTokenAccessURL());
+
+					Uri.Builder b = Uri
+							.parse(mAuthenticator.getTokenCheckURL())
+							.buildUpon();
+					b.appendQueryParameter("access_token", currentToken);
+
+					Log.i(TAG, b.build().toString());
+
+					url = new URL(b.build().toString());
 					conn = (HttpsURLConnection) url.openConnection();
 					conn.setReadTimeout(10000);
 					conn.setConnectTimeout(15000);
@@ -200,7 +211,7 @@ public class AuthenticationActivity extends Activity {
 			protected void onPostExecute(Boolean tokenValid) {
 
 				Log.i(TAG, "Found token valid? " + tokenValid);
-				
+
 				if (tokenValid) {
 					// Token is valid! Send the token to the server!
 					sendTokenToServer(currentToken);
@@ -307,7 +318,7 @@ public class AuthenticationActivity extends Activity {
 
 	private void processRefreshToken(String json) {
 
-		//Log.i(TAG, "json: " + json);
+		// Log.i(TAG, "json: " + json);
 
 		try {
 			JSONObject obj = new JSONObject(json);
@@ -321,7 +332,7 @@ public class AuthenticationActivity extends Activity {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		Log.i(TAG, "Token was refreshed");
 
 	}
@@ -361,20 +372,16 @@ public class AuthenticationActivity extends Activity {
 					"An error ocurred while fetchign the auth code: "
 							+ uri.getQueryParameter("error"));
 
-			handleAuthCodeError(uri.getQueryParameter("error"));
+			showLoginOptions();
 
 		} else {
 
 			String code = uri.getQueryParameter("code");
-			Log.i(TAG, "Authorization code from " + mAuthenticator + ": " + code);
+			Log.i(TAG, "Authorization code from " + mAuthenticator + ": "
+					+ code);
 
 			getToken(code);
 		}
-
-	}
-
-	private void handleAuthCodeError(String error) {
-		// TODO Auto-generated method stub
 
 	}
 
@@ -407,7 +414,7 @@ public class AuthenticationActivity extends Activity {
 
 	private void processToken(String json) {
 
-		//Log.i(TAG, "Token recieved : " + json);
+		// Log.i(TAG, "Token recieved : " + json);
 
 		try {
 			JSONObject obj = new JSONObject(json);
@@ -418,8 +425,8 @@ public class AuthenticationActivity extends Activity {
 			store.storeCredentials(new Credentials(access_token,
 					mAuthenticator, refresh_token));
 
-			Log.i(TAG, "Token received : " + access_token );
-			
+			Log.i(TAG, "Token received : " + access_token);
+
 			sendTokenToServer(access_token);
 
 		} catch (JSONException e) {
@@ -432,7 +439,7 @@ public class AuthenticationActivity extends Activity {
 	private void sendTokenToServer(String currentToken) {
 
 		Log.i(TAG, "Sending token to server...");
-		
+
 		RentalService service = RentalServiceImpl.getInstance();
 
 		service.login(new LoginRequest(currentToken, mAuthenticator),
@@ -445,6 +452,10 @@ public class AuthenticationActivity extends Activity {
 						Log.i(TAG, result.getMessage());
 						Log.i(TAG, "Session id: " + result.getSessionId());
 
+						dialog.dismiss();
+
+						showToast(result.getMessage());
+						
 						startMainActivity();
 						finish();
 
@@ -453,7 +464,10 @@ public class AuthenticationActivity extends Activity {
 					@Override
 					public void onFailure(int code, String error) {
 
+						dialog.dismiss();
 						Log.i(TAG, error);
+						
+						showToast(error);
 					}
 
 				});
@@ -608,6 +622,12 @@ public class AuthenticationActivity extends Activity {
 
 		mWebView.setVisibility(View.VISIBLE);
 		loginOptions.setVisibility(View.INVISIBLE);
+
+	}
+
+	private void showToast(String text) {
+		Toast toast = Toast.makeText(this, text, Toast.LENGTH_SHORT);
+		toast.show();
 
 	}
 

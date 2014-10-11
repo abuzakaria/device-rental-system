@@ -406,6 +406,33 @@ public class RentalServiceImpl implements RentalService {
 
 	}
 
+	@Override
+	public void logout(Callback<String> callback) {
+		
+		Uri.Builder builder = getBaseBuilder();
+		builder.appendPath("session");
+		builder.appendPath("logout");
+
+		URL url;
+
+		try {
+			url = new URL(builder.build().toString());
+
+			ServerRequestCallback<String> serverCallback = new GenericPOSTMethodParser(callback);
+
+			ServerRequest serverRequest = new ServerRequest(url,
+					ServerRequest.HTTP_METHODS.GET);
+
+			new ServerCommunication(serverCallback).execute(serverRequest);
+
+		} catch (MalformedURLException e) {
+
+			e.printStackTrace();
+		}
+
+		
+	}
+
 	private Uri.Builder getBaseBuilder() {
 
 		Uri.Builder b = Uri.parse(BASE_URL).buildUpon();

@@ -2,6 +2,8 @@ package de.tum.os.drs.client.mobile.communication;
 
 import java.net.URL;
 
+import de.tum.os.drs.client.mobile.authentication.SessionManager;
+
 public class ServerRequest {
 
 	public enum HTTP_METHODS {
@@ -27,6 +29,8 @@ public class ServerRequest {
 
 		this.url = url;
 		this.method = method;
+		
+		this.sessionId = SessionManager.currentSession;
 		
 	}
 

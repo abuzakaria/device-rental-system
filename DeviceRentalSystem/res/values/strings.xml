@@ -11,6 +11,7 @@
         <item>Add a device</item>
         <item>Rent a device</item>
         <item>Return a device</item>
+        <item>logout</item>
     </string-array>
 
     <!-- Nav Drawer List Item Icons -->
@@ -28,11 +29,7 @@
     <!-- Content Description -->
     <string name="desc_list_item_icon">Item Icon</string>
     <string name="scan">Scan</string>
-    <string name="title_activity_authentication">AuthenticationActivity</string>
-    <string name="hello_world">Hello world!</string>
-    <string name="auth_preferences_file">de.tum.drs.client.mobile.AUTH_PREFERENCES_FILE_KEY</string>
-    <string name="current_authenticator_key">current_authenticator</string>
-    <string name="current_token_key">current_token</string>
-    <string name="current_refresh_token_key">current_refresh_token</string>
-
+   
+    
+   
 </resources>
