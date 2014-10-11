@@ -3,11 +3,18 @@ package de.tum.os.drs.client.mobile.communication;
 import java.util.List;
 
 import de.tum.os.drs.client.mobile.model.Device;
+import de.tum.os.drs.client.mobile.model.LoginRequest;
+import de.tum.os.drs.client.mobile.model.LoginResponse;
 import de.tum.os.drs.client.mobile.model.RentRequest;
 import de.tum.os.drs.client.mobile.model.Renter;
 import de.tum.os.drs.client.mobile.model.ReturnRequest;
 
 public interface RentalService {
+	
+	//--------------Session------------------
+	
+	void login(LoginRequest request, Callback<LoginResponse> callback);
+	//void logout(Callback<String> callback);
 	
 	//---------------Devices-----------------
 	void addDevice(Device device, Callback<String> callback);
