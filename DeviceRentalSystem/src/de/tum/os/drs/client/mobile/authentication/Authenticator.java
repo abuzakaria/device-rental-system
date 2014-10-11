@@ -1,7 +1,7 @@
 package de.tum.os.drs.client.mobile.authentication;
 
 public enum Authenticator {
-	GOOGLE(
+	google(
 			"155367116448-2teug5re8bb7bthani6hv0ohvgcisq1a.apps.googleusercontent.com",
 			"MgCyA66FP-j1bkijAnObLYb4",
 			"https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile",
@@ -10,7 +10,7 @@ public enum Authenticator {
 			"https://www.googleapis.com/oauth2/v2/userinfo?access_token=",
 			"https://accounts.google.com/o/oauth2/revoke?token="),
 	
-	FACEBOOK("816880461697165", "4d20569eacb96ebae5131156abf5a714", "email user_about_me", "", "","", "");
+	facebook("816880461697165", "4d20569eacb96ebae5131156abf5a714", "email user_about_me", "", "","", "");
 
 	public String getTokenAccessURL() {
 		return tokenAccessURL;
@@ -68,7 +68,7 @@ public enum Authenticator {
 	            return valueOf(myEnumString);
 	        } catch (Exception ex) {
 	                // For error cases
-	            return GOOGLE;
+	            return google;
 	        }
 	    }
 

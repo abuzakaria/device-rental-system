@@ -1,6 +1,11 @@
 package de.tum.os.drs.client.parsers;
 
+import java.util.Date;
+
 import org.json.JSONException;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import de.tum.os.drs.client.mobile.communication.Callback;
 import de.tum.os.drs.client.mobile.model.Device;
@@ -15,7 +20,9 @@ public class SingleDeviceParser extends ServerRequestCallback<Device> {
 	@Override
 	public Device parseJson(String json) throws JSONException {
 		
-		return GsonHelper.getGson().fromJson(json, Device.class);
+		Gson gson = new GsonBuilder().registerTypeAdapter(Date.class, new JsonDateDeserializer()).create();
+		
+		return gson.fromJson(json, Device.class);
 	}
 
 }
