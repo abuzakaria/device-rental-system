@@ -22,12 +22,15 @@ import de.tum.os.drs.client.mobile.communication.RentalServiceImpl;
 import de.tum.os.drs.client.mobile.model.Device;
 import de.tum.os.drs.client.mobile.model.DeviceType;
 
-public class AddFragment extends Fragment {
-    Button scan_btn, add_btn;
+public class EditDeviceFragment extends Fragment{
+
+    Button scan_btn, update_btn;
     String scanresult, s_deviceName, s_deviceDesc, s_deviceSerial;
     EditText deviceSerial,deviceDetails, deviceName;
     Spinner deviceType, deviceState;
-	public AddFragment(){}
+    MainActivity _main;
+    RentalService service;
+	public EditDeviceFragment(){}
 
 	
 	@Override
@@ -35,30 +38,57 @@ public class AddFragment extends Fragment {
 		Log.d("check","on createview");
 		super.onCreateView(inflater, container, savedInstanceState);		
         View rootView = inflater.inflate(R.layout.fragment_add, container, false);
-        getActivity().setTitle("Add a device");
+        getActivity().setTitle("Update device");
         scan_btn = ((Button)rootView.findViewById(R.id.scan));
         deviceSerial = ((EditText)rootView.findViewById(R.id.device_serial));
         deviceName = ((EditText)rootView.findViewById(R.id.deviceName));
         deviceDetails = ((EditText)rootView.findViewById(R.id.description));
         deviceType = ((Spinner)rootView.findViewById(R.id.devicetype));
         deviceState = ((Spinner)rootView.findViewById(R.id.devicestate));
-        add_btn = ((Button)rootView.findViewById(R.id.editdevice));
-        
-        deviceSerial.setText("");
+        update_btn = ((Button)rootView.findViewById(R.id.editdevice));
+        scan_btn.setVisibility(View.GONE);
+        deviceSerial.setKeyListener(null);
+		
+        _main = (MainActivity)getActivity();
+        s_deviceSerial = _main.mSelectedDeviceImei;
+        _main.mSelectedDeviceImei = null;
         deviceType.setAdapter(new ArrayAdapter<DeviceType>(getActivity(), android.R.layout.simple_spinner_dropdown_item, DeviceType.values()));
+        update_btn.setText("Update");
         
-        
-        scan_btn.setOnClickListener(new OnClickListener() {
+        service = RentalServiceImpl.getInstance();
+		service.getDeviceByImei(s_deviceSerial, new Callback<Device>(){
+
 			@Override
-			public void onClick(View v) {
-				final FragmentTransaction ft = getFragmentManager().beginTransaction(); 
-				ft.replace(R.id.frame_container, new ScanFragment(), "NewFragmentTag"); 
-				ft.addToBackStack(null);
-				ft.commit(); 
+			public void onSuccess(Device result) {
+				// TODO Auto-generated method stub
+				if (result.getDescription()!=null)
+					deviceDetails.setText(result.getDescription());
+				if (result.getDeviceType()!=null)
+					deviceType.setSelection(result.getDeviceType().index());
+				if (result.getImei()!=null)
+					deviceSerial.setText(result.getImei());
+				if (result.getName()!=null)
+					deviceName.setText(result.getName());
+				if (result.getState()!=null)
+				{
+					ArrayAdapter<String> adap = (ArrayAdapter<String>) deviceState.getAdapter();
+					int pos =adap.getPosition(result.getState());
+					deviceState.setSelection(pos);
+				}
+					
 			}
+
+			@Override
+			public void onFailure(int code, String error) {
+				// TODO Auto-generated method stub
+				Log.i("Error", error);
+			}
+			
 		});
         
-        add_btn.setOnClickListener(new OnClickListener() {
+        
+        
+		update_btn.setOnClickListener(new OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
@@ -66,10 +96,10 @@ public class AddFragment extends Fragment {
 				if (deviceSerial.getText().length() == 0)
 					Toast.makeText(getActivity(), "Device serial can not be empty", Toast.LENGTH_SHORT).show();
 				else
-					addDevice();
+					editDevice();
 			}
 
-			private void addDevice() {
+			private void editDevice() {
 				// TODO Auto-generated method stub
 				//Toast.makeText(getActivity(), deviceSerial.getText() , Toast.LENGTH_SHORT).show();
 				
@@ -78,8 +108,8 @@ public class AddFragment extends Fragment {
 				s_deviceName = (deviceName.getText().length() == 0) ? null : deviceName.getText().toString();
 				Device device = new Device(s_deviceSerial, s_deviceName, s_deviceDesc, deviceState.getSelectedItem().toString(), DeviceType.valueOf(DeviceType.class, deviceType.getSelectedItem().toString()), null, true);
 				
-				RentalService service = RentalServiceImpl.getInstance();
-				service.addDevice(device, new Callback<String>(){
+				service = RentalServiceImpl.getInstance();
+				service.updateDevice(s_deviceSerial, device, new Callback<String>(){
 
 					@Override
 					public void onSuccess(String result) {
@@ -107,17 +137,5 @@ public class AddFragment extends Fragment {
         return rootView;
     }
 	
-	@Override
-	public void onResume()
-	{
-		super.onResume();
-		scanresult = ((MainActivity)getActivity()).mScanResult;
-        if (scanresult != null)   
-        {
-        	((MainActivity)getActivity()).mScanResult = null;
-        	Log.d("scan", scanresult);
-        	deviceSerial.setText(scanresult);
-        	
-        }
-	}
+	
 }

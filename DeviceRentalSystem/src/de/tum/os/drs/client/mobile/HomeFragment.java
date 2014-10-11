@@ -30,10 +30,11 @@ public class HomeFragment extends Fragment {
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		getActivity().getActionBar().setTitle(((MainActivity) getActivity()).mDrawerTitle);
-		View rootView = inflater.inflate(R.layout.fragment_home, container, false);
 
-		final Button button1 = (Button) rootView.findViewById(R.id.adddevice);
+		getActivity().setTitle("Home");
+		View rootView = inflater.inflate(R.layout.fragment_home, container, false);
+		
+		final Button button1 = (Button) rootView.findViewById(R.id.editdevice);
 		final TextView txt1 = (TextView)rootView.findViewById(R.id.txtLabel);
 		button1.setOnClickListener(new OnClickListener() {
 
@@ -123,8 +124,8 @@ public class HomeFragment extends Fragment {
 			*/	
 				
 				
-				Device device = new Device("7777", "whatever device", "tes7e32 description","very old", DeviceType.DesktopPC, new Date(), false);
-		/*
+			/*	Device device = new Device("7777", "whatever device", "tes7e32 description","very old", DeviceType.DesktopPC, new Date(), false);
+		
 				service.addDevice(device, new Callback<String>(){
 
 					@Override
@@ -164,14 +165,13 @@ public class HomeFragment extends Fragment {
 				});
 				
 			*/	
-			
-		service.getDeviceByImei("600", new Callback<Device>(){
+				
+		service.getDeviceByImei("500", new Callback<Device>(){
 
 			@Override
 			public void onSuccess(Device result) {
 				
 				Log.i("Device", result.getDeviceType().toString());
-				Log.i("Device", result.getEstimatedReturnDate().toLocaleString());
 				
 				
 			}
@@ -185,7 +185,7 @@ public class HomeFragment extends Fragment {
 			
 			
 		});
-				
+			
 				/*service.getAllRenters(new Callback<List<Renter>>(){
 
 					@Override

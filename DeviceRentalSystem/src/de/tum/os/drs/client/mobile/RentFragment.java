@@ -28,6 +28,7 @@ public class RentFragment extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_rent, container, false);
+        getActivity().setTitle("Rent a device");
         mSignaturePad = (SignaturePad) rootView.findViewById(R.id.signature_pad);
         mSignaturePad.setOnSignedListener(new SignaturePad.OnSignedListener() {
             @Override
