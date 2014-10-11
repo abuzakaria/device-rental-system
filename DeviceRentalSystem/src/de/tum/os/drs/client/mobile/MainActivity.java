@@ -3,9 +3,11 @@ package de.tum.os.drs.client.mobile;
 import java.util.ArrayList;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -17,15 +19,21 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 import de.tum.os.drs.client.mobile.adapter.NavDrawerListAdapter;
+import de.tum.os.drs.client.mobile.communication.Callback;
+import de.tum.os.drs.client.mobile.communication.RentalServiceImpl;
+import de.tum.os.drs.client.mobile.model.CredentialStore;
 import de.tum.os.drs.client.mobile.model.NavDrawerItem;
 
 public class MainActivity extends FragmentActivity {
-	
+
+	private static final String TAG = "MainActivity";
+
 	private DrawerLayout mDrawerLayout;
 	private ListView mDrawerList;
 	private ActionBarDrawerToggle mDrawerToggle;
-	
+
 	public String mScanResult;
 	// nav drawer title
 	public CharSequence mDrawerTitle;
@@ -39,7 +47,8 @@ public class MainActivity extends FragmentActivity {
 
 	private ArrayList<NavDrawerItem> navDrawerItems;
 	private NavDrawerListAdapter adapter;
-
+	
+	private CredentialStore store;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -61,12 +70,18 @@ public class MainActivity extends FragmentActivity {
 		navDrawerItems = new ArrayList<NavDrawerItem>();
 
 		// adding nav drawer items to array
-		navDrawerItems.add(new NavDrawerItem(navMenuTitles[0], navMenuIcons.getResourceId(0, -1)));
-		navDrawerItems.add(new NavDrawerItem(navMenuTitles[1], navMenuIcons.getResourceId(1, -1)));
-		navDrawerItems.add(new NavDrawerItem(navMenuTitles[2], navMenuIcons.getResourceId(2, -1)));
-		//navDrawerItems.add(new NavDrawerItem(navMenuTitles[3], navMenuIcons.getResourceId(3, -1), true, "22"));
-		navDrawerItems.add(new NavDrawerItem(navMenuTitles[3], navMenuIcons.getResourceId(3, -1)));
-		
+		navDrawerItems.add(new NavDrawerItem(navMenuTitles[0], navMenuIcons
+				.getResourceId(0, -1)));
+		navDrawerItems.add(new NavDrawerItem(navMenuTitles[1], navMenuIcons
+				.getResourceId(1, -1)));
+		navDrawerItems.add(new NavDrawerItem(navMenuTitles[2], navMenuIcons
+				.getResourceId(2, -1)));
+		// navDrawerItems.add(new NavDrawerItem(navMenuTitles[3],
+		// navMenuIcons.getResourceId(3, -1), true, "22"));
+		navDrawerItems.add(new NavDrawerItem(navMenuTitles[3], navMenuIcons
+				.getResourceId(3, -1)));
+		navDrawerItems.add(new NavDrawerItem(navMenuTitles[4], navMenuIcons
+				.getResourceId(3, -1)));
 
 		// Recycle the typed array
 		navMenuIcons.recycle();
@@ -83,9 +98,11 @@ public class MainActivity extends FragmentActivity {
 		getActionBar().setHomeButtonEnabled(true);
 
 		mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
-				R.drawable.ic_drawer, //nav menu toggle icon
-				R.string.app_name, // nav drawer open - description for accessibility
-				R.string.app_name // nav drawer close - description for accessibility
+				R.drawable.ic_drawer, // nav menu toggle icon
+				R.string.app_name, // nav drawer open - description for
+									// accessibility
+				R.string.app_name // nav drawer close - description for
+									// accessibility
 		) {
 			public void onDrawerClosed(View view) {
 				getActionBar().setTitle(mTitle);
@@ -108,12 +125,13 @@ public class MainActivity extends FragmentActivity {
 			setTitle(R.string.app_name);
 		}
 		
-		
-				
-		}
+		store = new CredentialStore(
+				PreferenceManager.getDefaultSharedPreferences(this));
+
+	}
 
 	private void startAuthenticationActivity() {
-		
+
 		Intent intent = new Intent(this, AuthenticationActivity.class);
 		startActivity(intent);
 	}
@@ -124,7 +142,8 @@ public class MainActivity extends FragmentActivity {
 	private class SlideMenuClickListener implements
 			ListView.OnItemClickListener {
 		@Override
-		public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+		public void onItemClick(AdapterView<?> parent, View view, int position,
+				long id) {
 			// display view for selected nav drawer item
 			displayView(position);
 		}
@@ -139,8 +158,7 @@ public class MainActivity extends FragmentActivity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// toggle nav drawer on selecting action bar app icon/title
-		if (mDrawerToggle.onOptionsItemSelected(item)) 
-		{
+		if (mDrawerToggle.onOptionsItemSelected(item)) {
 			return true;
 		}
 		// Handle action bar actions click
@@ -182,6 +200,9 @@ public class MainActivity extends FragmentActivity {
 		case 3:
 			fragment = new ReturnFragment();
 			break;
+		case 4:
+			logout();
+			break;
 		default:
 			break;
 		}
@@ -190,7 +211,7 @@ public class MainActivity extends FragmentActivity {
 			FragmentManager fragmentManager = getSupportFragmentManager();
 			fragmentManager.beginTransaction()
 					.replace(R.id.frame_container, fragment)
-					//.addToBackStack(null)
+					// .addToBackStack(null)
 					.commit();
 
 			// update selected item and title, then close the drawer
@@ -198,11 +219,37 @@ public class MainActivity extends FragmentActivity {
 			mDrawerList.setSelection(position);
 			setTitle(navMenuTitles[position]);
 			mDrawerLayout.closeDrawer(mDrawerList);
-		} 
-		else {
+		} else {
 			// error in creating fragment
 			Log.e("MainActivity", "Error in creating fragment");
 		}
+	}
+
+	private void logout() {
+
+		Log.i(TAG, "Loging out...");
+
+		RentalServiceImpl.getInstance().logout(new Callback<String>() {
+
+			@Override
+			public void onSuccess(String result) {
+				Log.i(TAG, result);
+				
+				store.clearCredentials();
+				
+				startAuthenticationActivity();
+				finish();
+				
+			}
+
+			@Override
+			public void onFailure(int code, String error) {
+
+				showToast("Error code received: " + code + " " + error);
+			}
+
+		});
+
 	}
 
 	@Override
@@ -230,5 +277,10 @@ public class MainActivity extends FragmentActivity {
 		mDrawerToggle.onConfigurationChanged(newConfig);
 	}
 
-}
+	private void showToast(String text) {
+		Toast toast = Toast.makeText(this, text, Toast.LENGTH_SHORT);
+		toast.show();
 
+	}
+
+}

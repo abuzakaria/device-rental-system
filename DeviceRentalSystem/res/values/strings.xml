@@ -11,6 +11,7 @@
         <item>Add a device</item>
         <item>Rent a device</item>
         <item>Return a device</item>
+        <item>logout</item>
     </string-array>
 
     <!-- Nav Drawer List Item Icons -->
@@ -36,6 +37,7 @@
     <string name="scan">Scan</string>
     <string name="add_device">Add device</string>
     <string name="find_device">Find device</string>
+   
     <string name="title_activity_authentication">AuthenticationActivity</string>
     <string name="hello_world">Hello world!</string>
     <string name="auth_preferences_file">de.tum.drs.client.mobile.AUTH_PREFERENCES_FILE_KEY</string>
