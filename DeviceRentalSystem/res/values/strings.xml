@@ -24,10 +24,18 @@
         <item>@drawable/ic_rent</item>
         <item>@drawable/ic_return</item>
     </array>
+    
+    
+    <string-array name="device_state">
+        <item>New</item>
+        <item>Used</item>
+    </string-array>
 
     <!-- Content Description -->
     <string name="desc_list_item_icon">Item Icon</string>
     <string name="scan">Scan</string>
+    <string name="add_device">Add device</string>
+    <string name="find_device">Find device</string>
     <string name="title_activity_authentication">AuthenticationActivity</string>
     <string name="hello_world">Hello world!</string>
     <string name="auth_preferences_file">de.tum.drs.client.mobile.AUTH_PREFERENCES_FILE_KEY</string>

@@ -20,10 +20,6 @@ import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.scribe.builder.ServiceBuilder;
-import org.scribe.builder.api.FacebookApi;
-import org.scribe.model.Token;
-import org.scribe.oauth.OAuthService;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -41,7 +37,6 @@ import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import de.tum.os.drs.client.mobile.authentication.Authenticator;
-import de.tum.os.drs.client.mobile.authentication.Google2APi;
 
 public class AuthenticationActivity extends Activity {
 

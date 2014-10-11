@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 import de.tum.os.drs.client.mobile.communication.Callback;
 import de.tum.os.drs.client.mobile.communication.RentalService;
 import de.tum.os.drs.client.mobile.communication.RentalServiceImpl;
@@ -28,24 +29,22 @@ public class HomeFragment extends Fragment {
 	}
 
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
-		getActivity().getActionBar().setTitle(
-				((MainActivity) getActivity()).mDrawerTitle);
-		View rootView = inflater.inflate(R.layout.fragment_home, container,
-				false);
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		getActivity().getActionBar().setTitle(((MainActivity) getActivity()).mDrawerTitle);
+		View rootView = inflater.inflate(R.layout.fragment_home, container, false);
 
-		button = (Button) rootView.findViewById(R.id.button1);
-		button.setOnClickListener(new OnClickListener() {
+		final Button button1 = (Button) rootView.findViewById(R.id.adddevice);
+		final TextView txt1 = (TextView)rootView.findViewById(R.id.txtLabel);
+		button1.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View arg0) {
-
+				button1.setEnabled(false);
 				RentalService service = RentalServiceImpl.getInstance();
 		
 				List<String> imeis = new ArrayList<String>();
 				
-				imeis.add("600");
+				//imeis.add("600");
 				//imeis.add("6.548201885173421E7");
 				
 				
@@ -54,13 +53,17 @@ public class HomeFragment extends Fragment {
 					@Override
 					public void onSuccess(String result) {
 						// TODO Auto-generated method stub
-						
+						button1.setEnabled(true);
+						Log.d("webservice",result);
+						txt1.setText(result);
 					}
 
 					@Override
 					public void onFailure(int code, String error) {
 						// TODO Auto-generated method stub
-						
+						button1.setEnabled(true);
+						Log.d("webservice", error);
+						txt1.setText(String.valueOf(code)+error);
 					}
 					
 				});
