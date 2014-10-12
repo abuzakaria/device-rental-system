@@ -24,12 +24,13 @@ import de.tum.os.drs.client.mobile.model.DeviceType;
 
 public class EditDeviceFragment extends Fragment{
 
-    Button scan_btn, update_btn;
-    String scanresult, s_deviceName, s_deviceDesc, s_deviceSerial;
-    EditText deviceSerial,deviceDetails, deviceName;
-    Spinner deviceType, deviceState;
-    MainActivity _main;
-    RentalService service;
+	private Button scan_btn, update_btn;
+	private String scanresult, s_deviceName, s_deviceDesc, s_deviceSerial;
+	private EditText deviceSerial,deviceDetails, deviceName;
+	private Spinner deviceType, deviceState;
+	private MainActivity _main;
+	private RentalService service;
+	
 	public EditDeviceFragment(){}
 
 	

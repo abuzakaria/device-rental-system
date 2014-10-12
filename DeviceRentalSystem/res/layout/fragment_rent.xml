@@ -97,13 +97,23 @@
 	        android:visibility="gone"
 	        android:layout_margin="15dp"
 	        android:layout_below="@id/datePicker"/>
+	    
+	    <EditText
+	        android:id="@+id/comments"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_below="@+id/confirm_btn"
+	        android:layout_marginTop="22dp"
+	        android:ems="10"
+	        android:hint="Comments" 
+	        android:visibility="gone"/>
 	
 	    <RelativeLayout
 	        android:layout_width="fill_parent"
 	        android:layout_height="300dp"
 	        android:layout_alignParentLeft="true"
 	        android:layout_alignParentRight="true"
-	        android:layout_below="@+id/datePicker"
+	        android:layout_below="@+id/comments"
 	        android:layout_marginTop="58dp"  	
 	        android:layout_margin="10dp"        
     		android:background="@drawable/border"    

@@ -37,7 +37,7 @@ import android.widget.Toast;
 public class ReturnFragment extends Fragment {
 	private SignaturePad mSignaturePad;
 	private TextView deviceDetails;
-	private EditText mIMEI;
+	private EditText mIMEI, mComments;
 	private String sIMEI, sMatNo;
 	private Renter m_renter;
 
@@ -54,6 +54,7 @@ public class ReturnFragment extends Fragment {
 
         service = RentalServiceImpl.getInstance();
         mIMEI = (EditText)rootView.findViewById(R.id.device_serial);
+        mComments = (EditText) rootView.findViewById(R.id.comments);
         mSignaturePad = (SignaturePad) rootView.findViewById(R.id.signature_pad);
         mScanButton = (Button) rootView.findViewById(R.id.scan);
         mFindButton = (Button) rootView.findViewById(R.id.find_device);
@@ -219,6 +220,7 @@ public class ReturnFragment extends Fragment {
             	mIMEI.setVisibility(View.GONE);
             	mFindButton.setVisibility(View.GONE);
             	RL.setVisibility(View.VISIBLE);
+            	mComments.setVisibility(View.VISIBLE);
             	mSaveButton.setVisibility(View.VISIBLE);
             	mClearButton.setVisibility(View.VISIBLE);
             }
@@ -246,7 +248,7 @@ public class ReturnFragment extends Fragment {
             	if (sIMEI != null && sMatNo !=null)
             	{
             		imeis.add(sIMEI);
-            		service.returnDevices(new ReturnRequest(sMatNo, imeis, "ASD", "signature"), new Callback<String>(){
+            		service.returnDevices(new ReturnRequest(sMatNo, imeis, mComments.getText().toString(), "signature"), new Callback<String>(){
 
 						@Override
 						public void onSuccess(String result) {

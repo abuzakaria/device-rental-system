@@ -21,11 +21,11 @@ import de.tum.os.drs.client.mobile.model.Renter;
 
 public class DeviceFragment extends Fragment{
 	private String imei;
-	MainActivity _main;
-	Button updatebtn;
+	private MainActivity _main;
+	private Button updatebtn;
 	public DeviceFragment(){}
-	TextView devicedump;
-	Renter m_renter;
+	private TextView devicedump;
+	private Renter m_renter;
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		Log.d("check","devicefragment: on createview");

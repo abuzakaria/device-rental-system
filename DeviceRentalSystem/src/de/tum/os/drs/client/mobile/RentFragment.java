@@ -54,7 +54,7 @@ public class RentFragment extends Fragment {
     private DatePicker datepicker;
     private ArrayList<Renter> m_renters;
     private ArrayList<String> m_rentersName;
-    private EditText mIMEI;
+    private EditText mIMEI, mComments;
     private String sIMEI, sMatNo;
     private RelativeLayout RL;
     private Renter m_renter;
@@ -77,6 +77,7 @@ public class RentFragment extends Fragment {
         deviceDetails = (TextView) rootView.findViewById(R.id.device_details);
         renterDetails = (TextView) rootView.findViewById(R.id.renter_details);
         mIMEI = (EditText) rootView.findViewById(R.id.device_serial);
+        mComments = (EditText) rootView.findViewById(R.id.comments);
         datepicker = (DatePicker) rootView.findViewById(R.id.datePicker);
         RL = (RelativeLayout)rootView.findViewById(R.id.signature_pad_container);
         
@@ -310,7 +311,7 @@ public class RentFragment extends Fragment {
             	if (sIMEI != null && sMatNo !=null)
             	{
             		imeis.add(sIMEI);
-                	service.rentDevices(new RentRequest(sMatNo, imeis, getDateFromDatePicker(datepicker), "some comments", "Signature"), new Callback<String>(){
+                	service.rentDevices(new RentRequest(sMatNo, imeis, getDateFromDatePicker(datepicker), mComments.getText().toString(), "Signature"), new Callback<String>(){
 
     					@Override
     					public void onSuccess(String result) {
@@ -351,6 +352,7 @@ public class RentFragment extends Fragment {
             	mConfirmButton.setVisibility(View.GONE);
             	renterSpinner.setVisibility(View.GONE);
             	RL.setVisibility(View.VISIBLE);
+            	mComments.setVisibility(View.VISIBLE);
             	mClearButton.setVisibility(View.VISIBLE);
             	mSaveButton.setVisibility(View.VISIBLE);
             }
