@@ -7,10 +7,14 @@ public enum Authenticator {
 			"https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile",
 			"https://accounts.google.com/o/oauth2/auth", 
 			"https://accounts.google.com/o/oauth2/token",
-			"https://www.googleapis.com/oauth2/v2/userinfo",
-			"https://accounts.google.com/o/oauth2/revoke"),
+			"https://www.googleapis.com/oauth2/v2/userinfo"),
 	
-	facebook("816880461697165", "4d20569eacb96ebae5131156abf5a714", "email user_about_me", "", "","", "");
+	facebook("816880461697165", 
+			"4d20569eacb96ebae5131156abf5a714",
+			"email user_about_me", 
+			"https://www.facebook.com/dialog/oauth", 
+			"https://graph.facebook.com/oauth/access_token",
+			"https://graph.facebook.com/me?access_token=");
 
 	public String getTokenAccessURL() {
 		return tokenAccessURL;
@@ -24,10 +28,9 @@ public enum Authenticator {
 	private final String authorizationURL;
 	private final String tokenAccessURL;
 	private final String tokenCheckURL;
-	private final String revokationURL;
 
 	Authenticator(String clientId, String clientSecret, String scope,
-			String authorizationURL, String tokenAccessURL, String tokenCheckURL, String revokationUrl) {
+			String authorizationURL, String tokenAccessURL, String tokenCheckURL) {
 
 		this.clientId = clientId;
 		this.clientSecret = clientSecret;
@@ -35,7 +38,6 @@ public enum Authenticator {
 		this.authorizationURL = authorizationURL;
 		this.tokenAccessURL = tokenAccessURL;
 		this.tokenCheckURL = tokenCheckURL;
-		this.revokationURL = revokationUrl;
 
 	}
 
@@ -59,10 +61,6 @@ public enum Authenticator {
 		return tokenCheckURL;
 	}
 
-	public String getRevokationURL() {
-		return revokationURL;
-	}
-	
 	 public static Authenticator toAuthenticator(String myEnumString) {
 	        try {
 	            return valueOf(myEnumString);

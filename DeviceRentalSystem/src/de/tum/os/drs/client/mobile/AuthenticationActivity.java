@@ -120,6 +120,7 @@ public class AuthenticationActivity extends Activity {
 
 		Log.i(TAG, "Attempting to login the user");
 		// Check if token exists
+		store.clearCredentials();
 		Credentials c = store.getStoredCredentials();
 
 		if (c == null) {
@@ -299,6 +300,7 @@ public class AuthenticationActivity extends Activity {
 				mWebView.stopLoading();
 				// Hide the calback webpage
 				mWebView.setVisibility(View.INVISIBLE);
+				mWebView.loadUrl("about:blank");
 				showLoadingDialog("Logging in...");
 				parseAuthenticationCode(url);
 
@@ -361,8 +363,13 @@ public class AuthenticationActivity extends Activity {
 	}
 
 	private void processToken(String json) {
+		
+		if(mAuthenticator == Authenticator.facebook){
+			processFacebookToken(json);
+			return;
+		}
 
-		// Log.i(TAG, "Token recieved : " + json);
+		 Log.i(TAG, "Token recieved : " + json);
 
 		try {
 			JSONObject obj = new JSONObject(json);
@@ -383,6 +390,21 @@ public class AuthenticationActivity extends Activity {
 		}
 
 	}
+	
+	private void processFacebookToken(String response){
+		
+		Log.i(TAG, response);
+		
+		String[] split = response.split("&");
+		String token = split[0].substring(13, split[0].length());
+		
+		Log.i(TAG, "Token: " + token);
+		
+		store.storeCredentials(new Credentials(token,
+				mAuthenticator, ""));
+		
+		sendTokenToServer(token);
+	}
 
 	private void sendTokenToServer(String currentToken) {
 
@@ -396,11 +418,11 @@ public class AuthenticationActivity extends Activity {
 					@Override
 					public void onSuccess(LoginResponse result) {
 
+						dialog.dismiss();
+						
 						SessionManager.currentSession = result.getSessionId();
 						Log.i(TAG, result.getMessage());
 						Log.i(TAG, "Session id: " + result.getSessionId());
-
-						dialog.dismiss();
 
 						showToast(result.getMessage());
 						
@@ -416,6 +438,8 @@ public class AuthenticationActivity extends Activity {
 						Log.i(TAG, error);
 						
 						showToast(error);
+						
+						
 					}
 
 				});

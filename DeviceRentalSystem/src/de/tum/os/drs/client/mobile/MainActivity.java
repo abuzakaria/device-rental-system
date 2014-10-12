@@ -20,12 +20,9 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 import de.tum.os.drs.client.mobile.adapter.NavDrawerListAdapter;
-import de.tum.os.drs.client.mobile.authentication.LogoutHelper;
-import de.tum.os.drs.client.mobile.authentication.LogoutHelper.LogoutCallback;
 import de.tum.os.drs.client.mobile.communication.Callback;
 import de.tum.os.drs.client.mobile.communication.RentalServiceImpl;
 import de.tum.os.drs.client.mobile.model.CredentialStore;
-import de.tum.os.drs.client.mobile.model.Credentials;
 import de.tum.os.drs.client.mobile.model.NavDrawerItem;
 
 public class MainActivity extends FragmentActivity {
