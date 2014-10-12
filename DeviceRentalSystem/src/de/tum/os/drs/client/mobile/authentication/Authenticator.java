@@ -8,7 +8,7 @@ public enum Authenticator {
 			"https://accounts.google.com/o/oauth2/auth", 
 			"https://accounts.google.com/o/oauth2/token",
 			"https://www.googleapis.com/oauth2/v2/userinfo",
-			"https://accounts.google.com/o/oauth2/revoke?token="),
+			"https://accounts.google.com/o/oauth2/revoke"),
 	
 	facebook("816880461697165", "4d20569eacb96ebae5131156abf5a714", "email user_about_me", "", "","", "");
 

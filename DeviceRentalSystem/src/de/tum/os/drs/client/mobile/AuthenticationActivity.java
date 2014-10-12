@@ -73,6 +73,7 @@ public class AuthenticationActivity extends Activity {
 
 				mAuthenticator = Authenticator.google;
 				getAuthorizationCode(Authenticator.google);
+				showLoadingDialog("");
 			}
 
 		});
@@ -84,6 +85,8 @@ public class AuthenticationActivity extends Activity {
 			public void onClick(View arg0) {
 
 				mAuthenticator = Authenticator.facebook;
+				getAuthorizationCode(Authenticator.facebook);
+				showLoadingDialog("");
 
 			}
 
@@ -101,9 +104,7 @@ public class AuthenticationActivity extends Activity {
 		store = new CredentialStore(
 				PreferenceManager.getDefaultSharedPreferences(this));
 
-		dialog = ProgressDialog.show(this, "Please wait ...", "Login in...",
-				true);
-		dialog.setCancelable(false);
+		showLoadingDialog("Logging in...");
 
 		// Try to login the user
 		login();
@@ -118,7 +119,6 @@ public class AuthenticationActivity extends Activity {
 	private void login() {
 
 		Log.i(TAG, "Attempting to login the user");
-		 store.clearCredentials();
 		// Check if token exists
 		Credentials c = store.getStoredCredentials();
 
@@ -126,7 +126,7 @@ public class AuthenticationActivity extends Activity {
 
 			Log.i(TAG, "No token found, user has to login");
 
-			dialog.dismiss();
+			hideLoadingDialog();
 			// We need to start from the beginning, no current token was found
 			showLoginOptions();
 
@@ -225,12 +225,6 @@ public class AuthenticationActivity extends Activity {
 		}).execute();
 	}
 
-	private void logout() {
-
-		// clearCredentials();
-
-	}
-
 	private void refreshToken() {
 
 		Log.i(TAG, "Refreshing token");
@@ -238,7 +232,6 @@ public class AuthenticationActivity extends Activity {
 
 		if (c == null) {
 
-			logout();
 			return;
 
 		}
@@ -269,63 +262,15 @@ public class AuthenticationActivity extends Activity {
 
 	}
 
-	private void revokeToken(String token) {
-
-		String url = mAuthenticator.getRevokationURL() + token;
-
-		(new AsyncTask<String, Void, String>() {
-			@Override
-			protected String doInBackground(String... params) {
-
-				URL url;
-				HttpsURLConnection conn = null;
-				try {
-					url = new URL(params[0]);
-					conn = (HttpsURLConnection) url.openConnection();
-					conn.setReadTimeout(10000);
-					conn.setConnectTimeout(15000);
-					conn.connect();
-
-					Log.i(TAG, "Response code " + conn.getResponseCode());
-
-					if (conn.getResponseCode() > 300) {
-
-						InputStream in = new BufferedInputStream(
-								conn.getErrorStream());
-						String error = getResponseText(in);
-						Log.e(TAG, error);
-
-					}
-
-				} catch (MalformedURLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} finally {
-					if (conn != null) {
-						conn.disconnect();
-					}
-
-				}
-				return null;
-			}
-
-		}).execute(url);
-
-	}
-
 	private void processRefreshToken(String json) {
-
-		// Log.i(TAG, "json: " + json);
 
 		try {
 			JSONObject obj = new JSONObject(json);
 
 			String access_token = obj.getString("access_token");
 
-			// store.refreshToken(access_token);
+			store.refreshToken(access_token);
+			
 			sendTokenToServer(access_token);
 
 		} catch (JSONException e) {
@@ -354,10 +299,12 @@ public class AuthenticationActivity extends Activity {
 				mWebView.stopLoading();
 				// Hide the calback webpage
 				mWebView.setVisibility(View.INVISIBLE);
+				showLoadingDialog("Logging in...");
 				parseAuthenticationCode(url);
 
 			} else {
 				super.onPageStarted(view, url, favicon);
+				hideLoadingDialog();
 			}
 		}
 	};
@@ -372,6 +319,7 @@ public class AuthenticationActivity extends Activity {
 					"An error ocurred while fetchign the auth code: "
 							+ uri.getQueryParameter("error"));
 
+			hideLoadingDialog();
 			showLoginOptions();
 
 		} else {
@@ -623,6 +571,23 @@ public class AuthenticationActivity extends Activity {
 		mWebView.setVisibility(View.VISIBLE);
 		loginOptions.setVisibility(View.INVISIBLE);
 
+	}
+	
+	private void showLoadingDialog(String message){
+		
+		dialog = ProgressDialog.show(this, "Please wait ...", message,
+				true);
+		dialog.setCancelable(false);
+	}
+	
+	private void hideLoadingDialog(){
+		
+		if(dialog != null){
+			
+			dialog.dismiss();
+			
+		}
+		
 	}
 
 	private void showToast(String text) {
