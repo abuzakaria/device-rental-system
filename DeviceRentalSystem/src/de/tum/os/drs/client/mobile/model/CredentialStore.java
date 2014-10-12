@@ -33,7 +33,6 @@ public class CredentialStore {
 
 		SharedPreferences.Editor editor = prefs.edit();
 		editor.putString(TOKEN_KEY, credentials.getToken());
-		editor.putString(REFRESH_TOKEN_KEY, credentials.getRefreshToken());
 		editor.putString(AUTHENTICATOR_KEY, credentials.getAuthenticator()
 				.toString());
 		editor.commit();
@@ -42,16 +41,15 @@ public class CredentialStore {
 	public Credentials getStoredCredentials() {
 
 		String token = prefs.getString(TOKEN_KEY, "");
-		String refreshToken = prefs.getString(REFRESH_TOKEN_KEY, "");
 		String authString = prefs.getString(AUTHENTICATOR_KEY, "");
 
-		if (token.isEmpty() || refreshToken.isEmpty() || authString.isEmpty()) {
+		if (token.isEmpty() || authString.isEmpty()) {
 			clearCredentials();
 			return null;
 		} else {
 
 			return new Credentials(token,
-					Authenticator.toAuthenticator(authString), refreshToken);
+					Authenticator.toAuthenticator(authString));
 		}
 	}
 

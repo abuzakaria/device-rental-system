@@ -238,11 +238,14 @@ public class MainActivity extends FragmentActivity {
 				showToast(result);
 				startAuthenticationActivity();
 				finish();
-								
+				
+						
 			}
 
 			@Override
 			public void onFailure(int code, String error) {
+				
+				Log.i(TAG, error);
 
 				showToast("Error code received: " + code + " " + error);
 			}
