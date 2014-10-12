@@ -69,6 +69,7 @@ public class ReturnFragment extends Fragment {
         
         return rootView;
     }
+
 	
 	@Override
 	public void onResume() {

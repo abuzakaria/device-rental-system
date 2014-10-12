@@ -3,7 +3,7 @@
     android:id="@+id/ScrollView01"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent" >
-    
+     
     <RelativeLayout
 	    android:layout_width="match_parent"
 	    android:layout_height="wrap_content">
@@ -69,8 +69,8 @@
 		        android:ems="10"
 		        android:hint="Comments" 
 		        android:visibility="gone"/>
-		    
-		    <RelativeLayout
+
+			<RelativeLayout
 		        android:layout_width="fill_parent"
 		        android:layout_height="300dp"
 		        android:layout_alignParentLeft="true"

@@ -24,10 +24,10 @@ import de.tum.os.drs.client.mobile.model.Device;
 import de.tum.os.drs.client.mobile.model.DeviceType;
 
 public class AddFragment extends Fragment {
-	private Button scan_btn, add_btn;
-	private String scanresult, s_deviceName, s_deviceDesc, s_deviceSerial;
-	private EditText deviceSerial,deviceDetails, deviceName;
-	private Spinner deviceType, deviceState;
+    Button scan_btn, add_btn;
+    String scanresult, s_deviceName, s_deviceDesc, s_deviceSerial;
+    EditText deviceSerial,deviceDetails, deviceName;
+    Spinner deviceType, deviceState;
 	private RentalService service;
 	private Boolean isDuplicate = true;
 	
@@ -83,55 +83,26 @@ public class AddFragment extends Fragment {
 				s_deviceName = (deviceName.getText().length() == 0) ? null : deviceName.getText().toString();
 				Device device = new Device(s_deviceSerial, s_deviceName, s_deviceDesc, deviceState.getSelectedItem().toString(), DeviceType.valueOf(DeviceType.class, deviceType.getSelectedItem().toString()), null, true);
 				
-				checkDuplicateDevice(s_deviceSerial);
-				if (!isDuplicate)
-					service.addDevice(device, new Callback<String>(){
-	
-						@Override
-						public void onSuccess(String result) {
-							// TODO Auto-generated method stub
-							Log.d("adddevice", "success");
-							Toast.makeText(getActivity(), result, Toast.LENGTH_SHORT).show();
-							MainActivity temp = (MainActivity)getActivity();
-							temp.mSelectedDeviceImei = s_deviceSerial; 
-							final FragmentTransaction ft2 = getFragmentManager().beginTransaction(); 
-							ft2.replace(R.id.frame_container, new DeviceFragment(), "NewFragmentTag"); 
-							ft2.commit(); 
-						}
-	
-						@Override
-						public void onFailure(int code, String error) {
-							// TODO Auto-generated method stub
-							Log.d("adddevice", "failure");
-							Toast.makeText(getActivity(), error, Toast.LENGTH_SHORT).show();
-							
-						}
-					});
-				else
-					Toast.makeText(getActivity(), "Duplicate IMEI", Toast.LENGTH_SHORT).show();
-			}
-
-			private void checkDuplicateDevice(String s_deviceSerial) {
-				// TODO Auto-generated method stub
-				//final Boolean isDuplicate;
-				final String tempSerial = s_deviceSerial.trim();
-				service.getAllDevices(new Callback<List<Device>>() {
+				RentalService service = RentalServiceImpl.getInstance();
+				service.addDevice(device, new Callback<String>(){
 
 					@Override
-					public void onSuccess(List<Device> result) {
+					public void onSuccess(String result) {
 						// TODO Auto-generated method stub
-						for (Device d : result)
-							if(d.getImei().trim().equals(tempSerial))
-							{
-								isDuplicate = true;
-								return;
-							}
-						isDuplicate = false;
+						Log.d("adddevice", "success");
+						Toast.makeText(getActivity(), result, Toast.LENGTH_SHORT).show();
+						MainActivity temp = (MainActivity)getActivity();
+						temp.mSelectedDeviceImei = s_deviceSerial; 
+						final FragmentTransaction ft2 = getFragmentManager().beginTransaction(); 
+						ft2.replace(R.id.frame_container, new DeviceFragment(), "NewFragmentTag"); 
+						ft2.commit(); 
 					}
 
 					@Override
 					public void onFailure(int code, String error) {
 						// TODO Auto-generated method stub
+						Log.d("adddevice", "failure");
+						Toast.makeText(getActivity(), error, Toast.LENGTH_SHORT).show();
 						
 					}
 				});
