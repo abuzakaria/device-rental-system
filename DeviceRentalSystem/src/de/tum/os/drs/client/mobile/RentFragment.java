@@ -155,10 +155,13 @@ public class RentFragment extends Fragment {
         					temp += d.getEstimatedReturnDate()==null ? "<Not found>": d.getEstimatedReturnDate().toString();  
         					temp += "\n";
         				}
-        				sIMEI = d.getImei();
+        				else
+        				{
+            				sIMEI = d.getImei();            				
+            				mRentButton.setVisibility(View.VISIBLE);        					
+        				}
         				deviceDetails.setVisibility(View.VISIBLE);
         				deviceDetails.setText(temp);
-        				mRentButton.setVisibility(View.VISIBLE);
         			}
 
             		});

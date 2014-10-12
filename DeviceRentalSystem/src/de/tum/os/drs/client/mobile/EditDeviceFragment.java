@@ -51,7 +51,6 @@ public class EditDeviceFragment extends Fragment{
 		
         _main = (MainActivity)getActivity();
         s_deviceSerial = _main.mSelectedDeviceImei;
-        _main.mSelectedDeviceImei = null;
         deviceType.setAdapter(new ArrayAdapter<DeviceType>(getActivity(), android.R.layout.simple_spinner_dropdown_item, DeviceType.values()));
         update_btn.setText("Update");
         
@@ -118,9 +117,10 @@ public class EditDeviceFragment extends Fragment{
 						Toast.makeText(getActivity(), result, Toast.LENGTH_SHORT).show();
 						MainActivity temp = (MainActivity)getActivity();
 						temp.mSelectedDeviceImei = s_deviceSerial; 
-						final FragmentTransaction ft2 = getFragmentManager().beginTransaction(); 
+						final FragmentTransaction ft2 = getFragmentManager().beginTransaction();						
 						ft2.replace(R.id.frame_container, new DeviceFragment(), "NewFragmentTag"); 
 						ft2.commit(); 
+						getFragmentManager().popBackStack();
 					}
 
 					@Override

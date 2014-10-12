@@ -19,6 +19,7 @@ import de.tum.os.drs.client.mobile.model.Device;
 public class DeviceFragment extends Fragment{
 	private String imei;
 	MainActivity _main;
+	Button updatebtn;
 	public DeviceFragment(){}
 	TextView devicedump;
 	@Override
@@ -27,18 +28,26 @@ public class DeviceFragment extends Fragment{
 		super.onCreateView(inflater, container, savedInstanceState);		
         View rootView = inflater.inflate(R.layout.fragment_device, container, false);
         devicedump = ((TextView)rootView.findViewById(R.id.devicedump));
+		updatebtn = (Button) rootView.findViewById(R.id.editDevice);
         getActivity().setTitle("Device details");
         
+        return rootView;
+	}
+	
+	@Override
+	public void onResume() {
+		// TODO Auto-generated method stub
+		super.onResume();
+
         _main = (MainActivity)getActivity();
 		imei = _main.mSelectedDeviceImei; 
-		_main.mSelectedDeviceImei = null;
-		Button updatebtn = (Button) rootView.findViewById(R.id.editDevice);
 		updatebtn.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				_main.mSelectedDeviceImei = imei;
 				final FragmentTransaction ft = getFragmentManager().beginTransaction(); 
 				ft.replace(R.id.frame_container, new EditDeviceFragment(), "NewFragmentTag"); 
+				ft.addToBackStack(null);
 				ft.commit(); 
 			}
 		});
@@ -95,7 +104,6 @@ public class DeviceFragment extends Fragment{
 				Log.i("Error", error);
 			}
 		});
-        return rootView;
 	}
 
 }
