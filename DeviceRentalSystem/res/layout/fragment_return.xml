@@ -1,14 +1,115 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ScrollView01"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
     
-    <TextView
-        android:id="@+id/txtLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:text="Return"
-        android:textSize="16dp" />
-
-</RelativeLayout>
+    <RelativeLayout
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content">
+	    <LinearLayout
+		        android:id="@+id/buttons_container"
+		        android:layout_width="fill_parent"
+		        android:layout_height="wrap_content"
+		        android:layout_alignParentTop="true"
+		        android:orientation="horizontal"
+		        android:paddingTop="16dp" >
+		
+		        <EditText
+		            android:id="@+id/device_serial"
+		            android:layout_width="0dp"
+		            android:layout_height="wrap_content"
+		            android:layout_weight="1"
+		            android:ems="10"
+		            android:hint="IMEI" >
+		            <requestFocus />
+		        </EditText>
+		
+		        <Button
+		            android:id="@+id/scan"
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content"
+		            android:onClick="scanAgain"
+		            android:text="@string/scan" />
+		    </LinearLayout>
+		    <Button
+			        android:id="@+id/find_device"
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+			        android:text="@string/find_device" 
+			        android:layout_centerHorizontal="true"
+			        android:layout_below="@id/buttons_container"/>
+		    
+		    <TextView
+		        android:id="@+id/device_details"
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+		        android:layout_margin="15dp"
+		        android:padding="10dp"
+		        android:background="@drawable/border" 
+		        android:layout_below="@+id/find_device"
+		        android:layout_marginTop="44dp"
+		        android:visibility="gone" />
+		    
+		    <Button
+		        android:id="@+id/return_btn"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+		        android:text="@string/return_btn" 
+		        android:layout_centerHorizontal="true"
+		        android:visibility="gone"
+		        android:layout_below="@id/device_details"/>
+		    
+		    <RelativeLayout
+		        android:layout_width="fill_parent"
+		        android:layout_height="300dp"
+		        android:layout_alignParentLeft="true"
+		        android:layout_alignParentRight="true"
+		        android:layout_below="@+id/return_btn"
+		        android:layout_marginTop="58dp"  	
+		        android:layout_margin="10dp"        
+	    		android:background="@drawable/border"    
+	            android:id="@+id/signature_pad_container"
+	            android:visibility="gone">
+		        
+		        <src.com.github.gcacace.signaturepad.views.SignaturePad
+				   xmlns:android="http://schemas.android.com/apk/res/android"
+				   xmlns:app="http://schemas.android.com/apk/res-auto"
+				   android:id="@+id/signature_pad"
+				   android:layout_width="wrap_content"
+				   android:layout_height="wrap_content"
+			   />
+		
+		    </RelativeLayout>	    
+		   
+		   <LinearLayout
+	            android:id="@+id/signature_buttons_container"
+	            android:paddingTop="16dp"
+	            android:layout_width="fill_parent"
+	            android:layout_height="wrap_content"
+	            android:orientation="horizontal"
+	            android:layout_below="@id/signature_pad_container"
+	            android:layout_alignParentBottom="true">
+	
+	        <Button
+	                android:id="@+id/clear_button"
+	                android:layout_width="0dp"
+	                android:layout_weight="1"
+	                android:layout_height="wrap_content"
+	                android:text="Clear Pad"
+	                android:enabled="false" 
+	            	android:visibility="gone"/>
+	
+	        <Button
+	                android:id="@+id/save_button"
+	                android:layout_width="0dp"
+	                android:layout_weight="1"
+	                android:layout_height="wrap_content"
+	                android:text="@string/return_btn"
+	                android:enabled="false" 
+	                android:visibility="gone"/>
+	
+	    </LinearLayout>
+	
+	</RelativeLayout>
+</ScrollView>

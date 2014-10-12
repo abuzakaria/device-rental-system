@@ -47,17 +47,17 @@ import de.tum.os.drs.client.mobile.model.Renter;
 
 public class RentFragment extends Fragment {
 	private SignaturePad mSignaturePad;
-	TextView deviceDetails, renterDetails;
+	private TextView deviceDetails, renterDetails;
     private Button mClearButton, mSaveButton, mFindButton, mRentButton, mScanButton, mConfirmButton;
-    RentalService service;
-    Spinner renterSpinner;
-    DatePicker datepicker;
-    ArrayList<Renter> m_renters;
-    ArrayList<String> m_rentersName;
-    EditText mIMEI;
-    String sIMEI, sMatNo;
-    RelativeLayout RL;
-	Renter m_renter;
+    private RentalService service;
+    private Spinner renterSpinner;
+    private DatePicker datepicker;
+    private ArrayList<Renter> m_renters;
+    private ArrayList<String> m_rentersName;
+    private EditText mIMEI;
+    private String sIMEI, sMatNo;
+    private RelativeLayout RL;
+    private Renter m_renter;
     
 	public RentFragment(){}	
 	

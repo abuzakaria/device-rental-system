@@ -23,10 +23,10 @@ import de.tum.os.drs.client.mobile.model.Device;
 import de.tum.os.drs.client.mobile.model.DeviceType;
 
 public class AddFragment extends Fragment {
-    Button scan_btn, add_btn;
-    String scanresult, s_deviceName, s_deviceDesc, s_deviceSerial;
-    EditText deviceSerial,deviceDetails, deviceName;
-    Spinner deviceType, deviceState;
+	private Button scan_btn, add_btn;
+	private String scanresult, s_deviceName, s_deviceDesc, s_deviceSerial;
+	private EditText deviceSerial,deviceDetails, deviceName;
+	private Spinner deviceType, deviceState;
 	public AddFragment(){}
 
 	
