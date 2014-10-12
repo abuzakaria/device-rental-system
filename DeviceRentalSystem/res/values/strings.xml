@@ -37,6 +37,9 @@
     <string name="scan">Scan</string>
     <string name="add_device">Add device</string>
     <string name="find_device">Find device</string>
+    <string name="edit_btn">Edit</string>
+    <string name="rent_btn">Rent</string>
+    <string name="confirm_btn">Confirm</string>
    
     <string name="title_activity_authentication">AuthenticationActivity</string>
     <string name="hello_world">Hello world!</string>

@@ -19,6 +19,6 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_below="@id/devicedump"
-        android:text="Edit" />
+        android:text="@string/edit_btn" />
 
 </RelativeLayout>
