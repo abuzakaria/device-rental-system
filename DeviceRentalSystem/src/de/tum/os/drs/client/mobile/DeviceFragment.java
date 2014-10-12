@@ -1,5 +1,7 @@
 package de.tum.os.drs.client.mobile;
 
+import java.util.List;
+
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -14,6 +16,7 @@ import de.tum.os.drs.client.mobile.communication.Callback;
 import de.tum.os.drs.client.mobile.communication.RentalService;
 import de.tum.os.drs.client.mobile.communication.RentalServiceImpl;
 import de.tum.os.drs.client.mobile.model.Device;
+import de.tum.os.drs.client.mobile.model.Renter;
 
 
 public class DeviceFragment extends Fragment{
@@ -22,6 +25,7 @@ public class DeviceFragment extends Fragment{
 	Button updatebtn;
 	public DeviceFragment(){}
 	TextView devicedump;
+	Renter m_renter;
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		Log.d("check","devicefragment: on createview");
@@ -54,6 +58,30 @@ public class DeviceFragment extends Fragment{
 		
 		
         RentalService service = RentalServiceImpl.getInstance();
+        service.getAllActiveRenters(new Callback<List<Renter>>(){
+			@Override
+			public void onFailure(int code, String error) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onSuccess(List<Renter> result) {
+				// TODO Auto-generated method stub
+				for (Renter r : result)
+				{
+					for(String d : r.getRentedDevices())
+					{
+						if (d.trim().equals(imei))
+						{
+							m_renter = r;
+							break;
+						}
+					}
+				}
+			}
+        	
+        });
 		service.getDeviceByImei(imei, new Callback<Device>(){
 
 			@Override
@@ -90,6 +118,10 @@ public class DeviceFragment extends Fragment{
 				
 				if (!d.isAvailable())
 				{
+					temp += "Renter: ";
+					temp += m_renter.getName();
+					temp += "\n";
+					
 					temp += "Estimated Return Date: ";
 					temp += d.getEstimatedReturnDate()==null ? "<Not found>": d.getEstimatedReturnDate().toString();  
 					temp += "\n";

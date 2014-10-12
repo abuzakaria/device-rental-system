@@ -57,6 +57,7 @@ public class RentFragment extends Fragment {
     EditText mIMEI;
     String sIMEI, sMatNo;
     RelativeLayout RL;
+	Renter m_renter;
     
 	public RentFragment(){}	
 	
@@ -108,6 +109,30 @@ public class RentFragment extends Fragment {
             public void onClick(View view) {
             	if (mIMEI.getText().length()>0)
             	{
+            		service.getAllActiveRenters(new Callback<List<Renter>>(){
+            			@Override
+            			public void onFailure(int code, String error) {
+            				// TODO Auto-generated method stub
+            				
+            			}
+
+            			@Override
+            			public void onSuccess(List<Renter> result) {
+            				// TODO Auto-generated method stub
+            				for (Renter r : result)
+            				{
+            					for(String d : r.getRentedDevices())
+            					{
+            						if (d.trim().equals(mIMEI.getText().toString()))
+            						{
+            							m_renter = r;
+            							break;
+            						}
+            					}
+            				}
+            			}
+                    	
+                    });
             		service.getDeviceByImei(mIMEI.getText().toString(), new Callback<Device>(){
 
         			@Override
@@ -151,6 +176,10 @@ public class RentFragment extends Fragment {
         				
         				if (!d.isAvailable())
         				{
+        					temp += "Renter: ";
+        					temp += m_renter.getName();
+        					temp += "\n";
+        					
         					temp += "Estimated Return Date: ";
         					temp += d.getEstimatedReturnDate()==null ? "<Not found>": d.getEstimatedReturnDate().toString();  
         					temp += "\n";
