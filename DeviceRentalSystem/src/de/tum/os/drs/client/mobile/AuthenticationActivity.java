@@ -10,11 +10,17 @@ import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
 import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.KeyManager;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
@@ -38,6 +44,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 import de.tum.os.drs.client.mobile.authentication.Authenticator;
+import de.tum.os.drs.client.mobile.authentication.DefaultTrustManager;
 import de.tum.os.drs.client.mobile.authentication.SessionManager;
 import de.tum.os.drs.client.mobile.communication.Callback;
 import de.tum.os.drs.client.mobile.communication.RentalService;
@@ -115,7 +122,7 @@ public class AuthenticationActivity extends Activity {
 
 		Log.i(TAG, "Attempting to login the user");
 		// Check if token exists
-		//store.clearCredentials();
+		// store.clearCredentials();
 		Credentials c = store.getStoredCredentials();
 
 		if (c == null) {
@@ -159,7 +166,7 @@ public class AuthenticationActivity extends Activity {
 							.buildUpon();
 					b.appendQueryParameter("access_token", currentToken);
 
-					//Log.i(TAG, b.build().toString());
+					// Log.i(TAG, b.build().toString());
 
 					url = new URL(b.build().toString());
 					conn = (HttpsURLConnection) url.openConnection();
@@ -174,27 +181,33 @@ public class AuthenticationActivity extends Activity {
 
 						InputStream in = new BufferedInputStream(
 								conn.getInputStream());
-						//Log.i(TAG, getResponseText(in));
+						// Log.i(TAG, getResponseText(in));
 
 						return true;
 
-					} else {
+					} else if (conn.getResponseCode() == 401) {
+						// The token was invalid.
+						Log.i(TAG, "Inavlid token found. We have to refresh it");
 
-						//The token is invalid. We got most likely a 401 
-						
-						InputStream in = new BufferedInputStream(
-								conn.getErrorStream());
-						String error = getResponseText(in);
-						//Log.e(TAG, error);
+						store.clearCredentials();
 
-						return false;
 					}
+
+					// The token is invalid. We got most likely a 401
+					/*
+					 * InputStream in = new BufferedInputStream(
+					 * conn.getErrorStream()); String error =
+					 * getResponseText(in);
+					 */
+					// Log.e(TAG, error);
+
+					return false;
 
 				} catch (MalformedURLException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
+
 					e.printStackTrace();
 				} finally {
 					if (conn != null) {
@@ -208,8 +221,6 @@ public class AuthenticationActivity extends Activity {
 			@Override
 			protected void onPostExecute(Boolean tokenValid) {
 
-				Log.i(TAG, "Found token valid? " + tokenValid);
-
 				if (tokenValid) {
 					// Token is valid! Send the token to the server!
 					sendTokenToServer(currentToken);
@@ -218,7 +229,7 @@ public class AuthenticationActivity extends Activity {
 
 					mAuthenticator = store.getStoredCredentials()
 							.getAuthenticator();
-					
+
 					store.clearCredentials();
 					startAuthenticationFlow();
 
@@ -502,6 +513,7 @@ public class AuthenticationActivity extends Activity {
 			} finally {
 				if (conn != null) {
 					conn.disconnect();
+					dialog.dismiss();
 				}
 
 			}

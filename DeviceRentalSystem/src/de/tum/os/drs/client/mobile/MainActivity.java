@@ -253,6 +253,13 @@ public class MainActivity extends FragmentActivity {
 
 	}
 
+	public void sessionExpired(){
+		
+		//finish();
+		startAuthenticationActivity();
+		
+	}
+	
 	@Override
 	public void setTitle(CharSequence title) {
 		mTitle = title;
