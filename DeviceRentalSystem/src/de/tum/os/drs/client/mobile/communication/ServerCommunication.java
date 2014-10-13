@@ -49,6 +49,7 @@ public class ServerCommunication extends
 			urlConnection.setConnectTimeout(CONNECTION_TIMEOUT);
 			urlConnection.setReadTimeout(DATARETRIEVAL_TIMEOUT);
 			urlConnection.setRequestProperty("Authorization", ""+request[0].getSessionId());
+			Log.i("Test", request[0].getSessionId()+"");
 			urlConnection.setDoOutput(false);
 
 			if (request[0].getMethod() == ServerRequest.HTTP_METHODS.POST) {

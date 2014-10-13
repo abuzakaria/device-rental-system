@@ -180,10 +180,12 @@ public class AuthenticationActivity extends Activity {
 
 					} else {
 
+						//The token is invalid. We got most likely a 401 
+						
 						InputStream in = new BufferedInputStream(
 								conn.getErrorStream());
 						String error = getResponseText(in);
-						Log.e(TAG, error);
+						//Log.e(TAG, error);
 
 						return false;
 					}
@@ -216,6 +218,8 @@ public class AuthenticationActivity extends Activity {
 
 					mAuthenticator = store.getStoredCredentials()
 							.getAuthenticator();
+					
+					store.clearCredentials();
 					startAuthenticationFlow();
 
 				}

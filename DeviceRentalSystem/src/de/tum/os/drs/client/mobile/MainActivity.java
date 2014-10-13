@@ -238,8 +238,7 @@ public class MainActivity extends FragmentActivity {
 				showToast(result);
 				startAuthenticationActivity();
 				finish();
-				
-						
+							
 			}
 
 			@Override
