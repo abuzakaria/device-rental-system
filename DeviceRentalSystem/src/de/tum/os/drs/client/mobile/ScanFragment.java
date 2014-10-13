@@ -12,7 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 public class ScanFragment extends Fragment implements ScannerListener {
-	boolean isResultReceived = false;
+	private boolean isResultReceived = false;
 	public ScanFragment(){}	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

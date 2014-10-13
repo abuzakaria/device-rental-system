@@ -6,4 +6,5 @@
     <color name="list_divider">#272727</color>
     <color name="counter_text_bg">#FFFFFF</color>
     <color name="counter_text_color">#000000</color>
+    <color name="white">#FFFFFF</color>
 </resources>

@@ -33,7 +33,7 @@ public class MainActivity extends FragmentActivity {
 	private ListView mDrawerList;
 	private ActionBarDrawerToggle mDrawerToggle;
 
-	public String mScanResult;
+	public String mScanResult, mSelectedDeviceImei;
 	// nav drawer title
 	public CharSequence mDrawerTitle;
 
