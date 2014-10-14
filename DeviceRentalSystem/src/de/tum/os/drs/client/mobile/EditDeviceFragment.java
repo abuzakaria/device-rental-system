@@ -30,6 +30,8 @@ public class EditDeviceFragment extends Fragment{
 	private Spinner deviceType, deviceState;
 	private MainActivity _main;
 	private RentalService service;
+	private boolean isAvailable=true;
+	private Date returnDate = null;
 	
 	public EditDeviceFragment(){}
 
@@ -69,6 +71,8 @@ public class EditDeviceFragment extends Fragment{
 					deviceSerial.setText(result.getImei());
 				if (result.getName()!=null)
 					deviceName.setText(result.getName());
+				isAvailable = result.isAvailable();
+				returnDate = result.getEstimatedReturnDate();
 				if (result.getState()!=null)
 				{
 					ArrayAdapter<String> adap = (ArrayAdapter<String>) deviceState.getAdapter();
@@ -106,7 +110,7 @@ public class EditDeviceFragment extends Fragment{
 				s_deviceSerial = (deviceSerial.getText().length() == 0) ? null : deviceSerial.getText().toString();
 				s_deviceDesc = (deviceDetails.getText().length() == 0) ? null : deviceDetails.getText().toString();
 				s_deviceName = (deviceName.getText().length() == 0) ? null : deviceName.getText().toString();
-				Device device = new Device(s_deviceSerial, s_deviceName, s_deviceDesc, deviceState.getSelectedItem().toString(), DeviceType.valueOf(DeviceType.class, deviceType.getSelectedItem().toString()), null, true);
+				Device device = new Device(s_deviceSerial, s_deviceName, s_deviceDesc, deviceState.getSelectedItem().toString(), DeviceType.valueOf(DeviceType.class, deviceType.getSelectedItem().toString()), returnDate, isAvailable);
 				
 				service = RentalServiceImpl.getInstance();
 				service.updateDevice(s_deviceSerial, device, new Callback<String>(){
@@ -118,10 +122,10 @@ public class EditDeviceFragment extends Fragment{
 						Toast.makeText(getActivity(), result, Toast.LENGTH_SHORT).show();
 						MainActivity temp = (MainActivity)getActivity();
 						temp.mSelectedDeviceImei = s_deviceSerial; 
+						getFragmentManager().popBackStack();
 						final FragmentTransaction ft2 = getFragmentManager().beginTransaction();						
 						ft2.replace(R.id.frame_container, new DeviceFragment(), "NewFragmentTag"); 
 						ft2.commit(); 
-						getFragmentManager().popBackStack();
 					}
 
 					@Override
