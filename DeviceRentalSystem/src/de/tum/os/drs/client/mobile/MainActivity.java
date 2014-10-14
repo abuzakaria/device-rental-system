@@ -2,6 +2,8 @@ package de.tum.os.drs.client.mobile;
 
 import java.util.ArrayList;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -275,6 +277,25 @@ public class MainActivity extends FragmentActivity {
 		super.onConfigurationChanged(newConfig);
 		// Pass any configuration change to the drawer toggles
 		mDrawerToggle.onConfigurationChanged(newConfig);
+	}
+	
+	@Override
+	public void onBackPressed() {
+	    /*new AlertDialog.Builder(this)
+	            .setMessage("Are you sure you want to exit?")
+	            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+	                @Override
+	                public void onClick(DialogInterface dialog, int which) {
+	                    MainActivity.super.onBackPressed();
+	                }
+	            })
+	            .setNegativeButton("No", null)
+	            .show();*/
+		if (getSupportFragmentManager().getBackStackEntryCount() < 1)
+			mDrawerLayout.openDrawer(mDrawerList);
+		else
+			MainActivity.super.onBackPressed();
+
 	}
 
 	private void showToast(String text) {
