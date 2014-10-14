@@ -10,11 +10,17 @@ import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
 import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.KeyManager;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
@@ -38,6 +44,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 import de.tum.os.drs.client.mobile.authentication.Authenticator;
+import de.tum.os.drs.client.mobile.authentication.DefaultTrustManager;
 import de.tum.os.drs.client.mobile.authentication.SessionManager;
 import de.tum.os.drs.client.mobile.communication.Callback;
 import de.tum.os.drs.client.mobile.communication.RentalService;
@@ -70,9 +77,8 @@ public class AuthenticationActivity extends Activity {
 
 			@Override
 			public void onClick(View arg0) {
-
 				mAuthenticator = Authenticator.google;
-				getAuthorizationCode(Authenticator.google);
+				startAuthenticationFlow();
 			}
 
 		});
@@ -82,9 +88,8 @@ public class AuthenticationActivity extends Activity {
 
 			@Override
 			public void onClick(View arg0) {
-
 				mAuthenticator = Authenticator.facebook;
-
+				startAuthenticationFlow();
 			}
 
 		});
@@ -101,9 +106,7 @@ public class AuthenticationActivity extends Activity {
 		store = new CredentialStore(
 				PreferenceManager.getDefaultSharedPreferences(this));
 
-		dialog = ProgressDialog.show(this, "Please wait ...", "Login in...",
-				true);
-		dialog.setCancelable(false);
+		showLoadingDialog("Logging in...");
 
 		// Try to login the user
 		login();
@@ -118,15 +121,15 @@ public class AuthenticationActivity extends Activity {
 	private void login() {
 
 		Log.i(TAG, "Attempting to login the user");
-		 store.clearCredentials();
 		// Check if token exists
+		// store.clearCredentials();
 		Credentials c = store.getStoredCredentials();
 
 		if (c == null) {
 
 			Log.i(TAG, "No token found, user has to login");
 
-			dialog.dismiss();
+			hideLoadingDialog();
 			// We need to start from the beginning, no current token was found
 			showLoginOptions();
 
@@ -163,7 +166,7 @@ public class AuthenticationActivity extends Activity {
 							.buildUpon();
 					b.appendQueryParameter("access_token", currentToken);
 
-					Log.i(TAG, b.build().toString());
+					// Log.i(TAG, b.build().toString());
 
 					url = new URL(b.build().toString());
 					conn = (HttpsURLConnection) url.openConnection();
@@ -178,25 +181,33 @@ public class AuthenticationActivity extends Activity {
 
 						InputStream in = new BufferedInputStream(
 								conn.getInputStream());
-						Log.i(TAG, getResponseText(in));
+						// Log.i(TAG, getResponseText(in));
 
 						return true;
 
-					} else {
+					} else if (conn.getResponseCode() == 401) {
+						// The token was invalid.
+						Log.i(TAG, "Inavlid token found. We have to refresh it");
 
-						InputStream in = new BufferedInputStream(
-								conn.getErrorStream());
-						String error = getResponseText(in);
-						Log.e(TAG, error);
+						store.clearCredentials();
 
-						return false;
 					}
+
+					// The token is invalid. We got most likely a 401
+					/*
+					 * InputStream in = new BufferedInputStream(
+					 * conn.getErrorStream()); String error =
+					 * getResponseText(in);
+					 */
+					// Log.e(TAG, error);
+
+					return false;
 
 				} catch (MalformedURLException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
+
 					e.printStackTrace();
 				} finally {
 					if (conn != null) {
@@ -210,14 +221,18 @@ public class AuthenticationActivity extends Activity {
 			@Override
 			protected void onPostExecute(Boolean tokenValid) {
 
-				Log.i(TAG, "Found token valid? " + tokenValid);
-
 				if (tokenValid) {
 					// Token is valid! Send the token to the server!
 					sendTokenToServer(currentToken);
 				} else {
-					// The token has expired, we need to refresh it.
-					refreshToken();
+					// The token has expired, we need to reissue it
+
+					mAuthenticator = store.getStoredCredentials()
+							.getAuthenticator();
+
+					store.clearCredentials();
+					startAuthenticationFlow();
+
 				}
 
 			}
@@ -225,121 +240,16 @@ public class AuthenticationActivity extends Activity {
 		}).execute();
 	}
 
-	private void logout() {
+	private void startAuthenticationFlow() {
 
-		// clearCredentials();
-
-	}
-
-	private void refreshToken() {
-
-		Log.i(TAG, "Refreshing token");
-		Credentials c = store.getStoredCredentials();
-
-		if (c == null) {
-
-			logout();
-			return;
-
-		}
-
-		mAuthenticator = c.getAuthenticator();
-
-		List<NameValuePair> queryParams = new ArrayList<NameValuePair>();
-		queryParams.add(new BasicNameValuePair("refresh_token", c
-				.getRefreshToken()));
-		queryParams.add(new BasicNameValuePair("client_id", mAuthenticator
-				.getClientId()));
-		queryParams.add(new BasicNameValuePair("client_secret", mAuthenticator
-				.getClientSecret()));
-		queryParams.add(new BasicNameValuePair("grant_type", "refresh_token"));
-
-		POSTRequestListener listener = new POSTRequestListener() {
-
-			@Override
-			public void onPOSTComplete(String json) {
-				processRefreshToken(json);
-
-			}
-
-		};
-
-		(new POSTRequest(listener, mAuthenticator.getTokenAccessURL(),
-				queryParams)).execute();
+		showLoadingDialog("");
+		getAuthorizationCode();
 
 	}
 
-	private void revokeToken(String token) {
+	private void getAuthorizationCode() {
 
-		String url = mAuthenticator.getRevokationURL() + token;
-
-		(new AsyncTask<String, Void, String>() {
-			@Override
-			protected String doInBackground(String... params) {
-
-				URL url;
-				HttpsURLConnection conn = null;
-				try {
-					url = new URL(params[0]);
-					conn = (HttpsURLConnection) url.openConnection();
-					conn.setReadTimeout(10000);
-					conn.setConnectTimeout(15000);
-					conn.connect();
-
-					Log.i(TAG, "Response code " + conn.getResponseCode());
-
-					if (conn.getResponseCode() > 300) {
-
-						InputStream in = new BufferedInputStream(
-								conn.getErrorStream());
-						String error = getResponseText(in);
-						Log.e(TAG, error);
-
-					}
-
-				} catch (MalformedURLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} finally {
-					if (conn != null) {
-						conn.disconnect();
-					}
-
-				}
-				return null;
-			}
-
-		}).execute(url);
-
-	}
-
-	private void processRefreshToken(String json) {
-
-		// Log.i(TAG, "json: " + json);
-
-		try {
-			JSONObject obj = new JSONObject(json);
-
-			String access_token = obj.getString("access_token");
-
-			// store.refreshToken(access_token);
-			sendTokenToServer(access_token);
-
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		Log.i(TAG, "Token was refreshed");
-
-	}
-
-	private void getAuthorizationCode(Authenticator auth) {
-
-		String url = getAuthorizationURL(auth);
+		String url = getAuthorizationURL(mAuthenticator);
 		Log.i(TAG, "Authorization URL: " + url);
 
 		mWebView.loadUrl(url);
@@ -354,10 +264,13 @@ public class AuthenticationActivity extends Activity {
 				mWebView.stopLoading();
 				// Hide the calback webpage
 				mWebView.setVisibility(View.INVISIBLE);
+				mWebView.loadUrl("about:blank");
+				showLoadingDialog("Logging in...");
 				parseAuthenticationCode(url);
 
 			} else {
 				super.onPageStarted(view, url, favicon);
+				hideLoadingDialog();
 			}
 		}
 	};
@@ -372,6 +285,7 @@ public class AuthenticationActivity extends Activity {
 					"An error ocurred while fetchign the auth code: "
 							+ uri.getQueryParameter("error"));
 
+			hideLoadingDialog();
 			showLoginOptions();
 
 		} else {
@@ -412,18 +326,32 @@ public class AuthenticationActivity extends Activity {
 				queryParams)).execute();
 	}
 
-	private void processToken(String json) {
+	private void processToken(String response) {
 
-		// Log.i(TAG, "Token recieved : " + json);
+		switch (mAuthenticator) {
+		case facebook:
+			processFacebookToken(response);
+			break;
+		case google:
+			processGoogleToken(response);
+			break;
+		default:
+			break;
+
+		}
+
+	}
+
+	private void processGoogleToken(String json) {
+
+		Log.i(TAG, "Token recieved : " + json);
 
 		try {
 			JSONObject obj = new JSONObject(json);
 
 			String access_token = obj.getString("access_token");
-			String refresh_token = obj.getString("refresh_token");
 
-			store.storeCredentials(new Credentials(access_token,
-					mAuthenticator, refresh_token));
+			store.storeCredentials(new Credentials(access_token, mAuthenticator));
 
 			Log.i(TAG, "Token received : " + access_token);
 
@@ -434,6 +362,20 @@ public class AuthenticationActivity extends Activity {
 			e.printStackTrace();
 		}
 
+	}
+
+	private void processFacebookToken(String response) {
+
+		Log.i(TAG, response);
+
+		String[] split = response.split("&");
+		String access_token = split[0].substring(13, split[0].length());
+
+		Log.i(TAG, "Facebook Token: " + access_token);
+
+		store.storeCredentials(new Credentials(access_token, mAuthenticator));
+
+		sendTokenToServer(access_token);
 	}
 
 	private void sendTokenToServer(String currentToken) {
@@ -448,14 +390,14 @@ public class AuthenticationActivity extends Activity {
 					@Override
 					public void onSuccess(LoginResponse result) {
 
+						dialog.dismiss();
+
 						SessionManager.currentSession = result.getSessionId();
 						Log.i(TAG, result.getMessage());
 						Log.i(TAG, "Session id: " + result.getSessionId());
 
-						dialog.dismiss();
-
 						showToast(result.getMessage());
-						
+
 						startMainActivity();
 						finish();
 
@@ -466,8 +408,11 @@ public class AuthenticationActivity extends Activity {
 
 						dialog.dismiss();
 						Log.i(TAG, error);
-						
 						showToast(error);
+
+						store.clearCredentials();
+						showLoginOptions();
+
 					}
 
 				});
@@ -486,9 +431,7 @@ public class AuthenticationActivity extends Activity {
 				.appendQueryParameter("client_id", auth.getClientId())
 				.appendQueryParameter("redirect_uri",
 						Authenticator.CALLBACK_URL)
-				.appendQueryParameter("scope", auth.getScope())
-				.appendQueryParameter("access_type", "offline")
-				.appendQueryParameter("approval_prompt", "force");
+				.appendQueryParameter("scope", auth.getScope());
 
 		return builder.build().toString();
 
@@ -570,6 +513,7 @@ public class AuthenticationActivity extends Activity {
 			} finally {
 				if (conn != null) {
 					conn.disconnect();
+					dialog.dismiss();
 				}
 
 			}
@@ -622,6 +566,22 @@ public class AuthenticationActivity extends Activity {
 
 		mWebView.setVisibility(View.VISIBLE);
 		loginOptions.setVisibility(View.INVISIBLE);
+
+	}
+
+	private void showLoadingDialog(String message) {
+
+		dialog = ProgressDialog.show(this, "Please wait ...", message, true);
+		dialog.setCancelable(false);
+	}
+
+	private void hideLoadingDialog() {
+
+		if (dialog != null) {
+
+			dialog.dismiss();
+
+		}
 
 	}
 

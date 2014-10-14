@@ -234,18 +234,20 @@ public class MainActivity extends FragmentActivity {
 		RentalServiceImpl.getInstance().logout(new Callback<String>() {
 
 			@Override
-			public void onSuccess(String result) {
+			public void onSuccess(final String result) {
 				Log.i(TAG, result);
 				
 				store.clearCredentials();
-				
+				showToast(result);
 				startAuthenticationActivity();
 				finish();
-				
+							
 			}
 
 			@Override
 			public void onFailure(int code, String error) {
+				
+				Log.i(TAG, error);
 
 				showToast("Error code received: " + code + " " + error);
 			}
@@ -254,6 +256,13 @@ public class MainActivity extends FragmentActivity {
 
 	}
 
+	public void sessionExpired(){
+		
+		//finish();
+		startAuthenticationActivity();
+		
+	}
+	
 	@Override
 	public void setTitle(CharSequence title) {
 		mTitle = title;
@@ -297,6 +306,8 @@ public class MainActivity extends FragmentActivity {
 			MainActivity.super.onBackPressed();
 
 	}
+	
+	
 
 	private void showToast(String text) {
 		Toast toast = Toast.makeText(this, text, Toast.LENGTH_SHORT);

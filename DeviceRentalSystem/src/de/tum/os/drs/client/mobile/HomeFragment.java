@@ -165,7 +165,9 @@ public class HomeFragment extends Fragment {
 				});
 				
 			*/	
-				
+
+	/*		
+					
 		service.getDeviceByImei("500", new Callback<Device>(){
 
 			@Override
@@ -185,7 +187,8 @@ public class HomeFragment extends Fragment {
 			
 			
 		});
-			
+
+		*/		
 				/*service.getAllRenters(new Callback<List<Renter>>(){
 
 					@Override
@@ -210,13 +213,14 @@ public class HomeFragment extends Fragment {
 					
 				});
 */
-		/*		
+				
 				service.getAllDevices(new Callback<List<Device>>(){
 
 					@Override
 					public void onSuccess(List<Device> result) {
 						for(Device d: result){
 							
+							Log.i("Device", d.getName());
 							Log.i("Device", d.getEstimatedReturnDate().toLocaleString());
 							
 						}
@@ -225,7 +229,10 @@ public class HomeFragment extends Fragment {
 
 					@Override
 					public void onFailure(int code, String error) {
-						// TODO Auto-generated method stub
+						
+						Log.i("TAG", code+"");
+						Log.i("TAG", error);
+						
 						
 					}
 					
@@ -233,7 +240,7 @@ public class HomeFragment extends Fragment {
 					
 					
 				});
-	*/		
+			
 				
 				
 			}

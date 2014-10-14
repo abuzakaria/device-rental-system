@@ -100,9 +100,13 @@ public class AddFragment extends Fragment {
 
 					@Override
 					public void onFailure(int code, String error) {
-						// TODO Auto-generated method stub
+						
 						Log.d("adddevice", "failure");
 						Toast.makeText(getActivity(), error, Toast.LENGTH_SHORT).show();
+						
+						if(code == 401){
+							((MainActivity) getActivity()).sessionExpired();
+						}
 						
 					}
 				});

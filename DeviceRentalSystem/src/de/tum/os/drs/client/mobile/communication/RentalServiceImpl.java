@@ -20,7 +20,7 @@ import de.tum.os.drs.client.parsers.SingleDeviceParser;
 
 public class RentalServiceImpl implements RentalService {
 
-	private static final String BASE_URL = "http://192.168.0.101:8080";
+	private static final String BASE_URL = "https://192.168.0.101:8080";
 	private static final String BASE_PATH = "/rental-server-mobile/rest/";
 
 	// The singleton instance

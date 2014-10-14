@@ -5,18 +5,30 @@ import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.util.Scanner;
+
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import de.tum.os.drs.client.mobile.authentication.SessionManager;
-import de.tum.os.drs.client.parsers.ServerRequestCallback;
 import android.os.AsyncTask;
 import android.util.Log;
+import de.tum.os.drs.client.parsers.ServerRequestCallback;
 
 public class ServerCommunication extends
 		AsyncTask<ServerRequest, Void, ServerResponse> {
@@ -25,8 +37,47 @@ public class ServerCommunication extends
 	private int CONNECTION_TIMEOUT = 10000;
 	private int DATARETRIEVAL_TIMEOUT = 15000;
 
+	// Used to ignore certificate erros when using self-signed certs
+	public class NullHostNameVerifier implements HostnameVerifier {
+
+	    public boolean verify(String hostname, SSLSession session) {
+	        Log.i("RestUtilImpl", "Approving certificate for " + hostname);
+	        return true;
+	    }
+	}
+	
+	TrustManager[] trustAllCerts = new TrustManager[] { new X509TrustManager() {
+        public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+                return new java.security.cert.X509Certificate[] {};
+        }
+
+        public void checkClientTrusted(X509Certificate[] chain,
+                        String authType) throws CertificateException {
+        }
+
+        public void checkServerTrusted(X509Certificate[] chain,
+                        String authType) throws CertificateException {
+        }
+    } };
+
 	public ServerCommunication(ServerRequestCallback callback) {
 		this.callback = callback;
+
+
+		try {
+			HttpsURLConnection.setDefaultHostnameVerifier(new NullHostNameVerifier());
+			SSLContext context = SSLContext.getInstance("TLS");
+			context.init(null, trustAllCerts, new SecureRandom());
+			HttpsURLConnection.setDefaultSSLSocketFactory(context.getSocketFactory());
+		} catch (KeyManagementException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchAlgorithmException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		
 
 	}
 
@@ -38,17 +89,17 @@ public class ServerCommunication extends
 	@Override
 	protected ServerResponse doInBackground(ServerRequest... request) {
 
-		HttpURLConnection urlConnection = null;
+		HttpsURLConnection urlConnection = null;
 		ServerResponse response = new ServerResponse();
 
 		try {
 
-			urlConnection = (HttpURLConnection) request[0].getUrl()
+			urlConnection = (HttpsURLConnection) request[0].getUrl()
 					.openConnection();
-			// connection.setRequestProperty("Authorization",basicAuth);
 			urlConnection.setConnectTimeout(CONNECTION_TIMEOUT);
 			urlConnection.setReadTimeout(DATARETRIEVAL_TIMEOUT);
-			urlConnection.setRequestProperty("Authorization", ""+request[0].getSessionId());
+			urlConnection.setRequestProperty("Authorization", (new Integer(
+					request[0].getSessionId()).toString()));
 			urlConnection.setDoOutput(false);
 
 			if (request[0].getMethod() == ServerRequest.HTTP_METHODS.POST) {
@@ -58,49 +109,55 @@ public class ServerCommunication extends
 				urlConnection.setRequestMethod("POST");
 
 				urlConnection.connect();
-				
+
 				// setup send
 				OutputStream os = new BufferedOutputStream(
 						urlConnection.getOutputStream());
 				os.write(request[0].getJson().toString().getBytes());
 				os.flush();
 				os.close();
-				
+
 			}
 
-			Log.i("ServerCommunication", "Satus code: " + urlConnection.getResponseCode());
-			
+			Log.i("ServerCommunication",
+					"Satus code: " + urlConnection.getResponseCode());
+
 			if (!isCodeValid(urlConnection.getResponseCode())) {
 				// Something went wrong
 				// parse the error code and message and put in the server
 				// response
-	
+
 				Log.i("ServerCommunication", "Bad status code");
-				
+
 				InputStream in = new BufferedInputStream(
 						urlConnection.getErrorStream());
 				JSONObject json = new JSONObject(getResponseText(in));
 
 				response.setStatusCode(urlConnection.getResponseCode());
 				response.setErrorMessage(json.getString("message"));
-				
+
 				in.close();
 
 			} else {
 
 				// Everything went fine and the server returned a json object
 				Log.i("ServerCommunication", "Good status code");
-				
+
 				InputStream in = new BufferedInputStream(
 						urlConnection.getInputStream());
-				
+
 				response.setStatusCode(urlConnection.getResponseCode());
 				response.setResult(getResponseText(in));
-				
+
 				in.close();
 
 			}
-			
+
+		} catch (ConnectException e) {
+			// URL is invalid
+			response.setStatusCode(HttpURLConnection.HTTP_BAD_REQUEST);
+			response.setErrorMessage("The server can't be reached.");
+			e.printStackTrace();
 		} catch (MalformedURLException e) {
 			// URL is invalid
 			response.setStatusCode(HttpURLConnection.HTTP_BAD_REQUEST);
