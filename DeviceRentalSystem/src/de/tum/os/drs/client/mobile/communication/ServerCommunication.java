@@ -166,7 +166,7 @@ public class ServerCommunication extends
 		} catch (SocketTimeoutException e) {
 			// data retrieval or connection timed out
 			response.setStatusCode(HttpURLConnection.HTTP_BAD_REQUEST);
-			response.setErrorMessage(e.getMessage());
+			response.setErrorMessage("The server can't be reached");
 			e.printStackTrace();
 		} catch (IOException e) {
 			// could not read response body

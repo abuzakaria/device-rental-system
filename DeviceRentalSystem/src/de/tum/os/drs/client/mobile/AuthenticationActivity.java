@@ -106,7 +106,7 @@ public class AuthenticationActivity extends Activity {
 		store = new CredentialStore(
 				PreferenceManager.getDefaultSharedPreferences(this));
 
-		showLoadingDialog("Logging in...");
+		showLoadingDialog();
 
 		// Try to login the user
 		login();
@@ -242,7 +242,7 @@ public class AuthenticationActivity extends Activity {
 
 	private void startAuthenticationFlow() {
 
-		showLoadingDialog("");
+		showLoadingDialog();
 		getAuthorizationCode();
 
 	}
@@ -262,21 +262,26 @@ public class AuthenticationActivity extends Activity {
 			if ((url != null) && (url.startsWith(Authenticator.CALLBACK_URL))) {
 
 				mWebView.stopLoading();
-				// Hide the calback webpage
+				// Hide the callback webpage
 				mWebView.setVisibility(View.INVISIBLE);
 				mWebView.loadUrl("about:blank");
-				showLoadingDialog("Logging in...");
 				parseAuthenticationCode(url);
 
 			} else {
-				super.onPageStarted(view, url, favicon);
-				hideLoadingDialog();
+				super.onPageStarted(view, url, favicon);				
 			}
+		}
+		
+		@Override
+		public void onPageFinished(WebView view, String url){
+			hideLoadingDialog();
 		}
 	};
 
 	private void parseAuthenticationCode(String redirectUrl) {
 
+		//showLoadingDialog();
+		
 		Uri uri = Uri.parse(redirectUrl);
 
 		if (uri.getQueryParameterNames().contains("error")) {
@@ -285,6 +290,7 @@ public class AuthenticationActivity extends Activity {
 					"An error ocurred while fetchign the auth code: "
 							+ uri.getQueryParameter("error"));
 
+			
 			hideLoadingDialog();
 			showLoginOptions();
 
@@ -382,6 +388,8 @@ public class AuthenticationActivity extends Activity {
 
 		Log.i(TAG, "Sending token to server...");
 
+		showLoadingDialog();
+		
 		RentalService service = RentalServiceImpl.getInstance();
 
 		service.login(new LoginRequest(currentToken, mAuthenticator),
@@ -390,7 +398,7 @@ public class AuthenticationActivity extends Activity {
 					@Override
 					public void onSuccess(LoginResponse result) {
 
-						dialog.dismiss();
+						hideLoadingDialog();
 
 						SessionManager.currentSession = result.getSessionId();
 						Log.i(TAG, result.getMessage());
@@ -406,7 +414,7 @@ public class AuthenticationActivity extends Activity {
 					@Override
 					public void onFailure(int code, String error) {
 
-						dialog.dismiss();
+						hideLoadingDialog();
 						Log.i(TAG, error);
 						showToast(error);
 
@@ -569,14 +577,15 @@ public class AuthenticationActivity extends Activity {
 
 	}
 
-	private void showLoadingDialog(String message) {
+	private void showLoadingDialog() {
 
-		dialog = ProgressDialog.show(this, "Please wait ...", message, true);
+		dialog = ProgressDialog.show(this, "Please wait ...", "Logging in..", true);
 		dialog.setCancelable(false);
 	}
 
 	private void hideLoadingDialog() {
 
+		Log.i(TAG, "Hiding dialog");
 		if (dialog != null) {
 
 			dialog.dismiss();
