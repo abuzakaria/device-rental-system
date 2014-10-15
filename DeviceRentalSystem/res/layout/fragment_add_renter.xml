@@ -1,0 +1,75 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ScrollView01"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <!-- Framelayout to display Fragments -->
+
+        <EditText
+            android:id="@+id/renterName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="22dp"
+            android:ems="10"
+            android:hint="Name" />
+
+        <EditText
+            android:id="@+id/mtrNr"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/renterName"
+            android:layout_marginTop="22dp"
+            android:ems="10"
+            android:hint="Matr. Number"
+            android:inputType="textMultiLine" >
+        </EditText>
+
+        <EditText
+            android:id="@+id/email"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/mtrNr"
+            android:layout_marginTop="22dp"
+            android:ems="10"
+            android:hint="Email"
+            android:inputType="textMultiLine" >
+        </EditText>
+
+        <EditText
+            android:id="@+id/phoneNr"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/email"
+            android:layout_marginTop="22dp"
+            android:ems="10"
+            android:hint="Phone Nr."
+            android:inputType="textMultiLine" >
+        </EditText>
+
+        <EditText
+            android:id="@+id/renter_comments"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/phoneNr"
+            android:layout_marginTop="22dp"
+            android:ems="10"
+            android:hint="Comments"
+            android:inputType="textMultiLine" >
+        </EditText>
+
+        <Button
+            android:id="@+id/addRenter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/renter_comments"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="48dp"
+            android:text="Add!" />
+    </RelativeLayout>
+
+</ScrollView>

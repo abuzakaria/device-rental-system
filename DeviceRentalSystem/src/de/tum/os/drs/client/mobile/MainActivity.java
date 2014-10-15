@@ -36,12 +36,12 @@ public class MainActivity extends FragmentActivity {
 	private ActionBarDrawerToggle mDrawerToggle;
 
 	public String mScanResult;
-	
+
 	public Device selectedDevice;
 	public Renter selectedRenter;
-	
+
 	public String signature;
-	
+
 	// nav drawer title
 	public CharSequence mDrawerTitle;
 
@@ -54,9 +54,9 @@ public class MainActivity extends FragmentActivity {
 
 	private ArrayList<NavDrawerItem> navDrawerItems;
 	private NavDrawerListAdapter adapter;
-	
+
 	private CredentialStore store;
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -76,19 +76,12 @@ public class MainActivity extends FragmentActivity {
 
 		navDrawerItems = new ArrayList<NavDrawerItem>();
 
-		// adding nav drawer items to array
-		navDrawerItems.add(new NavDrawerItem(navMenuTitles[0], navMenuIcons
-				.getResourceId(0, -1)));
-		navDrawerItems.add(new NavDrawerItem(navMenuTitles[1], navMenuIcons
-				.getResourceId(1, -1)));
-		navDrawerItems.add(new NavDrawerItem(navMenuTitles[2], navMenuIcons
-				.getResourceId(2, -1)));
-		// navDrawerItems.add(new NavDrawerItem(navMenuTitles[3],
-		// navMenuIcons.getResourceId(3, -1), true, "22"));
-		navDrawerItems.add(new NavDrawerItem(navMenuTitles[3], navMenuIcons
-				.getResourceId(3, -1)));
-		navDrawerItems.add(new NavDrawerItem(navMenuTitles[4], navMenuIcons
-				.getResourceId(3, -1)));
+		for (int i = 0; i < navMenuTitles.length; i++) {
+
+			navDrawerItems.add(new NavDrawerItem(navMenuTitles[i], navMenuIcons
+					.getResourceId(i, -1)));
+
+		}
 
 		// Recycle the typed array
 		navMenuIcons.recycle();
@@ -131,7 +124,7 @@ public class MainActivity extends FragmentActivity {
 			mDrawerLayout.openDrawer(mDrawerList);
 			setTitle(R.string.app_name);
 		}
-		
+
 		store = new CredentialStore(
 				PreferenceManager.getDefaultSharedPreferences(this));
 
@@ -202,12 +195,15 @@ public class MainActivity extends FragmentActivity {
 			fragment = new AddDeviceFragment();
 			break;
 		case 2:
-			fragment = new RentFragment();
+			fragment = new AddRenterFragment();
 			break;
 		case 3:
-			fragment = new ReturnFragment();
+			// fragment = new ReturnFragment();
 			break;
 		case 4:
+			fragment = new ReturnFragment();
+			break;
+		case 5:
 			logout();
 			break;
 		default:
@@ -232,22 +228,18 @@ public class MainActivity extends FragmentActivity {
 		}
 	}
 
-	public void startDeviceFragment(){
+	public void startDeviceFragment() {
 		FragmentManager fragmentManager = getSupportFragmentManager();
 		fragmentManager.beginTransaction()
 				.replace(R.id.frame_container, new DeviceFragment())
 				// .addToBackStack(null)
 				.commit();
 	}
-	
-	
-	public void updateDeviceList(){
-		
-		
-		
-		
+
+	public void updateDeviceList() {
+
 	}
-	
+
 	private void logout() {
 
 		Log.i(TAG, "Loging out...");
@@ -257,17 +249,17 @@ public class MainActivity extends FragmentActivity {
 			@Override
 			public void onSuccess(final String result) {
 				Log.i(TAG, result);
-				
+
 				store.clearCredentials();
 				showToast(result);
 				startAuthenticationActivity();
 				finish();
-							
+
 			}
 
 			@Override
 			public void onFailure(int code, String error) {
-				
+
 				Log.i(TAG, error);
 
 				showToast("Error code received: " + code + " " + error);
@@ -277,12 +269,12 @@ public class MainActivity extends FragmentActivity {
 
 	}
 
-	public void sessionExpired(){
-		
+	public void sessionExpired() {
+
 		finish();
 		startAuthenticationActivity();
 	}
-	
+
 	@Override
 	public void setTitle(CharSequence title) {
 		mTitle = title;
@@ -307,27 +299,24 @@ public class MainActivity extends FragmentActivity {
 		// Pass any configuration change to the drawer toggles
 		mDrawerToggle.onConfigurationChanged(newConfig);
 	}
-	
+
 	@Override
 	public void onBackPressed() {
-	    /*new AlertDialog.Builder(this)
-	            .setMessage("Are you sure you want to exit?")
-	            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-	                @Override
-	                public void onClick(DialogInterface dialog, int which) {
-	                    MainActivity.super.onBackPressed();
-	                }
-	            })
-	            .setNegativeButton("No", null)
-	            .show();*/
+		/*
+		 * new AlertDialog.Builder(this)
+		 * .setMessage("Are you sure you want to exit?")
+		 * .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+		 * 
+		 * @Override public void onClick(DialogInterface dialog, int which) {
+		 * MainActivity.super.onBackPressed(); } }) .setNegativeButton("No",
+		 * null) .show();
+		 */
 		if (getSupportFragmentManager().getBackStackEntryCount() < 1)
 			mDrawerLayout.openDrawer(mDrawerList);
 		else
 			MainActivity.super.onBackPressed();
 
 	}
-	
-	
 
 	private void showToast(String text) {
 		Toast toast = Toast.makeText(this, text, Toast.LENGTH_SHORT);

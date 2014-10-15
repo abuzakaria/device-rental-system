@@ -13,8 +13,8 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import de.tum.os.drs.client.mobile.communication.Callback;
 import de.tum.os.drs.client.mobile.communication.RentalService;
@@ -27,7 +27,7 @@ public class RenterSelectionFragment extends Fragment {
 	private MainActivity activity;
 	private ListView list;
 	private EditText inputSearch;
-	private Button addRenterButton;
+	private ImageButton addRenterButton;
 	private ArrayAdapter<Renter> adapter;
 	
 	@Override
@@ -85,12 +85,16 @@ public class RenterSelectionFragment extends Fragment {
 			}
 		});
 		
-		addRenterButton = (Button) rootView.findViewById(R.id.addRenter);
+		addRenterButton = (ImageButton) rootView.findViewById(R.id.addRenter);
 		addRenterButton.setOnClickListener(new OnClickListener(){
 
 			@Override
 			public void onClick(View arg0) {
-				// TODO Auto-generated method stub
+				
+				FragmentTransaction transaction = getFragmentManager().beginTransaction();
+				transaction.replace(R.id.frame_container, new AddRenterFragment());
+				transaction.addToBackStack(null);
+				transaction.commit();
 				
 			}
 			

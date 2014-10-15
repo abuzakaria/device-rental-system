@@ -9,39 +9,66 @@
         android:layout_height="wrap_content" >
 
         <TextView
+            android:id="@+id/deviceDetText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_margin="10dp"
+            android:textSize="16sp"
+            android:layout_alignParentTop="true"
+            android:text="Device Details:" />
+
+        <TextView
             android:id="@+id/device_details"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="15dp"
-            android:layout_marginTop="44dp"
+            android:layout_below="@id/deviceDetText"
+            android:layout_margin="5dp"
             android:background="@drawable/border"
-            android:layout_alignParentTop="true"
             android:padding="10dp" />
 
+        <TextView
+            android:id="@+id/renterDetText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_margin="10dp"
+            android:textSize="16sp"
+            android:layout_below="@id/device_details"
+            android:text="Renter Details:" />
+        
         <TextView
             android:id="@+id/renter_details"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/device_details"
-            android:layout_margin="15dp"
-            android:layout_marginTop="44dp"
+            android:layout_margin="5dp"
+            android:layout_below="@id/renterDetText"
             android:background="@drawable/border"
             android:padding="10dp" />
 
+        <TextView
+            android:id="@+id/dateTex"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_margin="10dp"
+            android:textSize="16sp"
+            android:layout_below="@id/renter_details"
+            android:text="Return Date:" />
+        
         <DatePicker
             android:id="@+id/confirm_date_picker"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_below="@id/renter_details"
+            android:layout_below="@id/dateTex"
             android:calendarViewShown="false" />
 
         <EditText
             android:id="@+id/rent_comments"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="22dp"
             android:layout_below="@id/confirm_date_picker"
+            android:layout_marginTop="15dp"
             android:ems="10"
             android:hint="Comments" />
 

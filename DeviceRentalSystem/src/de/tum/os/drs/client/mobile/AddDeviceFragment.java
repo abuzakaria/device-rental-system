@@ -38,7 +38,7 @@ public class AddDeviceFragment extends Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		Log.d("check","on createview");
 		super.onCreateView(inflater, container, savedInstanceState);		
-        View rootView = inflater.inflate(R.layout.fragment_add, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_add_device, container, false);
         getActivity().setTitle("Add a device");
         scan_btn = ((Button)rootView.findViewById(R.id.scan));
         deviceSerial = ((EditText)rootView.findViewById(R.id.device_serial));

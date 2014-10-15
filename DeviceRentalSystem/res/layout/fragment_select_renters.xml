@@ -4,16 +4,6 @@
     android:layout_height="fill_parent"
     android:orientation="vertical" >
 
-    <!-- Editext for Search -->
-
-    <TextView
-        android:id="@+id/select_renter_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:text="Select a renter!" />
-
     <EditText
         android:id="@+id/inputSearch"
         android:layout_width="fill_parent"
@@ -21,13 +11,11 @@
         android:hint="Name"
         android:inputType="textVisiblePassword" />
 
-    <Button
+    <ImageButton
         android:id="@+id/addRenter"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="Add new" />
-
-    <!-- List View -->
+        android:src="@drawable/ic_add" />
 
     <ListView
         android:id="@+id/renters_list"

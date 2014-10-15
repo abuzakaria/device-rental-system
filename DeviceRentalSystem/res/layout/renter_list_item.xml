@@ -7,7 +7,8 @@
     <TextView
         android:id="@+id/renter_name"
         android:layout_width="match_parent"
-        android:layout_height="20dip"
-        android:textSize="12sp" />
+        android:layout_height="45dip"
+        android:textSize="20sp"
+        android:gravity="center_vertical|left" />
 
 </LinearLayout>
