@@ -25,6 +25,7 @@ public class DeviceFragment extends Fragment {
 	private MainActivity activity;
 	private Button updateButton;
 	private Button rentButton;
+	private Button returnButton;
 	private ImageView deviceImage;
 	private TextView devicedump;
 	private Renter renter;
@@ -41,7 +42,6 @@ public class DeviceFragment extends Fragment {
 
 		devicedump = (TextView) rootView.findViewById(R.id.deviceDump);
 		updateButton = (Button) rootView.findViewById(R.id.editDevice);
-		rentButton = (Button) rootView.findViewById(R.id.rentDevice);
 		deviceImage = (ImageView) rootView.findViewById(R.id.deviceImage);
 		service = RentalServiceImpl.getInstance();
 		activity = (MainActivity) getActivity();
@@ -63,6 +63,7 @@ public class DeviceFragment extends Fragment {
 			}
 		});
 
+		rentButton = (Button) rootView.findViewById(R.id.rentDevice);
 		rentButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -71,11 +72,32 @@ public class DeviceFragment extends Fragment {
 						.beginTransaction();
 				ft.replace(R.id.frame_container, new RenterSelectionFragment(),
 						"NewFragmentTag");
-				//ft.addToBackStack(null);
+				ft.addToBackStack(null);
 				ft.commit();
 			}
 		});
 
+		returnButton = (Button) rootView.findViewById(R.id.returnDevice);
+		returnButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				
+				activity.rentingSignature = false;
+
+				final FragmentTransaction ft = getFragmentManager()
+						.beginTransaction();
+				ft.replace(R.id.frame_container, new SignatureFragment());
+				ft.addToBackStack(null);
+				ft.commit();
+			}
+		});
+
+		if (device.isAvailable()) {
+			rentButton.setVisibility(View.VISIBLE);
+		} else {
+			returnButton.setVisibility(View.VISIBLE);
+		}
+		
 		showDeviceDetails();
 
 		return rootView;
@@ -114,6 +136,8 @@ public class DeviceFragment extends Fragment {
 					for (String d : r.getRentedDevices()) {
 						if (d.trim().equals(device.getImei())) {
 							renter = r;
+							Log.i("Test", "Renter found");
+							activity.selectedRenter = r;
 							break;
 						}
 					}

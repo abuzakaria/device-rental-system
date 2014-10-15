@@ -43,6 +43,7 @@ public class MainActivity extends FragmentActivity {
 	public Renter selectedRenter;
 
 	public String signature;
+	public boolean rentingSignature;
 
 	// nav drawer title
 	public CharSequence mDrawerTitle;

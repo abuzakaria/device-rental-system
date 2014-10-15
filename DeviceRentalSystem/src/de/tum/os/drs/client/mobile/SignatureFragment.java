@@ -22,9 +22,10 @@ public class SignatureFragment extends Fragment {
 			Bundle savedInstanceState) {
 		super.onCreateView(inflater, container, savedInstanceState);
 
-		View rootView = inflater.inflate(R.layout.fragment_signature, container,
-				false);
-		getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+		View rootView = inflater.inflate(R.layout.fragment_signature,
+				container, false);
+		getActivity().setRequestedOrientation(
+				ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
 		mSignaturePad = (SignaturePad) rootView
 				.findViewById(R.id.signature_pad);
@@ -42,14 +43,28 @@ public class SignatureFragment extends Fragment {
 			@Override
 			public void onClick(View view) {
 				Bitmap signatureBitmap = mSignaturePad.getSignatureBitmap();
-				
+
 				activity.signature = "Test Signature";
-				
-				FragmentTransaction transaction = getFragmentManager().beginTransaction();
-				transaction.replace(R.id.frame_container, new RentConfirmFragment());
-				transaction.addToBackStack(null);
-				transaction.commit();
-				
+
+				if (activity.rentingSignature) {
+
+					FragmentTransaction transaction = getFragmentManager()
+							.beginTransaction();
+					transaction.replace(R.id.frame_container,
+							new RentConfirmFragment());
+					transaction.addToBackStack(null);
+					transaction.commit();
+
+				} else {
+					FragmentTransaction transaction = getFragmentManager()
+							.beginTransaction();
+					transaction.replace(R.id.frame_container,
+							new ReturnConfirmFragment());
+					transaction.addToBackStack(null);
+					transaction.commit();
+
+				}
+
 			}
 
 		});
@@ -67,7 +82,7 @@ public class SignatureFragment extends Fragment {
 				mClearButton.setEnabled(false);
 			}
 		});
-		
+
 		activity = (MainActivity) getActivity();
 
 		return rootView;

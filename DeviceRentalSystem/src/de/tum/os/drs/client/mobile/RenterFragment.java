@@ -35,6 +35,8 @@ public class RenterFragment extends Fragment {
 
 			@Override
 			public void onClick(View arg0) {
+				
+				activity.rentingSignature = true;
 				FragmentTransaction transaction = getFragmentManager().beginTransaction();
 				transaction.replace(R.id.frame_container, new SignatureFragment());
 				transaction.addToBackStack(null);

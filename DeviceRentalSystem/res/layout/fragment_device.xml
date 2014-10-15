@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent" >
 
-     <ImageView
+    <ImageView
         android:id="@+id/deviceImage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -11,31 +11,42 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:src="@drawable/ic_rent" />
-      
+
     <TextView
         android:id="@+id/deviceDump"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="15dp"
-        android:padding="10dp"
         android:layout_below="@id/deviceImage"
-        android:background="@drawable/border" />
+        android:layout_margin="15dp"
+        android:background="@drawable/border"
+        android:padding="10dp" />
 
     <Button
         android:id="@+id/editDevice"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
         android:layout_below="@id/deviceDump"
+        android:layout_centerHorizontal="true"
         android:text="@string/edit_btn" />
-    
+
     <Button
         android:id="@+id/rentDevice"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
         android:layout_below="@id/deviceDump"
+        android:layout_centerHorizontal="true"
         android:layout_toRightOf="@id/editDevice"
-        android:text="Rent!" />
-    
+        android:text="Rent!"
+        android:visibility="gone" />
+
+    <Button
+        android:id="@+id/returnDevice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/deviceDump"
+        android:layout_centerHorizontal="true"
+        android:layout_toRightOf="@id/editDevice"
+        android:text="Return!"
+        android:visibility="gone" />
+
 </RelativeLayout>
