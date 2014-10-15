@@ -203,7 +203,7 @@ public class MainActivity extends FragmentActivity {
 		case 2:
 			fragment = new ScanFragment();
 			break;
-		case 4:
+		case 3:
 			logout();
 			break;
 		default:

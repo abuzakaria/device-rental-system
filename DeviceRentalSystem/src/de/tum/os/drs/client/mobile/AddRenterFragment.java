@@ -1,6 +1,5 @@
 package de.tum.os.drs.client.mobile;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -63,7 +62,7 @@ public class AddRenterFragment extends Fragment {
 		
 		String mat = matrNr.getText().toString();
 		
-		if(!mat.isEmpty()){
+		if(!mat.isEmpty() || name.getText().toString().isEmpty() || email.getText().toString().isEmpty()){
 			
 			String rEmail = email.getText().toString();
 			String rPhone = phone.getText().toString();
@@ -97,7 +96,7 @@ public class AddRenterFragment extends Fragment {
 			
 		} else {
 			
-			
+			//TODO toast
 			
 		}
 

@@ -44,6 +44,7 @@ public class SignatureFragment extends Fragment {
 			public void onClick(View view) {
 				Bitmap signatureBitmap = mSignaturePad.getSignatureBitmap();
 
+				//TODO serialize bitmap
 				activity.signature = "Test Signature";
 
 				if (activity.rentingSignature) {
