@@ -1,6 +1,7 @@
 package de.tum.os.drs.client.mobile;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -21,6 +22,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 import de.tum.os.drs.client.mobile.adapter.NavDrawerListAdapter;
 import de.tum.os.drs.client.mobile.communication.Callback;
+import de.tum.os.drs.client.mobile.communication.RentalService;
 import de.tum.os.drs.client.mobile.communication.RentalServiceImpl;
 import de.tum.os.drs.client.mobile.model.CredentialStore;
 import de.tum.os.drs.client.mobile.model.Device;
@@ -56,6 +58,11 @@ public class MainActivity extends FragmentActivity {
 	private NavDrawerListAdapter adapter;
 
 	private CredentialStore store;
+
+	private List<Device> availableDevices;
+	private List<Device> rentedDevices;
+
+	private RentalService service;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -120,13 +127,17 @@ public class MainActivity extends FragmentActivity {
 
 		if (savedInstanceState == null) {
 			// on first time display view for first nav item
-			displayView(0);
+			//displayView(0);
 			mDrawerLayout.openDrawer(mDrawerList);
 			setTitle(R.string.app_name);
 		}
 
 		store = new CredentialStore(
 				PreferenceManager.getDefaultSharedPreferences(this));
+
+		service = RentalServiceImpl.getInstance();
+
+		fetchDevices();
 
 	}
 
@@ -236,7 +247,57 @@ public class MainActivity extends FragmentActivity {
 				.commit();
 	}
 
-	public void updateDeviceList() {
+	private void fetchDevices() {
+
+		service.getAvailableDevices(new Callback<List<Device>>() {
+
+			@Override
+			public void onSuccess(List<Device> result) {
+
+				availableDevices = result;
+				fetchRentedDevices();
+			}
+
+			@Override
+			public void onFailure(int code, String error) {
+				// TODO Auto-generated method stub
+
+			}
+
+		});
+
+	}
+
+	private void fetchRentedDevices() {
+
+		// TODO change this
+		service.getAllDevices(new Callback<List<Device>>() {
+
+			@Override
+			public void onSuccess(List<Device> result) {
+
+				rentedDevices = result;
+				displayView(0);
+			}
+
+			@Override
+			public void onFailure(int code, String error) {
+				// TODO Auto-generated method stub
+
+			}
+
+		});
+
+	}
+
+	public List<Device> getAvailableDevices() {
+
+		return availableDevices;
+
+	}
+
+	public List<Device> getRentedDevices() {
+		return rentedDevices;
 
 	}
 

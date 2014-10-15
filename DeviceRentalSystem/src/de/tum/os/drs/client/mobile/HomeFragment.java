@@ -18,10 +18,10 @@ public class HomeFragment extends Fragment {
 	        mTabHost = new FragmentTabHost(getActivity());
 	        mTabHost.setup(getActivity(), getChildFragmentManager(), R.id.realtabcontent);
 	        
-	        mTabHost.addTab(mTabHost.newTabSpec("available").setIndicator("Available"),
+	        mTabHost.addTab(mTabHost.newTabSpec("devices").setIndicator("Available"),
 	                AvailableDevicesFragment.class, null);
-	        mTabHost.addTab(mTabHost.newTabSpec("all").setIndicator("All"),
-	                AllDevicesFragment.class, null);
+	        mTabHost.addTab(mTabHost.newTabSpec("devics").setIndicator("All"),
+	                RentedDevicesFragment.class, null);
 	        
 	        return mTabHost;
 	    }

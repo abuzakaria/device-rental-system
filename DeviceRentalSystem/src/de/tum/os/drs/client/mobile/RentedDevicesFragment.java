@@ -13,13 +13,13 @@ import android.widget.EditText;
 import android.widget.ListView;
 import de.tum.os.drs.client.mobile.model.Device;
 
-public class AvailableDevicesFragment extends Fragment {
+public class RentedDevicesFragment extends Fragment {
 
 	private static final String TAG = "AvailableDevices";
 
 	private ListView list;
 	private MainActivity activity;
-	
+
 	private EditText inputSearch;
 	private ArrayAdapter<Device> adapter;
 
@@ -28,11 +28,11 @@ public class AvailableDevicesFragment extends Fragment {
 			Bundle savedInstanceState) {
 		super.onCreateView(inflater, container, savedInstanceState);
 
-		View rootView = inflater.inflate(R.layout.available_devices_tab,
+		View rootView = inflater.inflate(R.layout.rented_devices_tab,
 				container, false);
 
-		list = (ListView) rootView.findViewById(R.id.available_devices_list);
-		inputSearch = (EditText) rootView.findViewById(R.id.inputSearch);
+		list = (ListView) rootView.findViewById(R.id.rented_devices_list);
+		inputSearch = (EditText) rootView.findViewById(R.id.inputSearchRented);
 		inputSearch.addTextChangedListener(new TextWatcher() {
 
 			@Override
@@ -56,7 +56,7 @@ public class AvailableDevicesFragment extends Fragment {
 		});
 
 		activity = (MainActivity) getActivity();
-		
+
 		list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
 			@Override
@@ -79,8 +79,7 @@ public class AvailableDevicesFragment extends Fragment {
 
 	private void populateList() {
 
-		adapter = new DeviceListAdapter(activity,
-				activity.getAvailableDevices());
+		adapter = new DeviceListAdapter(activity, activity.getRentedDevices());
 		list.setAdapter(adapter);
 	}
 }
