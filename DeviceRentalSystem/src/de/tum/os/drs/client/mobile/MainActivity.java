@@ -126,13 +126,7 @@ public class MainActivity extends FragmentActivity {
 		};
 		mDrawerLayout.setDrawerListener(mDrawerToggle);
 
-		if (savedInstanceState == null) {
-			// on first time display view for first nav item
-			//displayView(0);
-			mDrawerLayout.openDrawer(mDrawerList);
-			setTitle(R.string.app_name);
-		}
-
+		setTitle(R.string.app_name);
 		store = new CredentialStore(
 				PreferenceManager.getDefaultSharedPreferences(this));
 
@@ -207,10 +201,7 @@ public class MainActivity extends FragmentActivity {
 			fragment = new AddDeviceFragment();
 			break;
 		case 2:
-			fragment = new AddRenterFragment();
-			break;
-		case 3:
-			// fragment = new ReturnFragment();
+			fragment = new ScanFragment();
 			break;
 		case 4:
 			fragment = new ReturnFragment();
@@ -226,7 +217,7 @@ public class MainActivity extends FragmentActivity {
 			FragmentManager fragmentManager = getSupportFragmentManager();
 			fragmentManager.beginTransaction()
 					.replace(R.id.frame_container, fragment)
-					// .addToBackStack(null)
+					 .addToBackStack(null)
 					.commit();
 
 			// update selected item and title, then close the drawer
@@ -244,10 +235,24 @@ public class MainActivity extends FragmentActivity {
 		FragmentManager fragmentManager = getSupportFragmentManager();
 		fragmentManager.beginTransaction()
 				.replace(R.id.frame_container, new DeviceFragment())
-				// .addToBackStack(null)
 				.commit();
 	}
 
+	public void receiveScannedDevice(Device d){
+		
+		if(d == null){
+			
+			//TODO toast
+			
+		} else {
+			
+			selectedDevice = d;
+			startDeviceFragment();
+			
+		}
+		
+	}
+	
 	private void fetchDevices() {
 
 		service.getAvailableDevices(new Callback<List<Device>>() {
