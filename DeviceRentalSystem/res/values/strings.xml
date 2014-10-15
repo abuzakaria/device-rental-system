@@ -9,8 +9,7 @@
     <string-array name="nav_drawer_items">
         <item>Home</item>
         <item>Add a device</item>
-        <item>Rent a device</item>
-        <item>Return a device</item>
+        <item>Scan Device</item>
         <item>logout</item>
     </string-array>
 
@@ -22,8 +21,7 @@
     <array name="nav_drawer_icons">
         <item>@drawable/ic_home</item>
         <item>@drawable/ic_add</item>
-        <item>@drawable/ic_rent</item>
-        <item>@drawable/ic_return</item>
+        <item>@drawable/ic_add</item>
         <item>@drawable/ic_return</item>
     </array>
     

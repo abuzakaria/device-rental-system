@@ -204,9 +204,6 @@ public class MainActivity extends FragmentActivity {
 			fragment = new ScanFragment();
 			break;
 		case 4:
-			fragment = new ReturnFragment();
-			break;
-		case 5:
 			logout();
 			break;
 		default:
