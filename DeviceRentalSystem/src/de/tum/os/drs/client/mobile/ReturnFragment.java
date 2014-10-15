@@ -274,7 +274,7 @@ public class ReturnFragment extends Fragment {
 									// TODO Auto-generated method stub
 									MainActivity _main;
 									_main = (MainActivity) getActivity();
-									_main.mSelectedDeviceImei = sIMEI;
+									//_main.mSelectedDeviceImei = sIMEI;
 									final FragmentTransaction ft = getFragmentManager()
 											.beginTransaction();
 									ft.replace(R.id.frame_container,

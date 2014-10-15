@@ -585,7 +585,6 @@ public class AuthenticationActivity extends Activity {
 
 	private void hideLoadingDialog() {
 
-		Log.i(TAG, "Hiding dialog");
 		if (dialog != null) {
 
 			dialog.dismiss();

@@ -92,7 +92,7 @@ public class AddFragment extends Fragment {
 						Log.d("adddevice", "success");
 						Toast.makeText(getActivity(), result, Toast.LENGTH_SHORT).show();
 						MainActivity temp = (MainActivity)getActivity();
-						temp.mSelectedDeviceImei = s_deviceSerial; 
+						//temp.mSelectedDeviceImei = s_deviceSerial; 
 						final FragmentTransaction ft2 = getFragmentManager().beginTransaction(); 
 						ft2.replace(R.id.frame_container, new DeviceFragment(), "NewFragmentTag"); 
 						ft2.commit(); 

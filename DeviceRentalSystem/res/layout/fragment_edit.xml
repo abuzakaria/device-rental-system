@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/ScrollView01"
     android:layout_width="fill_parent"
@@ -36,13 +37,6 @@
 
                 <requestFocus />
             </EditText>
-
-            <Button
-                android:id="@+id/scan"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:onClick="scanAgain"
-                android:text="@string/scan" />
         </LinearLayout>
 
         <EditText
@@ -84,6 +78,15 @@
             android:layout_below="@id/devicetype"
             android:layout_marginTop="22dp"
             android:entries="@array/device_state" />
+        
+        <DatePicker
+	        android:id="@+id/returnDate"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentLeft="true"
+	        android:visibility="gone"
+	        android:calendarViewShown="false"
+	        android:layout_below="@id/devicestate"/>
 
         <Button
             android:id="@+id/editdevice"
@@ -92,7 +95,7 @@
             android:layout_below="@id/devicestate"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="48dp"
-            android:text="@string/add_device" />
+            android:text="Update!" />
     </RelativeLayout>
 
 </ScrollView>

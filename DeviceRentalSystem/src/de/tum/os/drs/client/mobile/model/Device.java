@@ -49,6 +49,10 @@ public class Device {
 	 * The approximate date when the device will be available.
 	 */
 	Date estimatedReturnDate = new Date();
+	
+	public Device(){
+		
+	}
 
 	public Device(String imei, String name, String description, String state,
 			DeviceType deviceType, Date estimatedReturnDate, boolean isAvailable) {

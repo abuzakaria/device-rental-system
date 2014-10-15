@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ScrollView01"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <TextView
+            android:id="@+id/device_details"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="15dp"
+            android:layout_marginTop="44dp"
+            android:background="@drawable/border"
+            android:layout_alignParentTop="true"
+            android:padding="10dp" />
+
+        <TextView
+            android:id="@+id/renter_details"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/device_details"
+            android:layout_margin="15dp"
+            android:layout_marginTop="44dp"
+            android:background="@drawable/border"
+            android:padding="10dp" />
+
+        <DatePicker
+            android:id="@+id/confirm_date_picker"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@id/renter_details"
+            android:calendarViewShown="false" />
+
+        <EditText
+            android:id="@+id/rent_comments"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="22dp"
+            android:layout_below="@id/confirm_date_picker"
+            android:ems="10"
+            android:hint="Comments" />
+
+        <Button
+            android:id="@+id/rent_conf_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/rent_comments"
+            android:layout_centerHorizontal="true"
+            android:text="@string/rent_btn" />
+    </RelativeLayout>
+
+</ScrollView>

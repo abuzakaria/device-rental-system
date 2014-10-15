@@ -46,6 +46,7 @@ import de.tum.os.drs.client.mobile.model.RentRequest;
 import de.tum.os.drs.client.mobile.model.Renter;
 
 public class RentFragment extends Fragment {
+	
 	private SignaturePad mSignaturePad;
 	TextView deviceDetails, renterDetails;
 	private Button mClearButton, mSaveButton, mFindButton, mRentButton,
@@ -78,7 +79,7 @@ public class RentFragment extends Fragment {
 		mRentButton = (Button) rootView.findViewById(R.id.rent_btn);
 		mScanButton = (Button) rootView.findViewById(R.id.scan);
 		mConfirmButton = (Button) rootView.findViewById(R.id.confirm_btn);
-		renterSpinner = (Spinner) rootView.findViewById(R.id.renter_spinner);
+		//renterSpinner = (Spinner) rootView.findViewById(R.id.renter_spinner);
 		deviceDetails = (TextView) rootView.findViewById(R.id.device_details);
 		renterDetails = (TextView) rootView.findViewById(R.id.renter_details);
 		mIMEI = (EditText) rootView.findViewById(R.id.device_serial);
@@ -343,7 +344,7 @@ public class RentFragment extends Fragment {
 									// TODO Auto-generated method stub
 									MainActivity _main;
 									_main = (MainActivity) getActivity();
-									_main.mSelectedDeviceImei = sIMEI;
+								//	_main.mSelectedDeviceImei = sIMEI;
 									final FragmentTransaction ft = getFragmentManager()
 											.beginTransaction();
 									ft.replace(R.id.frame_container,

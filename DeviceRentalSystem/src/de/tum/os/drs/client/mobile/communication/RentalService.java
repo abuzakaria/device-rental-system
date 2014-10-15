@@ -29,10 +29,6 @@ public interface RentalService {
 	
 	void getDeviceByImei(String Imei, Callback<Device> callback);
 	
-	//TODO needed?
-	//void deleteDevice(Device device);
-	
-
 	//-------------Renters------------------
 	
 	void addRenter(Renter renter, Callback<String> callBack);
@@ -42,10 +38,6 @@ public interface RentalService {
 	void getAllRenters(Callback<List<Renter>> callBack);
 	
 	void getAllActiveRenters(Callback<List<Renter>> callBack);
-	
-	//TODO needed?
-	//void getRenter(Callback<Renter> callBack);
-	//void deleteRenter();
 	
 	//------------Renting Service-------------
 	

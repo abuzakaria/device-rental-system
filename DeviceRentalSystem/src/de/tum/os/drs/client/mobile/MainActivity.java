@@ -2,10 +2,7 @@ package de.tum.os.drs.client.mobile;
 
 import java.util.ArrayList;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.os.Bundle;
@@ -26,7 +23,9 @@ import de.tum.os.drs.client.mobile.adapter.NavDrawerListAdapter;
 import de.tum.os.drs.client.mobile.communication.Callback;
 import de.tum.os.drs.client.mobile.communication.RentalServiceImpl;
 import de.tum.os.drs.client.mobile.model.CredentialStore;
+import de.tum.os.drs.client.mobile.model.Device;
 import de.tum.os.drs.client.mobile.model.NavDrawerItem;
+import de.tum.os.drs.client.mobile.model.Renter;
 
 public class MainActivity extends FragmentActivity {
 
@@ -36,7 +35,13 @@ public class MainActivity extends FragmentActivity {
 	private ListView mDrawerList;
 	private ActionBarDrawerToggle mDrawerToggle;
 
-	public String mScanResult, mSelectedDeviceImei;
+	public String mScanResult;
+	
+	public Device selectedDevice;
+	public Renter selectedRenter;
+	
+	public String signature;
+	
 	// nav drawer title
 	public CharSequence mDrawerTitle;
 
@@ -227,6 +232,22 @@ public class MainActivity extends FragmentActivity {
 		}
 	}
 
+	public void startDeviceFragment(){
+		FragmentManager fragmentManager = getSupportFragmentManager();
+		fragmentManager.beginTransaction()
+				.replace(R.id.frame_container, new DeviceFragment())
+				// .addToBackStack(null)
+				.commit();
+	}
+	
+	
+	public void updateDeviceList(){
+		
+		
+		
+		
+	}
+	
 	private void logout() {
 
 		Log.i(TAG, "Loging out...");
@@ -258,9 +279,8 @@ public class MainActivity extends FragmentActivity {
 
 	public void sessionExpired(){
 		
-		//finish();
+		finish();
 		startAuthenticationActivity();
-		
 	}
 	
 	@Override

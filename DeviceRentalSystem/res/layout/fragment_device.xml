@@ -3,14 +3,22 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/devicedump"
-        android:layout_width="match_parent"
+     <ImageView
+        android:id="@+id/deviceImage"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/ic_rent" />
+      
+    <TextView
+        android:id="@+id/deviceDump"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_margin="15dp"
         android:padding="10dp"
+        android:layout_below="@id/deviceImage"
         android:background="@drawable/border" />
 
     <Button
@@ -18,7 +26,16 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_below="@id/devicedump"
+        android:layout_below="@id/deviceDump"
         android:text="@string/edit_btn" />
-
+    
+    <Button
+        android:id="@+id/rentDevice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/deviceDump"
+        android:layout_toRightOf="@id/editDevice"
+        android:text="Rent!" />
+    
 </RelativeLayout>

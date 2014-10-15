@@ -1,0 +1,131 @@
+package de.tum.os.drs.client.mobile;
+
+import java.util.List;
+
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ListView;
+import de.tum.os.drs.client.mobile.communication.Callback;
+import de.tum.os.drs.client.mobile.communication.RentalService;
+import de.tum.os.drs.client.mobile.communication.RentalServiceImpl;
+import de.tum.os.drs.client.mobile.model.Renter;
+
+public class RenterSelectionFragment extends Fragment {
+	
+	private RentalService service;
+	private MainActivity activity;
+	private ListView list;
+	private EditText inputSearch;
+	private Button addRenterButton;
+	private ArrayAdapter<Renter> adapter;
+	
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
+		super.onCreateView(inflater, container, savedInstanceState);
+		
+		View rootView = inflater.inflate(R.layout.fragment_select_renters,
+				container, false);
+		
+		list = (ListView) rootView.findViewById(R.id.renters_list);
+		list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, final View view,
+					int position, long id) {
+				final Renter item = (Renter) parent.getItemAtPosition(position);
+				activity.selectedRenter = item;
+
+				//activity.startDeviceFragment();
+				
+				//Start the device fragment
+				FragmentTransaction transaction = getFragmentManager().beginTransaction();
+				transaction.replace(R.id.frame_container, new RenterFragment());
+				transaction.addToBackStack(null);
+				transaction.commit();
+
+			}
+
+		});
+		
+		activity = (MainActivity) getActivity();
+		service = RentalServiceImpl.getInstance();
+		
+		inputSearch = (EditText) rootView.findViewById(R.id.inputSearch);
+		inputSearch.addTextChangedListener(new TextWatcher() {
+
+			@Override
+			public void onTextChanged(CharSequence cs, int arg1, int arg2,
+					int arg3) {
+				// When user changed the Text
+				adapter.getFilter().filter(cs);
+			}
+
+			@Override
+			public void beforeTextChanged(CharSequence arg0, int arg1,
+					int arg2, int arg3) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void afterTextChanged(Editable arg0) {
+				// TODO Auto-generated method stub
+			}
+		});
+		
+		addRenterButton = (Button) rootView.findViewById(R.id.addRenter);
+		addRenterButton.setOnClickListener(new OnClickListener(){
+
+			@Override
+			public void onClick(View arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+		});
+		
+		populateList();
+		
+		return rootView;
+		
+	}
+	
+	private void populateList(){
+		
+		service.getAllRenters(new Callback<List<Renter>>(){
+
+			@Override
+			public void onSuccess(List<Renter> result) {
+				adapter = new RentersListAdapter(activity, result);
+				list.setAdapter(adapter);
+				
+			}
+
+			@Override
+			public void onFailure(int code, String error) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			
+			
+			
+			
+		});
+		
+	}
+	
+
+}
