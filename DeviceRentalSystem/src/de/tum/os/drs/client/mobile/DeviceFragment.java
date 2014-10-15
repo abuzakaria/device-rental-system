@@ -21,7 +21,7 @@ import de.tum.os.drs.client.mobile.model.Device;
 import de.tum.os.drs.client.mobile.model.Renter;
 
 public class DeviceFragment extends Fragment {
-	
+
 	private MainActivity activity;
 	private Button updateButton;
 	private Button rentButton;
@@ -34,11 +34,11 @@ public class DeviceFragment extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		
+
 		super.onCreateView(inflater, container, savedInstanceState);
 		View rootView = inflater.inflate(R.layout.fragment_device, container,
 				false);
-		
+
 		devicedump = (TextView) rootView.findViewById(R.id.deviceDump);
 		updateButton = (Button) rootView.findViewById(R.id.editDevice);
 		rentButton = (Button) rootView.findViewById(R.id.rentDevice);
@@ -47,9 +47,9 @@ public class DeviceFragment extends Fragment {
 		activity = (MainActivity) getActivity();
 
 		getActivity().setTitle("Device details");
-		
+
 		device = activity.selectedDevice;
-		
+
 		updateButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -62,22 +62,22 @@ public class DeviceFragment extends Fragment {
 				ft.commit();
 			}
 		});
-		
+
 		rentButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				
+
 				final FragmentTransaction ft = getFragmentManager()
 						.beginTransaction();
 				ft.replace(R.id.frame_container, new RenterSelectionFragment(),
 						"NewFragmentTag");
-				ft.addToBackStack(null);
+				//ft.addToBackStack(null);
 				ft.commit();
 			}
 		});
 
 		showDeviceDetails();
-		
+
 		return rootView;
 	}
 
@@ -97,7 +97,7 @@ public class DeviceFragment extends Fragment {
 		} else {
 
 		}
-		
+
 	}
 
 	private void setRenter() {
@@ -105,7 +105,6 @@ public class DeviceFragment extends Fragment {
 		service.getAllActiveRenters(new Callback<List<Renter>>() {
 			@Override
 			public void onFailure(int code, String error) {
-				
 
 			}
 
@@ -124,63 +123,7 @@ public class DeviceFragment extends Fragment {
 		});
 
 	}
-/*
-	@Override
-	public void onResume() {
-		super.onResume();
 
-		_main = (MainActivity) getActivity();
-		// imei = _main.mSelectedDeviceImei;
-		updateButton.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				_main.mSelectedDeviceImei = imei;
-				final FragmentTransaction ft = getFragmentManager()
-						.beginTransaction();
-				ft.replace(R.id.frame_container, new EditDeviceFragment(),
-						"NewFragmentTag");
-				ft.addToBackStack(null);
-				ft.commit();
-			}
-		});
-
-		RentalService service = RentalServiceImpl.getInstance();
-		service.getAllActiveRenters(new Callback<List<Renter>>() {
-			@Override
-			public void onFailure(int code, String error) {
-				// TODO Auto-generated method stub
-
-			}
-
-			@Override
-			public void onSuccess(List<Renter> result) {
-				// TODO Auto-generated method stub
-				for (Renter r : result) {
-					for (String d : r.getRentedDevices()) {
-						if (d.trim().equals(imei)) {
-							renter = r;
-							break;
-						}
-					}
-				}
-			}
-
-		});
-		service.getDeviceByImei(imei, new Callback<Device>() {
-
-			@Override
-			public void onSuccess(Device result) {
-				Log.i("Device", result.getDeviceType().toString());
-				// displayDetails(result);
-			}
-
-			@Override
-			public void onFailure(int code, String error) {
-				Log.i("Error", error);
-			}
-		});
-	}
-*/
 	private void fillDeviceTextDetails() {
 		String temp = "Name: ";
 		temp += device.getName() == null ? "<None>" : device.getName();
@@ -212,7 +155,7 @@ public class DeviceFragment extends Fragment {
 			temp += "Renter: ";
 			temp += renter.getName();
 			temp += "\n";
-			
+
 			temp += "Matriculation Number: ";
 			temp += renter.getMatriculationNumber();
 			temp += "\n";

@@ -199,7 +199,7 @@ public class MainActivity extends FragmentActivity {
 			fragment = new HomeFragment();
 			break;
 		case 1:
-			fragment = new AddFragment();
+			fragment = new AddDeviceFragment();
 			break;
 		case 2:
 			fragment = new RentFragment();

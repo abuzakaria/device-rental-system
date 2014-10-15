@@ -5,7 +5,6 @@ import java.util.List;
 import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -20,7 +19,7 @@ import de.tum.os.drs.client.mobile.communication.RentalService;
 import de.tum.os.drs.client.mobile.communication.RentalServiceImpl;
 import de.tum.os.drs.client.mobile.model.Device;
 
-public class AvailableDevicesFragment extends Fragment{
+public class AvailableDevicesFragment extends Fragment {
 
 	private static final String TAG = "AvailableDevices";
 
@@ -76,13 +75,7 @@ public class AvailableDevicesFragment extends Fragment{
 				activity.selectedDevice = item;
 
 				activity.startDeviceFragment();
-				/*
-				//Start the device fragment
-				FragmentTransaction transaction = getFragmentManager().beginTransaction();
-				transaction.replace(R.id.frame_container, new DeviceFragment());
-				transaction.addToBackStack(null);
-				transaction.commit();
-*/
+
 			}
 
 		});
@@ -103,6 +96,7 @@ public class AvailableDevicesFragment extends Fragment{
 
 			@Override
 			public void onSuccess(List<Device> result) {
+				
 				adapter = new DeviceListAdapter(activity, result);
 				list.setAdapter(adapter);
 				// dialog.dismiss();
@@ -119,5 +113,4 @@ public class AvailableDevicesFragment extends Fragment{
 		});
 	}
 
-	
 }

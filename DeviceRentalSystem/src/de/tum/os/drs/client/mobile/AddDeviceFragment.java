@@ -23,7 +23,7 @@ import de.tum.os.drs.client.mobile.communication.RentalServiceImpl;
 import de.tum.os.drs.client.mobile.model.Device;
 import de.tum.os.drs.client.mobile.model.DeviceType;
 
-public class AddFragment extends Fragment {
+public class AddDeviceFragment extends Fragment {
     Button scan_btn, add_btn;
     String scanresult, s_deviceName, s_deviceDesc, s_deviceSerial;
     EditText deviceSerial,deviceDetails, deviceName;
@@ -31,7 +31,7 @@ public class AddFragment extends Fragment {
 	private RentalService service;
 	private Boolean isDuplicate = true;
 	
-	public AddFragment(){}
+	public AddDeviceFragment(){}
 
 	
 	@Override
