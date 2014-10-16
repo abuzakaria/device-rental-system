@@ -48,6 +48,8 @@ public class MainActivity extends FragmentActivity {
 	// The currently selected device and renter
 	public Device selectedDevice;
 	public Renter selectedRenter;
+	
+	public String scanResult;
 
 	// The serialized signature as a string
 	public String signature;
@@ -214,6 +216,7 @@ public class MainActivity extends FragmentActivity {
 			fragment = new AddDeviceFragment();
 			break;
 		case 2:
+			scanAction = AfterScanAction.OPEN_DEVICE;
 			fragment = new ScanFragment();
 			break;
 		case 3:
@@ -273,6 +276,8 @@ public class MainActivity extends FragmentActivity {
 			break;
 
 		}
+		
+		updateAction = null;
 
 	}
 
@@ -285,11 +290,15 @@ public class MainActivity extends FragmentActivity {
 		}
 
 		case SET_IMEI_FILED:
+			scanResult = result;
+			this.getSupportFragmentManager().popBackStack();
 			break;
 		default:
 			break;
 
 		}
+		
+		scanAction = null;
 
 	}
 

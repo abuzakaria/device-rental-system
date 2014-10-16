@@ -2,19 +2,14 @@ package de.tum.os.drs.client.mobile;
 
 import garin.artemiy.simplescanner.library.fragments.SimpleScannerFragment;
 import garin.artemiy.simplescanner.library.listeners.ScannerListener;
-
-import java.util.List;
-
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import de.tum.os.drs.client.mobile.model.Device;
 
 public class ScanFragment extends Fragment implements ScannerListener {
 	private boolean isResultReceived = false;
@@ -48,11 +43,8 @@ public class ScanFragment extends Fragment implements ScannerListener {
 			v.vibrate(50);
 
 			activity.onScanFinished(result);
-			activity.returnToHome();
-
+			
 		}
 	}
-
-	
 
 }

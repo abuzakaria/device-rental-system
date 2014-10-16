@@ -17,20 +17,19 @@ import de.tum.os.drs.client.mobile.communication.Callback;
 import de.tum.os.drs.client.mobile.communication.RentalService;
 import de.tum.os.drs.client.mobile.communication.RentalServiceImpl;
 import de.tum.os.drs.client.mobile.model.AfterDeviceUpdateAction;
+import de.tum.os.drs.client.mobile.model.AfterScanAction;
 import de.tum.os.drs.client.mobile.model.Device;
 import de.tum.os.drs.client.mobile.model.DeviceType;
 
 public class AddDeviceFragment extends Fragment {
 
-	private Button add_btn;
+	private Button add_btn, scanButton;
 	private String s_deviceName, s_deviceDesc, s_deviceSerial;
 	private EditText deviceSerial, deviceDetails, deviceName;
 	private Spinner deviceType, deviceState;
 	private RentalService service;
 	private Boolean isDuplicate = true;
 
-	public AddDeviceFragment() {
-	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -46,6 +45,7 @@ public class AddDeviceFragment extends Fragment {
 		deviceType = ((Spinner) rootView.findViewById(R.id.devicetype));
 		deviceState = ((Spinner) rootView.findViewById(R.id.devicestate));
 		add_btn = ((Button) rootView.findViewById(R.id.editdevice));
+		scanButton = (Button) rootView.findViewById(R.id.scan_add);
 		service = RentalServiceImpl.getInstance();
 
 		deviceSerial.setText("");
@@ -66,6 +66,21 @@ public class AddDeviceFragment extends Fragment {
 					addDevice();
 				}
 
+			}
+
+		});
+		
+		scanButton.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				
+				MainActivity activity = (MainActivity) getActivity();
+				activity.scanAction = AfterScanAction.SET_IMEI_FILED;
+				final FragmentTransaction ft = getFragmentManager().beginTransaction(); 
+				ft.replace(R.id.frame_container, new ScanFragment()); 
+				ft.addToBackStack(null);
+				ft.commit(); 
 			}
 
 		});
@@ -116,6 +131,22 @@ public class AddDeviceFragment extends Fragment {
 		});
 	}
 
+	@Override
+	public void onResume()
+	{
+		super.onResume();
+		
+		String result = ((MainActivity) getActivity()).scanResult;
+		
+        if (result != null)   
+        {
+        	((MainActivity) getActivity()).scanResult = null;
+        	deviceSerial.setText(result);
+        	
+        }
+	}
+	
+	
 	private void onFinished() {
 		MainActivity activity = (MainActivity) getActivity();
 		activity.newDeviceImei = s_deviceSerial;
