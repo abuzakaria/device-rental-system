@@ -42,48 +42,17 @@ public class ScanFragment extends Fragment implements ScannerListener {
 	public void onDataReceive(String result, int barcodeType) {
 		if (isResultReceived == false) {
 			isResultReceived = true;
-			((MainActivity) getActivity()).mScanResult = result;
+			
 			Vibrator v = (Vibrator) getActivity().getSystemService(
 					Context.VIBRATOR_SERVICE);
 			v.vibrate(50);
 
-			Log.i("Test", result);
-			
-			Device d = processScan(result);
-			
-			activity.receiveScannedDevice(d);
-			
-			this.getFragmentManager().popBackStack();
+			activity.onScanFinished(result);
+			activity.returnToHome();
 
 		}
 	}
 
-	private Device processScan(String result) {
-
-		List<Device> available = activity.getAvailableDevices();
-
-		for (Device d : available) {
-
-			if (d.getImei().equals(result)) {
-
-				return d;
-			}
-
-		}
-
-		List<Device> rented = activity.getRentedDevices();
-
-		for (Device d : rented) {
-
-			if (d.getImei().equals(result)) {
-
-				return d;
-			}
-
-		}
-		
-		return null;
-
-	}
+	
 
 }

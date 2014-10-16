@@ -7,6 +7,8 @@ import java.util.List;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -56,7 +58,8 @@ public class RentConfirmFragment extends Fragment {
 
 			@Override
 			public void onClick(View v) {
-				rentDevice();
+				//rentDevice();
+				returnToHome();
 
 			}
 
@@ -67,50 +70,55 @@ public class RentConfirmFragment extends Fragment {
 		return rootView;
 	}
 
-	private void rentDevice(){
+	private void rentDevice() {
 		
-		if(activity.signature == null || activity.selectedRenter == null || activity.selectedDevice == null){
-			
+		if (activity.signature == null || activity.selectedRenter == null
+				|| activity.selectedDevice == null) {
+
 			return;
-			
+
 		}
-		
+
 		Renter renter = activity.selectedRenter;
 		Device device = activity.selectedDevice;
-		
+
 		List<String> devices = new ArrayList<String>();
 		devices.add(device.getImei());
-		
+
 		Date returnDate = getDateFromDatePicker(datePicker);
-		
-		RentRequest request = new RentRequest(renter.getMatriculationNumber(), devices, returnDate, comments.getText().toString(), activity.signature);
-		
-		
-		service.rentDevices(request, new Callback<String>(){
+
+		RentRequest request = new RentRequest(renter.getMatriculationNumber(),
+				devices, returnDate, comments.getText().toString(),
+				activity.signature);
+
+		service.rentDevices(request, new Callback<String>() {
 
 			@Override
 			public void onSuccess(String result) {
-				
+
 				Log.i("Test", result);
+				// TODO toast
+				returnToHome();
 			}
 
 			@Override
 			public void onFailure(int code, String error) {
+				//TODO toast
 				
-				
+				returnToHome();
+
 			}
-			
-		
+
 		});
-		
-		
-		
-		
-		
-		
+
 	}
-	
-	
+
+	private void returnToHome() {
+
+		activity.returnToHome();
+
+	}
+
 	private void showInformation() {
 
 		showDeviceInformation();
@@ -118,17 +126,18 @@ public class RentConfirmFragment extends Fragment {
 		setDatePicker();
 	}
 
-
 	private void setDatePicker() {
-		
+
 		Date date = new Date();
-		
-  	   Calendar calendar = Calendar.getInstance();
-  	   calendar.setTime(date);
-  	   calendar.add(Calendar.MONTH, 6);
-  	   
-  	   datePicker.updateDate(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
-  	  
+
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+		calendar.add(Calendar.MONTH, 6);
+
+		datePicker.updateDate(calendar.get(Calendar.YEAR),
+				calendar.get(Calendar.MONTH),
+				calendar.get(Calendar.DAY_OF_MONTH));
+
 	}
 
 	private void showRenterInformation() {
@@ -201,7 +210,7 @@ public class RentConfirmFragment extends Fragment {
 
 		deviceDetails.setText(temp);
 	}
-	
+
 	private Date getDateFromDatePicker(DatePicker datePicker) {
 		int day = datePicker.getDayOfMonth();
 		int month = datePicker.getMonth();

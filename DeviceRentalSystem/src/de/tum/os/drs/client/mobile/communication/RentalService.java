@@ -45,10 +45,5 @@ public interface RentalService {
 	
 	void returnDevices(ReturnRequest request, Callback<String> callBack);
 	
-	//-----------Event service---------------
-	
-	//TODO
-	//void fetchEvents();
- 
 	
 }

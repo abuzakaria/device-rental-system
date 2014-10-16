@@ -65,7 +65,7 @@ public class AvailableDevicesFragment extends Fragment {
 				final Device item = (Device) parent.getItemAtPosition(position);
 				activity.selectedDevice = item;
 
-				activity.startDeviceFragment();
+				activity.startDeviceFragment(true);
 
 			}
 

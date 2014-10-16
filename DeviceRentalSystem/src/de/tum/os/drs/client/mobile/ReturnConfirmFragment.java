@@ -2,6 +2,7 @@ package de.tum.os.drs.client.mobile;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -59,7 +60,9 @@ public class ReturnConfirmFragment extends Fragment {
 	}
 	
 	private void returnDevice(){
-		
+		//getActivity().getFragmentManager().popBackStack("HomeInitial", 0);
+		//returnToHome();
+		activity.returnToHome();
 		
 	}
 	
@@ -141,7 +144,5 @@ public class ReturnConfirmFragment extends Fragment {
 
 		deviceDetails.setText(temp);
 	}
-
 	
-
 }

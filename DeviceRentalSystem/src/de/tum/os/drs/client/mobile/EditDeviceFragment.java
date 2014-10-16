@@ -21,6 +21,7 @@ import android.widget.Toast;
 import de.tum.os.drs.client.mobile.communication.Callback;
 import de.tum.os.drs.client.mobile.communication.RentalService;
 import de.tum.os.drs.client.mobile.communication.RentalServiceImpl;
+import de.tum.os.drs.client.mobile.model.AfterDeviceUpdateAction;
 import de.tum.os.drs.client.mobile.model.Device;
 import de.tum.os.drs.client.mobile.model.DeviceType;
 
@@ -113,7 +114,7 @@ public class EditDeviceFragment extends Fragment{
 	
 	private void editDevice() {
 		
-		String imei  = (deviceSerial.getText().length() == 0) ? null : deviceSerial.getText().toString();
+		final String imei  = (deviceSerial.getText().length() == 0) ? null : deviceSerial.getText().toString();
 		String description = (deviceDetails.getText().length() == 0) ? null : deviceDetails.getText().toString();
 		String name = (deviceName.getText().length() == 0) ? null : deviceName.getText().toString();
 		Date date = getDateFromDatePicker(returnDate);
@@ -131,14 +132,12 @@ public class EditDeviceFragment extends Fragment{
 
 			@Override
 			public void onSuccess(String result) {
-				Log.d("adddevice", "success");
 				Toast.makeText(getActivity(), result, Toast.LENGTH_SHORT).show();
 				dialog.dismiss();
 
-				getFragmentManager().popBackStack();
-				final FragmentTransaction ft2 = getFragmentManager().beginTransaction();						
-				ft2.replace(R.id.frame_container, new DeviceFragment(), "NewFragmentTag"); 
-				ft2.commit(); 
+				activity.newDeviceImei = imei;
+				activity.updateAction = AfterDeviceUpdateAction.OPEN_DEVICE;
+				activity.updateDevices();
 				
 			}
 

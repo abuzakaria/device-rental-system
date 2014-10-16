@@ -9,27 +9,29 @@ import android.view.ViewGroup;
 
 public class HomeFragment extends Fragment {
 
-	  private FragmentTabHost mTabHost;
+	private FragmentTabHost mTabHost;
 
-	    @Override
-	    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-	            Bundle savedInstanceState) {
-	    	
-	        mTabHost = new FragmentTabHost(getActivity());
-	        mTabHost.setup(getActivity(), getChildFragmentManager(), R.id.realtabcontent);
-	        
-	        mTabHost.addTab(mTabHost.newTabSpec("available").setIndicator("Available"),
-	                AvailableDevicesFragment.class, null);
-	        mTabHost.addTab(mTabHost.newTabSpec("rented").setIndicator("Rented"),
-	                RentedDevicesFragment.class, null);
-	        
-	        return mTabHost;
-	    }
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
 
-	    @Override
-	    public void onDestroyView() {
-	        super.onDestroyView();
-	        mTabHost = null;
-	    }
+		mTabHost = new FragmentTabHost(getActivity());
+		mTabHost.setup(getActivity(), getChildFragmentManager(),
+				R.id.realtabcontent);
+
+		mTabHost.addTab(
+				mTabHost.newTabSpec("available").setIndicator("Available"),
+				AvailableDevicesFragment.class, null);
+		mTabHost.addTab(mTabHost.newTabSpec("rented").setIndicator("Rented"),
+				RentedDevicesFragment.class, null);
+
+		return mTabHost;
+	}
+
+	@Override
+	public void onDestroyView() {
+		super.onDestroyView();
+		mTabHost = null;
+	}
 
 }

@@ -24,6 +24,8 @@ import de.tum.os.drs.client.mobile.adapter.NavDrawerListAdapter;
 import de.tum.os.drs.client.mobile.communication.Callback;
 import de.tum.os.drs.client.mobile.communication.RentalService;
 import de.tum.os.drs.client.mobile.communication.RentalServiceImpl;
+import de.tum.os.drs.client.mobile.model.AfterDeviceUpdateAction;
+import de.tum.os.drs.client.mobile.model.AfterScanAction;
 import de.tum.os.drs.client.mobile.model.CredentialStore;
 import de.tum.os.drs.client.mobile.model.Device;
 import de.tum.os.drs.client.mobile.model.NavDrawerItem;
@@ -33,16 +35,23 @@ public class MainActivity extends FragmentActivity {
 
 	private static final String TAG = "MainActivity";
 
+	// The navigation drawer
 	private DrawerLayout mDrawerLayout;
 	private ListView mDrawerList;
 	private ActionBarDrawerToggle mDrawerToggle;
 
-	public String mScanResult;
+	// Actions to be performed after a certain event
+	public AfterScanAction scanAction;
+	public AfterDeviceUpdateAction updateAction;
+	public String newDeviceImei;
 
+	// The currently selected device and renter
 	public Device selectedDevice;
 	public Renter selectedRenter;
 
+	// The serialized signature as a string
 	public String signature;
+
 	public boolean rentingSignature;
 
 	// nav drawer title
@@ -58,8 +67,10 @@ public class MainActivity extends FragmentActivity {
 	private ArrayList<NavDrawerItem> navDrawerItems;
 	private NavDrawerListAdapter adapter;
 
+	// Used to store access tokens
 	private CredentialStore store;
 
+	// List of fetched devices
 	private List<Device> availableDevices;
 	private List<Device> rentedDevices;
 
@@ -132,7 +143,8 @@ public class MainActivity extends FragmentActivity {
 
 		service = RentalServiceImpl.getInstance();
 
-		fetchDevices();
+		updateAction = AfterDeviceUpdateAction.GO_TO_HOME;
+		updateDevices();
 
 	}
 
@@ -192,6 +204,7 @@ public class MainActivity extends FragmentActivity {
 	 * */
 	private void displayView(int position) {
 		// update the main content by replacing fragments
+
 		Fragment fragment = null;
 		switch (position) {
 		case 0:
@@ -211,11 +224,11 @@ public class MainActivity extends FragmentActivity {
 		}
 
 		if (fragment != null) {
+
 			FragmentManager fragmentManager = getSupportFragmentManager();
 			fragmentManager.beginTransaction()
 					.replace(R.id.frame_container, fragment)
-					 .addToBackStack(null)
-					.commit();
+					.addToBackStack(null).commit();
 
 			// update selected item and title, then close the drawer
 			mDrawerList.setItemChecked(position, true);
@@ -228,29 +241,101 @@ public class MainActivity extends FragmentActivity {
 		}
 	}
 
-	public void startDeviceFragment() {
-		FragmentManager fragmentManager = getSupportFragmentManager();
-		fragmentManager.beginTransaction()
-				.replace(R.id.frame_container, new DeviceFragment())
-				.commit();
+	public void startDeviceFragment(boolean putInStack) {
+
+		if (putInStack) {
+
+			FragmentManager fragmentManager = getSupportFragmentManager();
+			fragmentManager.beginTransaction()
+					.replace(R.id.frame_container, new DeviceFragment())
+					.addToBackStack(null).commit();
+
+		} else {
+
+			FragmentManager fragmentManager = getSupportFragmentManager();
+			fragmentManager.beginTransaction()
+					.replace(R.id.frame_container, new DeviceFragment())
+					.commit();
+		}
+
 	}
 
-	public void receiveScannedDevice(Device d){
-		
-		if(d == null){
-			
-			//TODO toast
-			
-		} else {
-			
-			selectedDevice = d;
-			startDeviceFragment();
-			
+	public void onListUpdateFinished() {
+
+		switch (updateAction) {
+		case GO_TO_HOME:
+			returnToHome();
+			break;
+		case OPEN_DEVICE:
+			selectAndShowDevice(newDeviceImei);
+			break;
+		default:
+			break;
+
 		}
-		
+
 	}
-	
-	private void fetchDevices() {
+
+	public void onScanFinished(String result) {
+
+		switch (scanAction) {
+		case OPEN_DEVICE: {
+			selectAndShowDevice(result);
+			break;
+		}
+
+		case SET_IMEI_FILED:
+			break;
+		default:
+			break;
+
+		}
+
+	}
+
+	private void selectAndShowDevice(String imei) {
+		Device d = getDeviceFromImei(imei);
+
+		if (d != null) {
+
+			selectedDevice = d;
+			startDeviceFragment(false);
+		} else {
+
+			// TODO toast
+		}
+
+	}
+
+	private Device getDeviceFromImei(String result) {
+
+		List<Device> available = getAvailableDevices();
+
+		for (Device d : available) {
+
+			if (d.getImei().equals(result)) {
+
+				return d;
+			}
+
+		}
+
+		List<Device> rented = getRentedDevices();
+
+		for (Device d : rented) {
+
+			if (d.getImei().equals(result)) {
+
+				return d;
+			}
+
+		}
+
+		return null;
+
+	}
+
+	public void updateDevices() {
 
 		service.getAvailableDevices(new Callback<List<Device>>() {
 
@@ -273,14 +358,13 @@ public class MainActivity extends FragmentActivity {
 
 	private void fetchRentedDevices() {
 
-		// TODO change this
-		service.getAllDevices(new Callback<List<Device>>() {
+		service.getRentedDevices(new Callback<List<Device>>() {
 
 			@Override
 			public void onSuccess(List<Device> result) {
 
 				rentedDevices = result;
-				displayView(0);
+				onListUpdateFinished();
 			}
 
 			@Override
@@ -290,6 +374,15 @@ public class MainActivity extends FragmentActivity {
 			}
 
 		});
+
+	}
+
+	public void clearFragmentStack() {
+
+		FragmentManager fm = this.getSupportFragmentManager();
+		for (int i = 0; i < fm.getBackStackEntryCount(); ++i) {
+			fm.popBackStack();
+		}
 
 	}
 
@@ -345,6 +438,20 @@ public class MainActivity extends FragmentActivity {
 		getActionBar().setTitle(mTitle);
 	}
 
+	public void returnToHome() {
+
+		FragmentManager manager = getSupportFragmentManager();
+		if (manager.getBackStackEntryCount() > 0) {
+			FragmentManager.BackStackEntry first = manager
+					.getBackStackEntryAt(0);
+			manager.popBackStack(first.getId(),
+					FragmentManager.POP_BACK_STACK_INCLUSIVE);
+		}
+
+		displayView(0);
+
+	}
+
 	/**
 	 * When using the ActionBarDrawerToggle, you must call it during
 	 * onPostCreate() and onConfigurationChanged()...
@@ -366,19 +473,32 @@ public class MainActivity extends FragmentActivity {
 
 	@Override
 	public void onBackPressed() {
-		/*
-		 * new AlertDialog.Builder(this)
-		 * .setMessage("Are you sure you want to exit?")
-		 * .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-		 * 
-		 * @Override public void onClick(DialogInterface dialog, int which) {
-		 * MainActivity.super.onBackPressed(); } }) .setNegativeButton("No",
-		 * null) .show();
-		 */
-		if (getSupportFragmentManager().getBackStackEntryCount() < 1)
-			mDrawerLayout.openDrawer(mDrawerList);
-		else
+
+		Fragment f = getSupportFragmentManager().findFragmentById(
+				R.id.frame_container);
+
+		if (f instanceof DeviceFragment || f instanceof RentConfirmFragment || f instanceof ReturnConfirmFragment) {
+
+			returnToHome();
+			return;
+
+		}
+
+		if (getSupportFragmentManager().getBackStackEntryCount() == 1) {
+
+			if (f instanceof HomeFragment) {
+				// don't do anything if the current fragment is the
+				mDrawerLayout.openDrawer(mDrawerList);
+			} else {
+
+				returnToHome();
+
+			}
+
+		} else {
+
 			MainActivity.super.onBackPressed();
+		}
 
 	}
 

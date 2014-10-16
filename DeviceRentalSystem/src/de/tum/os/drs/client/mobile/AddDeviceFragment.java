@@ -16,6 +16,7 @@ import android.widget.Toast;
 import de.tum.os.drs.client.mobile.communication.Callback;
 import de.tum.os.drs.client.mobile.communication.RentalService;
 import de.tum.os.drs.client.mobile.communication.RentalServiceImpl;
+import de.tum.os.drs.client.mobile.model.AfterDeviceUpdateAction;
 import de.tum.os.drs.client.mobile.model.Device;
 import de.tum.os.drs.client.mobile.model.DeviceType;
 
@@ -56,66 +57,71 @@ public class AddDeviceFragment extends Fragment {
 
 			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				if (deviceSerial.getText().length() == 0)
+				if (deviceSerial.getText().length() == 0) {
+
 					Toast.makeText(getActivity(),
 							"Device serial can not be empty",
 							Toast.LENGTH_SHORT).show();
-				else
+				} else {
 					addDevice();
+				}
+
 			}
 
-			private void addDevice() {
-				// TODO Auto-generated method stub
-				// Toast.makeText(getActivity(), deviceSerial.getText() ,
-				// Toast.LENGTH_SHORT).show();
-
-				s_deviceSerial = (deviceSerial.getText().length() == 0) ? null
-						: deviceSerial.getText().toString();
-				s_deviceDesc = (deviceDetails.getText().length() == 0) ? null
-						: deviceDetails.getText().toString();
-				s_deviceName = (deviceName.getText().length() == 0) ? null
-						: deviceName.getText().toString();
-				Device device = new Device(s_deviceSerial, s_deviceName,
-						s_deviceDesc, deviceState.getSelectedItem().toString(),
-						DeviceType.valueOf(DeviceType.class, deviceType
-								.getSelectedItem().toString()), null, true);
-
-				RentalService service = RentalServiceImpl.getInstance();
-				service.addDevice(device, new Callback<String>() {
-
-					@Override
-					public void onSuccess(String result) {
-						// TODO Auto-generated method stub
-						Log.d("adddevice", "success");
-						Toast.makeText(getActivity(), result,
-								Toast.LENGTH_SHORT).show();
-						MainActivity temp = (MainActivity) getActivity();
-						// temp.mSelectedDeviceImei = s_deviceSerial;
-						final FragmentTransaction ft2 = getFragmentManager()
-								.beginTransaction();
-						ft2.replace(R.id.frame_container, new DeviceFragment(),
-								"NewFragmentTag");
-						ft2.commit();
-					}
-
-					@Override
-					public void onFailure(int code, String error) {
-
-						Log.d("adddevice", "failure");
-						Toast.makeText(getActivity(), error, Toast.LENGTH_SHORT)
-								.show();
-
-						if (code == 401) {
-							((MainActivity) getActivity()).sessionExpired();
-						}
-
-					}
-				});
-			}
 		});
 
 		return rootView;
+	}
+
+	private void addDevice() {
+
+		s_deviceSerial = (deviceSerial.getText().length() == 0) ? null
+				: deviceSerial.getText().toString();
+		s_deviceDesc = (deviceDetails.getText().length() == 0) ? null
+				: deviceDetails.getText().toString();
+		s_deviceName = (deviceName.getText().length() == 0) ? null : deviceName
+				.getText().toString();
+
+		// Create device object with the provided parameters
+		Device device = new Device(s_deviceSerial, s_deviceName, s_deviceDesc,
+				deviceState.getSelectedItem().toString(), DeviceType.valueOf(
+						DeviceType.class, deviceType.getSelectedItem()
+								.toString()), null, true);
+
+		// Send the new device to the server
+		RentalService service = RentalServiceImpl.getInstance();
+		service.addDevice(device, new Callback<String>() {
+
+			@Override
+			public void onSuccess(String result) {
+
+				Toast.makeText(getActivity(), result, Toast.LENGTH_SHORT)
+						.show();
+
+				onFinished();
+
+			}
+
+			@Override
+			public void onFailure(int code, String error) {
+
+				Log.d("adddevice", "failure");
+				Toast.makeText(getActivity(), error, Toast.LENGTH_SHORT).show();
+
+				if (code == 401) {
+					((MainActivity) getActivity()).sessionExpired();
+				}
+
+			}
+		});
+	}
+
+	private void onFinished() {
+		MainActivity activity = (MainActivity) getActivity();
+		activity.newDeviceImei = s_deviceSerial;
+		activity.updateAction = AfterDeviceUpdateAction.OPEN_DEVICE;
+		activity.updateDevices();
+		
 	}
 
 }

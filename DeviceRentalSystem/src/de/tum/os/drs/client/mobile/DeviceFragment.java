@@ -53,11 +53,10 @@ public class DeviceFragment extends Fragment {
 		updateButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				// _main.mSelectedDeviceImei = imei;
+				
 				final FragmentTransaction ft = getFragmentManager()
 						.beginTransaction();
-				ft.replace(R.id.frame_container, new EditDeviceFragment(),
-						"NewFragmentTag");
+				ft.replace(R.id.frame_container, new EditDeviceFragment());
 				ft.addToBackStack(null);
 				ft.commit();
 			}
@@ -67,7 +66,6 @@ public class DeviceFragment extends Fragment {
 		rentButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-
 				final FragmentTransaction ft = getFragmentManager()
 						.beginTransaction();
 				ft.replace(R.id.frame_container, new RenterSelectionFragment(),
@@ -83,7 +81,6 @@ public class DeviceFragment extends Fragment {
 			public void onClick(View v) {
 				
 				activity.rentingSignature = false;
-
 				final FragmentTransaction ft = getFragmentManager()
 						.beginTransaction();
 				ft.replace(R.id.frame_container, new SignatureFragment());

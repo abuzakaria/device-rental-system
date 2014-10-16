@@ -92,7 +92,7 @@
             android:id="@+id/editdevice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/devicestate"
+            android:layout_below="@id/returnDate"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="48dp"
             android:text="Update!" />
