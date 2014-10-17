@@ -8,19 +8,23 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:orientation="vertical"
+        android:gravity="center"
         android:visibility="gone" >
 
         <Button
             android:id="@+id/googleLogin"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Google" />
+            android:text="Google" 
+            android:background="@drawable/buttonshape"
+            android:layout_marginBottom="40px"/>
         
          <Button
             android:id="@+id/facebookLogin"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Facebook" />
+            android:text="Facebook" 
+            android:background="@drawable/buttonshape"/>
     </LinearLayout>
 
     <WebView
