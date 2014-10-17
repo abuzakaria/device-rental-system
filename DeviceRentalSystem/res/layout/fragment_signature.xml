@@ -1,21 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content" >
-
-    <RelativeLayout
-        android:id="@+id/signature_pad_container"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent" >
-
-        <src.com.github.gcacace.signaturepad.views.SignaturePad
-            xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:app="http://schemas.android.com/apk/res-auto"
-            android:id="@+id/signature_pad"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-    </RelativeLayout>
-
+    
     <LinearLayout
         android:id="@+id/signature_buttons_container"
         android:layout_width="fill_parent"
@@ -40,4 +27,13 @@
             android:text="Save Signature" />
     </LinearLayout>
 
-</FrameLayout>
+
+    <src.com.github.gcacace.signaturepad.views.SignaturePad
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/signature_pad"
+        android:layout_below="@+id/signature_buttons_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+</RelativeLayout>
