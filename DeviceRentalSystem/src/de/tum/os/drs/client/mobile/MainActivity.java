@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.os.Bundle;
@@ -133,6 +134,10 @@ public class MainActivity extends FragmentActivity {
 		mDrawerLayout.setDrawerListener(mDrawerToggle);
 
 		setTitle(R.string.app_name);
+		SharedPreferences prefs = getSharedPreferences("Rental_pref", MODE_PRIVATE);
+		String url = prefs.getString("BASE_URL", null);
+		if(url!=null)
+			RentalServiceImpl.BASE_URL = url;
 		store = new CredentialStore(
 				PreferenceManager.getDefaultSharedPreferences(this));
 
@@ -215,6 +220,9 @@ public class MainActivity extends FragmentActivity {
 		case 3:
 			logout();
 			break;
+		case 4:
+            System.exit(1);
+            
 		default:
 			break;
 		}
