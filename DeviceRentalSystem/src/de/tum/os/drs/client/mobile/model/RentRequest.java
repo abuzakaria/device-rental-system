@@ -3,7 +3,7 @@ package de.tum.os.drs.client.mobile.model;
 import java.util.Date;
 import java.util.List;
 
-import de.tum.os.drs.client.parsers.GsonHelper;
+import de.tum.os.drs.client.mobile.parsers.GsonHelper;
 
 public class RentRequest {
 

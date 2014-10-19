@@ -1,4 +1,4 @@
-package de.tum.os.drs.client.mobile;
+package de.tum.os.drs.client.mobile.adapters;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +12,9 @@ import android.widget.ArrayAdapter;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;
+import de.tum.os.drs.client.mobile.R;
+import de.tum.os.drs.client.mobile.R.id;
+import de.tum.os.drs.client.mobile.R.layout;
 import de.tum.os.drs.client.mobile.model.Renter;
 
 public class RentersListAdapter extends ArrayAdapter<Renter> implements

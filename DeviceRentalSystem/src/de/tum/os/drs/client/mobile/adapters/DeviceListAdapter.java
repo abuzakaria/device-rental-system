@@ -1,4 +1,4 @@
-package de.tum.os.drs.client.mobile;
+package de.tum.os.drs.client.mobile.adapters;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,16 +13,20 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
+import de.tum.os.drs.client.mobile.MainActivity;
+import de.tum.os.drs.client.mobile.R;
+import de.tum.os.drs.client.mobile.R.id;
+import de.tum.os.drs.client.mobile.R.layout;
 import de.tum.os.drs.client.mobile.model.Device;
 
 public class DeviceListAdapter extends ArrayAdapter<Device> implements
 		Filterable {
 
 	private List<Device> list;
-	private Context context;
+	private MainActivity context;
 	private List<Device> original;
 
-	public DeviceListAdapter(Context context, List<Device> objects) {
+	public DeviceListAdapter(MainActivity context, List<Device> objects) {
 		super(context, R.layout.device_list_item, objects);
 
 		list = new ArrayList<Device>(objects);
@@ -44,8 +48,8 @@ public class DeviceListAdapter extends ArrayAdapter<Device> implements
 		name.setText(list.get(position).getName());
 		imei.setText(list.get(position).getImei());
 
-		// TODO set image
-
+		imageView.setImageResource(context.getDeviceImage(list.get(position).getName()));
+		
 		return rowView;
 	}
 

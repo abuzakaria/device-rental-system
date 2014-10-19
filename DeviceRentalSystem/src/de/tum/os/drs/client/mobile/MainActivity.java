@@ -1,6 +1,7 @@
 package de.tum.os.drs.client.mobile;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import android.content.Intent;
@@ -20,7 +21,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
-import de.tum.os.drs.client.mobile.adapter.NavDrawerListAdapter;
+import de.tum.os.drs.client.mobile.adapters.NavDrawerListAdapter;
 import de.tum.os.drs.client.mobile.communication.Callback;
 import de.tum.os.drs.client.mobile.communication.RentalService;
 import de.tum.os.drs.client.mobile.communication.RentalServiceImpl;
@@ -48,19 +49,13 @@ public class MainActivity extends FragmentActivity {
 	// The currently selected device and renter
 	public Device selectedDevice;
 	public Renter selectedRenter;
-	
+
 	public String scanResult;
 
 	// The serialized signature as a string
 	public String signature;
 
 	public boolean rentingSignature;
-
-	// nav drawer title
-	public CharSequence mDrawerTitle;
-
-	// used to store app title
-	private CharSequence mTitle;
 
 	// slide menu items
 	private String[] navMenuTitles;
@@ -82,8 +77,6 @@ public class MainActivity extends FragmentActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-
-		mTitle = mDrawerTitle = getTitle();
 
 		// load slide menu items
 		navMenuTitles = getResources().getStringArray(R.array.nav_drawer_items);
@@ -126,13 +119,13 @@ public class MainActivity extends FragmentActivity {
 									// accessibility
 		) {
 			public void onDrawerClosed(View view) {
-				getActionBar().setTitle(mTitle);
+
 				// calling onPrepareOptionsMenu() to show action bar icons
 				invalidateOptionsMenu();
 			}
 
 			public void onDrawerOpened(View drawerView) {
-				getActionBar().setTitle(mDrawerTitle);
+
 				// calling onPrepareOptionsMenu() to hide action bar icons
 				invalidateOptionsMenu();
 			}
@@ -227,6 +220,14 @@ public class MainActivity extends FragmentActivity {
 		}
 
 		if (fragment != null) {
+			
+			FragmentManager manager = getSupportFragmentManager();
+			if (manager.getBackStackEntryCount() > 0) {
+				FragmentManager.BackStackEntry first = manager
+						.getBackStackEntryAt(0);
+				manager.popBackStack(first.getId(),
+						FragmentManager.POP_BACK_STACK_INCLUSIVE);
+			}
 
 			FragmentManager fragmentManager = getSupportFragmentManager();
 			fragmentManager.beginTransaction()
@@ -276,7 +277,7 @@ public class MainActivity extends FragmentActivity {
 			break;
 
 		}
-		
+
 		updateAction = null;
 
 	}
@@ -297,7 +298,7 @@ public class MainActivity extends FragmentActivity {
 			break;
 
 		}
-		
+
 		scanAction = null;
 
 	}
@@ -441,14 +442,15 @@ public class MainActivity extends FragmentActivity {
 		startAuthenticationActivity();
 	}
 
-	@Override
-	public void setTitle(CharSequence title) {
-		mTitle = title;
-		getActionBar().setTitle(mTitle);
-	}
-
 	public void returnToHome() {
 
+		clearStack();
+
+		displayView(0);
+
+	}
+
+	private void clearStack() {
 		FragmentManager manager = getSupportFragmentManager();
 		if (manager.getBackStackEntryCount() > 0) {
 			FragmentManager.BackStackEntry first = manager
@@ -456,8 +458,6 @@ public class MainActivity extends FragmentActivity {
 			manager.popBackStack(first.getId(),
 					FragmentManager.POP_BACK_STACK_INCLUSIVE);
 		}
-
-		displayView(0);
 
 	}
 
@@ -486,7 +486,8 @@ public class MainActivity extends FragmentActivity {
 		Fragment f = getSupportFragmentManager().findFragmentById(
 				R.id.frame_container);
 
-		if (f instanceof DeviceFragment || f instanceof RentConfirmFragment || f instanceof ReturnConfirmFragment) {
+		if (f instanceof DeviceFragment || f instanceof RentConfirmFragment
+				|| f instanceof ReturnConfirmFragment) {
 
 			returnToHome();
 			return;
@@ -516,5 +517,43 @@ public class MainActivity extends FragmentActivity {
 		toast.show();
 
 	}
+	
+	
+	public int getDeviceImage(String name){
+		
+		int r = unknown_device_picture;
+		
+		if(name == null){
+			
+			return r;
+		}
+		
+		String lower = name.toLowerCase().toString();
+		
+		
+		if(deviceNameToImageNameMap.containsKey(lower)){
+			r = deviceNameToImageNameMap.get(lower);
+			
+		}
+		
+		return r;
+		
+	}
+	
+	private int unknown_device_picture = R.drawable.ic_launcher; 
+	private HashMap<String, Integer> deviceNameToImageNameMap = new HashMap<String, Integer>() {
+		private static final long serialVersionUID = -4645423715285941470L;
+		{
+			put("nexus one", R.drawable.nexus_one);
+			put("nexus s", R.drawable.nexus_s);
+			put("galaxy nexus", R.drawable.galaxy_nexus);
+			put("nexus 4", R.drawable.nexus_4);
+			put("nexus 7", R.drawable.nexus_7);
+			put("htc one", R.drawable.htc_one);
+			put("htc one x", R.drawable.htc_one_x);
+			put("htc one x+", R.drawable.htc_one_x_plus);
+			put("nexus 10", R.drawable.nexus_10);
+		}
+	};
 
 }

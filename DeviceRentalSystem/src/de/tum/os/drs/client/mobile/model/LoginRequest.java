@@ -1,7 +1,7 @@
 package de.tum.os.drs.client.mobile.model;
 
 import de.tum.os.drs.client.mobile.authentication.Authenticator;
-import de.tum.os.drs.client.parsers.GsonHelper;
+import de.tum.os.drs.client.mobile.parsers.GsonHelper;
 
 public class LoginRequest {
 

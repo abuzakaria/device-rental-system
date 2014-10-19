@@ -11,12 +11,12 @@ import de.tum.os.drs.client.mobile.model.LoginResponse;
 import de.tum.os.drs.client.mobile.model.RentRequest;
 import de.tum.os.drs.client.mobile.model.Renter;
 import de.tum.os.drs.client.mobile.model.ReturnRequest;
-import de.tum.os.drs.client.parsers.GenericPOSTMethodParser;
-import de.tum.os.drs.client.parsers.ListDevicesParser;
-import de.tum.os.drs.client.parsers.ListRentersParser;
-import de.tum.os.drs.client.parsers.LoginResponseParser;
-import de.tum.os.drs.client.parsers.ServerRequestCallback;
-import de.tum.os.drs.client.parsers.SingleDeviceParser;
+import de.tum.os.drs.client.mobile.parsers.GenericPOSTMethodParser;
+import de.tum.os.drs.client.mobile.parsers.ListDevicesParser;
+import de.tum.os.drs.client.mobile.parsers.ListRentersParser;
+import de.tum.os.drs.client.mobile.parsers.LoginResponseParser;
+import de.tum.os.drs.client.mobile.parsers.ServerRequestCallback;
+import de.tum.os.drs.client.mobile.parsers.SingleDeviceParser;
 
 public class RentalServiceImpl implements RentalService {
 

@@ -10,17 +10,11 @@ import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
 import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.KeyManager;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
@@ -44,7 +38,6 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 import de.tum.os.drs.client.mobile.authentication.Authenticator;
-import de.tum.os.drs.client.mobile.authentication.DefaultTrustManager;
 import de.tum.os.drs.client.mobile.authentication.SessionManager;
 import de.tum.os.drs.client.mobile.communication.Callback;
 import de.tum.os.drs.client.mobile.communication.RentalService;

@@ -28,7 +28,7 @@ import org.json.JSONObject;
 
 import android.os.AsyncTask;
 import android.util.Log;
-import de.tum.os.drs.client.parsers.ServerRequestCallback;
+import de.tum.os.drs.client.mobile.parsers.ServerRequestCallback;
 
 public class ServerCommunication extends
 		AsyncTask<ServerRequest, Void, ServerResponse> {

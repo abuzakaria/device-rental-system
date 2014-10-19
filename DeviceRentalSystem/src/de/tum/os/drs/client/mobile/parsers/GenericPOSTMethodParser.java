@@ -1,4 +1,4 @@
-package de.tum.os.drs.client.parsers;
+package de.tum.os.drs.client.mobile.parsers;
 
 import org.json.JSONException;
 import org.json.JSONObject;

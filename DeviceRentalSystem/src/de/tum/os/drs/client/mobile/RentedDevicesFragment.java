@@ -11,6 +11,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
+import de.tum.os.drs.client.mobile.adapters.DeviceListAdapter;
 import de.tum.os.drs.client.mobile.model.Device;
 
 public class RentedDevicesFragment extends Fragment {

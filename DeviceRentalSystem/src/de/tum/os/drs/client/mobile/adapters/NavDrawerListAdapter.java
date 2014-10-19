@@ -1,4 +1,4 @@
-package de.tum.os.drs.client.mobile.adapter;
+package de.tum.os.drs.client.mobile.adapters;
 
 import java.util.ArrayList;
 

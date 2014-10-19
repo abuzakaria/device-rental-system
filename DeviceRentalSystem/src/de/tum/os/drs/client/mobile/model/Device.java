@@ -4,7 +4,7 @@ import java.util.Date;
 
 import com.google.gson.annotations.SerializedName;
 
-import de.tum.os.drs.client.parsers.GsonHelper;
+import de.tum.os.drs.client.mobile.parsers.GsonHelper;
 
 public class Device {
 

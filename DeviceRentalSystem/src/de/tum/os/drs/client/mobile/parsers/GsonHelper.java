@@ -1,4 +1,4 @@
-package de.tum.os.drs.client.parsers;
+package de.tum.os.drs.client.mobile.parsers;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
