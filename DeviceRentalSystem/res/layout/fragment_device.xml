@@ -1,65 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ScrollView01"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
 
-    <ImageView
-        android:id="@+id/deviceImage"
-        android:layout_width="100dip"
-        android:layout_height="100dip"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_margin="15dp"
-        android:src="@drawable/ic_rent" />
-
-    <TextView
-        android:id="@+id/deviceDump"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/deviceImage"
-        android:layout_centerHorizontal="true"
-        android:layout_margin="15dp"
-        android:background="@drawable/border"
-        android:padding="10dp" />
+        android:layout_height="wrap_content" >
 
-    <TextView
-        android:id="@+id/renterDumpDevice"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/deviceDump"
-        android:layout_centerHorizontal="true"
-        android:layout_margin="15dp"
-        android:background="@drawable/border"
-        android:padding="10dp"
-        android:visibility="gone" />
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/renterDumpDevice"
-        android:layout_centerHorizontal="true"
-        android:orientation="horizontal"
-        android:paddingTop="16dp" >
-
-        <Button
-            android:id="@+id/editDevice"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/edit_btn" />
-
-        <Button
-            android:id="@+id/rentDevice"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Rent"
-            android:visibility="gone" />
-
-        <Button
-            android:id="@+id/returnDevice"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Return"
-            android:visibility="gone" />
-    </LinearLayout>
-
-</RelativeLayout>
+	    <ImageView
+	        android:id="@+id/deviceImage"
+	        android:layout_width="100dip"
+	        android:layout_height="100dip"
+	        android:layout_alignParentTop="true"
+	        android:layout_centerHorizontal="true"
+	        android:layout_margin="15dp"
+	        android:src="@drawable/ic_rent" />
+	
+	    <TextView
+	        android:id="@+id/deviceDump"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_below="@id/deviceImage"
+	        android:layout_centerHorizontal="true"
+	        android:layout_margin="15dp"
+	        android:background="@drawable/border"
+	        android:padding="10dp" />
+	
+	    <TextView
+	        android:id="@+id/renterDumpDevice"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_below="@id/deviceDump"
+	        android:layout_centerHorizontal="true"
+	        android:layout_margin="15dp"
+	        android:background="@drawable/border"
+	        android:padding="10dp"
+	        android:visibility="gone" />
+	
+	    <LinearLayout
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_below="@id/renterDumpDevice"
+	        android:layout_centerHorizontal="true"
+	        android:orientation="horizontal"
+	        android:paddingTop="16dp" >
+	
+	        <Button
+	            android:id="@+id/editDevice"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:text="@string/edit_btn" 
+	            android:layout_margin="20dip"/>
+	
+	        <Button
+	            android:id="@+id/rentDevice"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:text="Rent"
+	            android:visibility="gone" 
+	            android:layout_margin="20dip"/>
+	
+	        <Button
+	            android:id="@+id/returnDevice"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:text="Return"
+	            android:visibility="gone" 
+	            android:layout_margin="20dip"/>
+	    </LinearLayout>
+	
+	</RelativeLayout>
+</ScrollView>

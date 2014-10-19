@@ -34,6 +34,7 @@ public class AddRenterFragment extends Fragment {
 		super.onCreateView(inflater, container, savedInstanceState);
 		View rootView = inflater.inflate(R.layout.fragment_add_renter,
 				container, false);
+		getActivity().setTitle("Add renter");
 
 		name = (EditText) rootView.findViewById(R.id.renterNameAdd);
 		matrNr = (EditText) rootView.findViewById(R.id.mtrNrAdd);

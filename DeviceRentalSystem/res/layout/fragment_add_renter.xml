@@ -12,6 +12,7 @@
 
         <EditText
             android:id="@+id/renterNameAdd"
+            android:inputType="textCapWords"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="20dip"
@@ -20,42 +21,42 @@
 
         <EditText
             android:id="@+id/mtrNrAdd"
+            android:inputType="number"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="20dip"
             android:ems="10"
-            android:hint="Matr. Number"
-            android:inputType="textMultiLine" >
+            android:hint="Matr. Number">
         </EditText>
 
         <EditText
             android:id="@+id/emailAdd"
+            android:inputType="textWebEmailAddress"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="20dip"
             android:ems="10"
-            android:hint="Email"
-            android:inputType="textMultiLine" >
+            android:hint="Email">
         </EditText>
 
         <EditText
             android:id="@+id/phoneNrAdd"
+            android:inputType="phone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="20dip"
             android:ems="10"
-            android:hint="Phone Nr."
-            android:inputType="textMultiLine" >
+            android:hint="Phone Nr.">
         </EditText>
 
         <EditText
             android:id="@+id/renterCommentsAdd"
+            android:inputType="text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="20dip"
             android:ems="10"
-            android:hint="Comments"
-            android:inputType="textMultiLine" >
+            android:hint="Comments">
         </EditText>
 
         <Button
