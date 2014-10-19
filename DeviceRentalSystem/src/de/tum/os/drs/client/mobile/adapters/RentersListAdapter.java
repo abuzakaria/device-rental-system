@@ -13,8 +13,6 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;
 import de.tum.os.drs.client.mobile.R;
-import de.tum.os.drs.client.mobile.R.id;
-import de.tum.os.drs.client.mobile.R.layout;
 import de.tum.os.drs.client.mobile.model.Renter;
 
 public class RentersListAdapter extends ArrayAdapter<Renter> implements
@@ -22,11 +20,13 @@ public class RentersListAdapter extends ArrayAdapter<Renter> implements
 
 	private List<Renter> list;
 	private Context context;
+	private List<Renter> original;
 
 	public RentersListAdapter(Context context, List<Renter> objects) {
 		super(context, android.R.layout.simple_list_item_1, objects);
 
-		list = objects;
+		list = new ArrayList<Renter>(objects);
+		original = new ArrayList<Renter>(objects);
 		this.context = context;
 	}
 
@@ -44,6 +44,11 @@ public class RentersListAdapter extends ArrayAdapter<Renter> implements
 	}
 
 	@Override
+	public Renter getItem(int position) {
+		return list.get(position);
+	}
+	
+	@Override
 	public int getCount() {
 		return list.size();
 	}
@@ -60,34 +65,42 @@ public class RentersListAdapter extends ArrayAdapter<Renter> implements
 			FilterResults filterResults = new FilterResults();
 			ArrayList<Renter> tempList = new ArrayList<Renter>();
 
-			if (constraint != null && list != null) {
+			String lower = constraint.toString().toLowerCase();
 
-				int length = list.size();
-				int i = 0;
-				while (i < length) {
-					Renter item = list.get(i);
-					// do whatever you wanna do here
-					// adding result set output array
+			if (lower == null || lower.isEmpty()) {
+				filterResults.values = original;
+				filterResults.count = original.size();
+				
+			} else {
 
-					String lower = constraint.toString().toLowerCase();
+				if (list != null) {
 
-					if (item.getName() != null
-							&& item.getName().toLowerCase().contains(lower)) {
-						tempList.add(item);
+					int length = list.size();
+					int i = 0;
+					while (i < length) {
+						Renter item = list.get(i);
+						// do whatever you wanna do here
+						// adding result set output array
+
+						if (item.getName() != null
+								&& item.getName().toLowerCase().contains(lower)) {
+							tempList.add(item);
+						}
+
+						i++;
 					}
+					// following two lines is very important
+					// as publish result can only take FilterResults objects
+					filterResults.values = tempList;
+					filterResults.count = tempList.size();
 
-					i++;
 				}
-				// following two lines is very important
-				// as publish result can only take FilterResults objects
-				filterResults.values = tempList;
-				filterResults.count = tempList.size();
 
-				Log.i("Test", "Count: " + tempList.size());
 			}
+
 			return filterResults;
 		}
-
+		
 		@SuppressWarnings("unchecked")
 		@Override
 		protected void publishResults(CharSequence contraint,

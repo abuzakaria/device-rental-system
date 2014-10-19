@@ -21,6 +21,7 @@ import android.widget.TextView;
 import de.tum.os.drs.client.mobile.communication.Callback;
 import de.tum.os.drs.client.mobile.communication.RentalService;
 import de.tum.os.drs.client.mobile.communication.RentalServiceImpl;
+import de.tum.os.drs.client.mobile.model.AfterDeviceUpdateAction;
 import de.tum.os.drs.client.mobile.model.Device;
 import de.tum.os.drs.client.mobile.model.RentRequest;
 import de.tum.os.drs.client.mobile.model.Renter;
@@ -58,9 +59,7 @@ public class RentConfirmFragment extends Fragment {
 
 			@Override
 			public void onClick(View v) {
-				//rentDevice();
-				returnToHome();
-
+				rentDevice();
 			}
 
 		});
@@ -71,7 +70,7 @@ public class RentConfirmFragment extends Fragment {
 	}
 
 	private void rentDevice() {
-		
+
 		if (activity.signature == null || activity.selectedRenter == null
 				|| activity.selectedDevice == null) {
 
@@ -96,16 +95,16 @@ public class RentConfirmFragment extends Fragment {
 			@Override
 			public void onSuccess(String result) {
 
-				Log.i("Test", result);
-				// TODO toast
-				returnToHome();
+				activity.showToast(result);
+
+				activity.updateAction = AfterDeviceUpdateAction.GO_TO_HOME;
+				activity.updateDevices();
+
 			}
 
 			@Override
 			public void onFailure(int code, String error) {
-				//TODO toast
-				
-				returnToHome();
+				activity.showToast(error);
 
 			}
 

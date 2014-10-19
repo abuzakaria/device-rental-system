@@ -424,6 +424,21 @@ public class AuthenticationActivity extends Activity {
 		Intent in = new Intent(getApplicationContext(), MainActivity.class);
 		startActivity(in);
 	}
+	
+	@Override
+	public void onBackPressed() {
+		
+		if(mWebView.getVisibility() == View.VISIBLE){
+			
+			showLoginOptions();
+			mWebView.loadUrl("about:blank");
+			
+			
+		}else {
+			super.onBackPressed();
+		}
+	}
+
 
 	private String getAuthorizationURL(Authenticator auth) {
 

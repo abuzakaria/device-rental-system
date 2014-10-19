@@ -28,6 +28,7 @@ public class DeviceFragment extends Fragment {
 	private Button returnButton;
 	private ImageView deviceImage;
 	private TextView devicedump;
+	private TextView renterDump;
 	private Renter renter;
 	private Device device;
 	private RentalService service;
@@ -41,6 +42,7 @@ public class DeviceFragment extends Fragment {
 				false);
 
 		devicedump = (TextView) rootView.findViewById(R.id.deviceDump);
+		renterDump = (TextView) rootView.findViewById(R.id.renterDumpDevice);
 		updateButton = (Button) rootView.findViewById(R.id.editDevice);
 		deviceImage = (ImageView) rootView.findViewById(R.id.deviceImage);
 		service = RentalServiceImpl.getInstance();
@@ -53,7 +55,7 @@ public class DeviceFragment extends Fragment {
 		updateButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				
+
 				final FragmentTransaction ft = getFragmentManager()
 						.beginTransaction();
 				ft.replace(R.id.frame_container, new EditDeviceFragment());
@@ -79,7 +81,7 @@ public class DeviceFragment extends Fragment {
 		returnButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				
+
 				activity.rentingSignature = false;
 				final FragmentTransaction ft = getFragmentManager()
 						.beginTransaction();
@@ -93,8 +95,9 @@ public class DeviceFragment extends Fragment {
 			rentButton.setVisibility(View.VISIBLE);
 		} else {
 			returnButton.setVisibility(View.VISIBLE);
+			renterDump.setVisibility(View.VISIBLE);
 		}
-		
+
 		showDeviceDetails();
 
 		return rootView;
@@ -104,14 +107,15 @@ public class DeviceFragment extends Fragment {
 
 		if (device != null) {
 
+			fillDeviceTextDetails();
+			
+			deviceImage.setImageResource(activity.getDeviceImage(device
+					.getName()));
+
 			if (!device.isAvailable()) {
 
 				setRenter();
 			}
-
-			// TODO set image
-
-			fillDeviceTextDetails();
 
 		} else {
 
@@ -133,9 +137,11 @@ public class DeviceFragment extends Fragment {
 					for (String d : r.getRentedDevices()) {
 						if (d.trim().equals(device.getImei())) {
 							renter = r;
-							Log.i("Test", "Renter found");
+							//Used by confirmation fragment
 							activity.selectedRenter = r;
-							break;
+							Log.i("Test", "Renter found");
+							showRenterDetails();
+							return;
 						}
 					}
 				}
@@ -154,10 +160,10 @@ public class DeviceFragment extends Fragment {
 		temp += device.getImei() == null ? "<None>" : device.getImei();
 		temp += "\n";
 
-		temp += "Description: ";
+		temp += "Description: \n";
 		temp += device.getDescription() == null ? "<None>" : device
 				.getDescription();
-		temp += "\n";
+		temp += "\n\n";
 
 		temp += "Type: ";
 		temp += device.getDeviceType() == null ? "<None>" : device
@@ -171,6 +177,13 @@ public class DeviceFragment extends Fragment {
 		temp += "Availabilty: ";
 		temp += device.isAvailable() ? "Available" : "Unavailable";
 		temp += "\n";
+
+		devicedump.setText(temp);
+	}
+
+	private void showRenterDetails() {
+
+		String temp = "";
 
 		if (renter != null) {
 			temp += "Renter: ";
@@ -187,7 +200,8 @@ public class DeviceFragment extends Fragment {
 			temp += "\n";
 		}
 
-		devicedump.setText(temp);
+		renterDump.setText(temp);
+
 	}
 
 }

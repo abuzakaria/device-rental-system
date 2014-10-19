@@ -36,11 +36,6 @@ public class Device {
 	DeviceType deviceType;
 
 	/**
-	 * Stores the name of a picture of the device.
-	 */
-	// String pictureName;
-
-	/**
 	 * False if the device was rented and not yet brought back. True otherwise.
 	 */
 	Boolean isAvailable = true;

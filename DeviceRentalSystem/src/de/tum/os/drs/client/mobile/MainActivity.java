@@ -284,6 +284,8 @@ public class MainActivity extends FragmentActivity {
 
 	public void onScanFinished(String result) {
 
+		Log.i(TAG, "Scan result:" + result);
+		
 		switch (scanAction) {
 		case OPEN_DEVICE: {
 			selectAndShowDevice(result);
@@ -312,7 +314,9 @@ public class MainActivity extends FragmentActivity {
 			startDeviceFragment(false);
 		} else {
 
-			// TODO toast
+			this.getSupportFragmentManager().popBackStack();
+			showToast("The scanned device could not be found");
+			returnToHome();
 		}
 
 	}
@@ -512,7 +516,7 @@ public class MainActivity extends FragmentActivity {
 
 	}
 
-	private void showToast(String text) {
+	public void showToast(String text) {
 		Toast toast = Toast.makeText(this, text, Toast.LENGTH_SHORT);
 		toast.show();
 

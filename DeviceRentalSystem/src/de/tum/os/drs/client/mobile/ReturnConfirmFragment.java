@@ -1,8 +1,10 @@
 package de.tum.os.drs.client.mobile;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -10,10 +12,13 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import de.tum.os.drs.client.mobile.communication.Callback;
 import de.tum.os.drs.client.mobile.communication.RentalService;
 import de.tum.os.drs.client.mobile.communication.RentalServiceImpl;
+import de.tum.os.drs.client.mobile.model.AfterDeviceUpdateAction;
 import de.tum.os.drs.client.mobile.model.Device;
 import de.tum.os.drs.client.mobile.model.Renter;
+import de.tum.os.drs.client.mobile.model.ReturnRequest;
 
 public class ReturnConfirmFragment extends Fragment {
 
@@ -24,6 +29,8 @@ public class ReturnConfirmFragment extends Fragment {
 	private TextView renterDetails;
 	private Button returnB;
 	private EditText comments;
+	private Renter renter;
+	private Device device;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -40,6 +47,8 @@ public class ReturnConfirmFragment extends Fragment {
 		comments = (EditText) rootView.findViewById(R.id.return_comments);
 
 		activity = (MainActivity) getActivity();
+		renter = activity.selectedRenter;
+		device = activity.selectedDevice;
 		service = RentalServiceImpl.getInstance();
 
 		returnB = (Button) rootView.findViewById(R.id.return_conf_btn);
@@ -60,11 +69,36 @@ public class ReturnConfirmFragment extends Fragment {
 	}
 	
 	private void returnDevice(){
-		//getActivity().getFragmentManager().popBackStack("HomeInitial", 0);
-		//returnToHome();
-		activity.returnToHome();
+		
+		List<String> devices = new ArrayList<String>();
+		devices.add(device.getImei());
+		ReturnRequest request = new ReturnRequest(renter.getMatriculationNumber(), devices, comments.getText().toString(), activity.signature);
+		
+		service.returnDevices(request, new Callback<String>(){
+
+			@Override
+			public void onSuccess(String result) {
+				activity.showToast(result);
+				activity.updateAction = AfterDeviceUpdateAction.GO_TO_HOME;
+				activity.updateDevices();
+				
+			}
+
+			@Override
+			public void onFailure(int code, String error) {
+				activity.showToast(error);
+				
+				
+			}
+			
+			
+		});		
+	
+		
 		
 	}
+	
+	
 	
 	private void showInformation(){
 		
@@ -76,11 +110,9 @@ public class ReturnConfirmFragment extends Fragment {
 
 	private void showRenterInformation() {
 
-		if (activity.selectedRenter == null) {
+		if (renter == null) {
 			return;
 		}
-
-		Renter renter = activity.selectedRenter;
 
 		String temp = "Name: ";
 		temp += renter.getName() == null ? "<None>" : renter.getName();
@@ -109,12 +141,10 @@ public class ReturnConfirmFragment extends Fragment {
 
 	private void showDeviceInformation() {
 
-		if (activity.selectedDevice == null) {
+		if (device == null) {
 
 			return;
 		}
-
-		Device device = activity.selectedDevice;
 
 		String temp = "Name: ";
 		temp += device.getName() == null ? "<None>" : device.getName();

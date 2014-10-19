@@ -63,7 +63,7 @@ public class RenterSelectionFragment extends Fragment {
 		activity = (MainActivity) getActivity();
 		service = RentalServiceImpl.getInstance();
 		
-		inputSearch = (EditText) rootView.findViewById(R.id.inputSearch);
+		inputSearch = (EditText) rootView.findViewById(R.id.inputSearchR);
 		inputSearch.addTextChangedListener(new TextWatcher() {
 
 			@Override

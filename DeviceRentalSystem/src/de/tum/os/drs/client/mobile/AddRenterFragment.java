@@ -23,9 +23,9 @@ public class AddRenterFragment extends Fragment {
 	private EditText comments;
 
 	private Button add;
-	
+
 	private RentalService service;
-	
+
 	private MainActivity activity;
 
 	@Override
@@ -35,12 +35,12 @@ public class AddRenterFragment extends Fragment {
 		View rootView = inflater.inflate(R.layout.fragment_add_renter,
 				container, false);
 
-		name = (EditText) rootView.findViewById(R.id.renter_name);
-		matrNr = (EditText) rootView.findViewById(R.id.mtrNr);
-		phone = (EditText) rootView.findViewById(R.id.phoneNr);
-		email = (EditText) rootView.findViewById(R.id.email);
-		comments = (EditText) rootView.findViewById(R.id.renter_comments);
-		
+		name = (EditText) rootView.findViewById(R.id.renterNameAdd);
+		matrNr = (EditText) rootView.findViewById(R.id.mtrNrAdd);
+		phone = (EditText) rootView.findViewById(R.id.phoneNrAdd);
+		email = (EditText) rootView.findViewById(R.id.emailAdd);
+		comments = (EditText) rootView.findViewById(R.id.renterCommentsAdd);
+
 		service = RentalServiceImpl.getInstance();
 		activity = (MainActivity) getActivity();
 
@@ -60,44 +60,57 @@ public class AddRenterFragment extends Fragment {
 
 	private void addRenter() {
 		
-		String mat = matrNr.getText().toString();
-		
-		if(!mat.isEmpty() || name.getText().toString().isEmpty() || email.getText().toString().isEmpty()){
+		if (matrNr.getText().length() > 0 && name.getText().length() > 0
+				&& email.getText().length() > 0) {
 			
+			String mat = matrNr.getText().toString();
+
 			String rEmail = email.getText().toString();
-			String rPhone = phone.getText().toString();
+
+			String rPhone = "";
+			if (phone.getText().length() > 0) {
+
+				rPhone = phone.getText().toString();
+			}
+
 			String rName = name.getText().toString();
-			String comm = comments.getText().toString();
-			
-			final Renter renter = new Renter(rName, mat, rEmail,rPhone, comm);
-			
-			service.addRenter(renter, new Callback<String>(){
+
+			String comm = "";
+			if (comments.getText().length() > 0) {
+				comm = comments.getText().toString();
+			}
+
+			final Renter renter = new Renter(rName, mat, rEmail, rPhone, comm);
+
+			service.addRenter(renter, new Callback<String>() {
 
 				@Override
 				public void onSuccess(String result) {
-					
-					//TODO toast
-					
+
+					activity.showToast(result);
+
 					activity.selectedRenter = renter;
-					
-					FragmentTransaction transaction = getFragmentManager().beginTransaction();
-					transaction.replace(R.id.frame_container, new RenterFragment());
+
+					FragmentTransaction transaction = getFragmentManager()
+							.beginTransaction();
+					transaction.replace(R.id.frame_container,
+							new RenterFragment());
 					transaction.commit();
-					
+
 				}
 
 				@Override
 				public void onFailure(int code, String error) {
-					// TODO Auto-generated method stub
-					
+					activity.showToast(error);
+
 				}
-				
+
 			});
-			
+
 		} else {
-			
-			//TODO toast
-			
+
+			activity.showToast("Name, Matriculation number and email are mandatory");
+
 		}
 
 	}
