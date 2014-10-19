@@ -21,20 +21,29 @@ import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.R.bool;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.text.InputType;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 import de.tum.os.drs.client.mobile.authentication.Authenticator;
@@ -50,7 +59,7 @@ import de.tum.os.drs.client.mobile.model.LoginResponse;
 public class AuthenticationActivity extends Activity {
 
 	private static final String TAG = "Authentication Activity";
-
+	private String s_ip = null, s_port = null;
 	private WebView mWebView;
 	private LinearLayout loginOptions;
 	private Authenticator mAuthenticator;
@@ -95,7 +104,13 @@ public class AuthenticationActivity extends Activity {
 		mWebView.setWebViewClient(mWebViewClient);
 
 		loginOptions = (LinearLayout) findViewById(R.id.login_buttons);
-
+		if(RentalServiceImpl.BASE_URL == null)
+		{
+			SharedPreferences prefs = getSharedPreferences("Rental_pref", MODE_PRIVATE);
+			String url = prefs.getString("BASE_URL", null);
+			if(url!=null)
+				RentalServiceImpl.BASE_URL = url;
+		}
 		store = new CredentialStore(
 				PreferenceManager.getDefaultSharedPreferences(this));
 
@@ -589,6 +604,67 @@ public class AuthenticationActivity extends Activity {
 	private void showToast(String text) {
 		Toast toast = Toast.makeText(this, text, Toast.LENGTH_SHORT);
 		toast.show();
+
+	}
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.authentication, menu);
+		return true;
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// Handle action bar actions click
+		switch (item.getItemId()) {
+		case R.id.action_address:
+			showIPalert();
+			return true;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
+	}
+	
+	public void showIPalert()
+	{
+		AlertDialog.Builder alert = new AlertDialog.Builder(this);
+
+		alert.setTitle("Server address");
+		alert.setMessage("Input ip & port");
+		
+		LinearLayout layout = new LinearLayout(this);
+		layout.setOrientation(LinearLayout.VERTICAL);
+
+		// Set  EditText view to get ip port 
+		final EditText ip = new EditText(this);
+		ip.setHint("IP e.g., localhost, 192.168.0.1");
+		if(s_ip!=null)
+			ip.setText(s_ip);
+		layout.addView(ip);
+		
+		final EditText port = new EditText(this);
+		port.setHint("Port e.g., 8443");
+		if(s_port!=null)
+			port.setText(s_port);
+		port.setInputType(InputType.TYPE_CLASS_NUMBER);
+		layout.addView(port);
+		alert.setView(layout);
+		alert.setPositiveButton("Save", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int whichButton) {
+			  s_ip = ip.getText().toString().trim();
+			  s_port = port.getText().toString().trim();
+			  String url = "https://" + s_ip + ":" + s_port;
+			  SharedPreferences.Editor editor = getSharedPreferences("Rental_pref", MODE_PRIVATE).edit();
+			  editor.putString("BASE_URL",url);
+			  editor.commit();
+			  }
+		});
+		alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+		  public void onClick(DialogInterface dialog, int whichButton) {
+		    // Canceled.
+		  }
+		});
+		alert.show();
 
 	}
 

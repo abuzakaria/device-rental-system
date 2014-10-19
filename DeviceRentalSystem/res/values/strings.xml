@@ -3,6 +3,7 @@
 
     <string name="app_name">Device Rental System</string>
     <string name="action_settings">Settings</string>
+    <string name="action_address">Server address</string>
     <string name="action_exit">Exit</string>
 
     <!-- Nav Drawer Menu Items -->
@@ -10,7 +11,8 @@
         <item>Home</item>
         <item>Add a device</item>
         <item>Scan Device</item>
-        <item>logout</item>
+        <item>Log out</item>
+        <item>Exit</item>
     </string-array>
 
     <!-- Nav Drawer List Item Icons -->
@@ -23,6 +25,7 @@
         <item>@drawable/ic_add</item>
         <item>@drawable/ic_action_action_search</item>
         <item>@drawable/ic_return</item>
+        <item>@drawable/ic_exit</item>
     </array>
     
     

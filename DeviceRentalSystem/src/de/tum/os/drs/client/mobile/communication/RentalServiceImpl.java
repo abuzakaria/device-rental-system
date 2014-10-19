@@ -5,6 +5,9 @@ import java.net.URL;
 import java.util.List;
 
 import android.net.Uri;
+import android.util.Log;
+import android.widget.Toast;
+import de.tum.os.drs.client.mobile.MainActivity;
 import de.tum.os.drs.client.mobile.model.Device;
 import de.tum.os.drs.client.mobile.model.LoginRequest;
 import de.tum.os.drs.client.mobile.model.LoginResponse;
@@ -21,16 +24,16 @@ import de.tum.os.drs.client.mobile.parsers.SingleDeviceParser;
 public class RentalServiceImpl implements RentalService {
 
 
-	private static final String BASE_URL = "https://192.168.2.2:8443";
-	//private static final String BASE_URL = "https://192.168.0.101:8443";
+	//private static final String BASE_URL = "https://192.168.2.9:8443";
+	public static  String BASE_URL;
 
-	private static final String BASE_PATH = "/rental-server-mobile/rest/";
+	private static  String BASE_PATH = "/rental-server-mobile/rest/";
 
 	// The singleton instance
 	private static RentalService theInstance = null;
 
 	public static RentalService getInstance() {
-
+		Log.i("ip", BASE_URL);
 		if (theInstance == null) {
 			theInstance = new RentalServiceImpl();
 		}
