@@ -35,7 +35,8 @@ public class RenterSelectionFragment extends Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		super.onCreateView(inflater, container, savedInstanceState);
-		
+
+		getActivity().setTitle("Select Renter");
 		View rootView = inflater.inflate(R.layout.fragment_select_renters,
 				container, false);
 		

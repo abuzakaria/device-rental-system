@@ -23,6 +23,7 @@ public class RenterFragment extends Fragment {
 			Bundle savedInstanceState) {
 		super.onCreateView(inflater, container, savedInstanceState);
 
+		getActivity().setTitle("Renter Details");
 		View rootView = inflater.inflate(R.layout.fragment_renter, container,
 				false);
 

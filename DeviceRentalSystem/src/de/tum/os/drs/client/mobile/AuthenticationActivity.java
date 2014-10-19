@@ -104,13 +104,13 @@ public class AuthenticationActivity extends Activity {
 		mWebView.setWebViewClient(mWebViewClient);
 
 		loginOptions = (LinearLayout) findViewById(R.id.login_buttons);
-		if(RentalServiceImpl.BASE_URL == null)
+		/*if(RentalServiceImpl.BASE_URL == null)
 		{
 			SharedPreferences prefs = getSharedPreferences("Rental_pref", MODE_PRIVATE);
 			String url = prefs.getString("BASE_URL", null);
 			if(url!=null)
 				RentalServiceImpl.BASE_URL = url;
-		}
+		}*/
 		store = new CredentialStore(
 				PreferenceManager.getDefaultSharedPreferences(this));
 
@@ -621,7 +621,7 @@ public class AuthenticationActivity extends Activity {
 		toast.show();
 
 	}
-	
+	/*
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.authentication, menu);
@@ -681,6 +681,6 @@ public class AuthenticationActivity extends Activity {
 		});
 		alert.show();
 
-	}
+	}*/
 
 }

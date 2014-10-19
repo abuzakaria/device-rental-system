@@ -78,6 +78,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/rent_comments"
             android:layout_centerHorizontal="true"
+            android:layout_margin="20dip"
             android:text="@string/rent_btn" />
     </RelativeLayout>
 

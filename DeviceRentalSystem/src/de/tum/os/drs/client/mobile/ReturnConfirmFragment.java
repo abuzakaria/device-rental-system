@@ -41,6 +41,7 @@ public class ReturnConfirmFragment extends Fragment {
 				false);
 		
 		activity = (MainActivity) getActivity();
+		getActivity().setTitle("Confirm returning");
 		
 		deviceDetails = (TextView) rootView.findViewById(R.id.device_details_r);
 		renterDetails = (TextView) rootView.findViewById(R.id.renter_details_r);

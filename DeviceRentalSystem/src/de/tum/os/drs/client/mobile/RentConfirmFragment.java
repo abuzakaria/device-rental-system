@@ -44,6 +44,7 @@ public class RentConfirmFragment extends Fragment {
 
 		View rootView = inflater.inflate(R.layout.fragment_rent_confirm,
 				container, false);
+		getActivity().setTitle("Confirm Renting");
 
 		deviceDetails = (TextView) rootView.findViewById(R.id.device_details);
 		renterDetails = (TextView) rootView.findViewById(R.id.renter_details);

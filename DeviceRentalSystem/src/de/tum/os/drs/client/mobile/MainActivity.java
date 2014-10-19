@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -134,10 +136,7 @@ public class MainActivity extends FragmentActivity {
 		mDrawerLayout.setDrawerListener(mDrawerToggle);
 
 		setTitle(R.string.app_name);
-		SharedPreferences prefs = getSharedPreferences("Rental_pref", MODE_PRIVATE);
-		String url = prefs.getString("BASE_URL", null);
-		if(url!=null)
-			RentalServiceImpl.BASE_URL = url;
+		
 		store = new CredentialStore(
 				PreferenceManager.getDefaultSharedPreferences(this));
 
@@ -181,7 +180,17 @@ public class MainActivity extends FragmentActivity {
 		}
 		// Handle action bar actions click
 		switch (item.getItemId()) {
-		case R.id.action_settings:
+		case R.id.action_about:
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setMessage("This app was developed as a project for Android Practical Summer School Course by Pablo Arias & Abu Zakaria")
+			       .setCancelable(false)
+			       .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+			           public void onClick(DialogInterface dialog, int id) {
+			                //do things
+			           }
+			       });
+			AlertDialog alert = builder.create();
+			alert.show();
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);
@@ -195,7 +204,7 @@ public class MainActivity extends FragmentActivity {
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		// if nav drawer is opened, hide the action items
 		boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerList);
-		menu.findItem(R.id.action_settings).setVisible(!drawerOpen);
+		menu.findItem(R.id.action_about).setVisible(!drawerOpen);
 		return super.onPrepareOptionsMenu(menu);
 	}
 
@@ -552,7 +561,7 @@ public class MainActivity extends FragmentActivity {
 		
 	}
 	
-	private int unknown_device_picture = R.drawable.ic_launcher; 
+	private int unknown_device_picture = R.drawable.ic_action_hardware_phone; 
 	private HashMap<String, Integer> deviceNameToImageNameMap = new HashMap<String, Integer>() {
 		private static final long serialVersionUID = -4645423715285941470L;
 		{

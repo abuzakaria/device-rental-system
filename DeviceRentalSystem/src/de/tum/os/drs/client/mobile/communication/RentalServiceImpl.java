@@ -24,8 +24,8 @@ import de.tum.os.drs.client.mobile.parsers.SingleDeviceParser;
 public class RentalServiceImpl implements RentalService {
 
 
-	//private static final String BASE_URL = "https://192.168.2.9:8443";
-	public static  String BASE_URL;
+	private static final String BASE_URL = "https://192.168.0.101:8443";
+	//public static  String BASE_URL;
 
 	private static  String BASE_PATH = "/rental-server-mobile/rest/";
 

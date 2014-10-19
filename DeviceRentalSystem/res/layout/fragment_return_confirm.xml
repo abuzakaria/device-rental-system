@@ -61,7 +61,8 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/return_comments"
             android:layout_centerHorizontal="true"
-            android:text="Return!" />
+            android:layout_margin="20dip"
+            android:text="Return" />
     </RelativeLayout>
 
 </ScrollView>

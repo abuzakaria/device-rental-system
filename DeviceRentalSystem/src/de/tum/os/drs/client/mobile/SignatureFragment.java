@@ -25,6 +25,7 @@ public class SignatureFragment extends Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		super.onCreateView(inflater, container, savedInstanceState);
+		getActivity().setTitle("Signature");
 
 		View rootView = inflater.inflate(R.layout.fragment_signature,
 				container, false);
