@@ -21,7 +21,7 @@
     <array name="nav_drawer_icons">
         <item>@drawable/ic_home</item>
         <item>@drawable/ic_add</item>
-        <item>@drawable/ic_add</item>
+        <item>@drawable/ic_action_action_search</item>
         <item>@drawable/ic_return</item>
     </array>
     
