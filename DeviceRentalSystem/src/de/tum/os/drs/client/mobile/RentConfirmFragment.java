@@ -113,6 +113,14 @@ public class RentConfirmFragment extends Fragment {
 			public void onFailure(int code, String error) {
 				activity.hideLoadingDialog();
 				activity.showToast(error);
+				
+				if(code == 401 || code == 403){
+					
+					//Invalid session
+					//We need to login again
+					activity.sessionExpired();
+					
+				}
 
 			}
 

@@ -31,20 +31,20 @@ public class ReturnConfirmFragment extends Fragment {
 	private EditText comments;
 	private Renter renter;
 	private Device device;
-	
+
 	private String signature;
-	
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		super.onCreateView(inflater, container, savedInstanceState);
 
-		View rootView = inflater.inflate(R.layout.fragment_return_confirm, container,
-				false);
-		
+		View rootView = inflater.inflate(R.layout.fragment_return_confirm,
+				container, false);
+
 		activity = (MainActivity) getActivity();
 		getActivity().setTitle("Confirm returning");
-		
+
 		deviceDetails = (TextView) rootView.findViewById(R.id.device_details_r);
 		renterDetails = (TextView) rootView.findViewById(R.id.renter_details_r);
 		comments = (EditText) rootView.findViewById(R.id.return_comments);
@@ -53,9 +53,9 @@ public class ReturnConfirmFragment extends Fragment {
 		renter = activity.selectedRenter;
 		device = activity.selectedDevice;
 		service = RentalServiceImpl.getInstance();
-		
+
 		signature = getArguments().getString("signature");
-		
+
 		returnB = (Button) rootView.findViewById(R.id.return_conf_btn);
 		returnB.setOnClickListener(new OnClickListener() {
 
@@ -66,59 +66,64 @@ public class ReturnConfirmFragment extends Fragment {
 			}
 
 		});
-		
+
 		showInformation();
-		
+
 		return rootView;
 
 	}
-	
+
 	/**
 	 * Sends the return message to the server
 	 * 
 	 */
-	private void returnDevice(){
-		
+	private void returnDevice() {
+
 		List<String> devices = new ArrayList<String>();
 		devices.add(device.getImei());
-		ReturnRequest request = new ReturnRequest(renter.getMatriculationNumber(), devices, comments.getText().toString(), signature);
-		
+		ReturnRequest request = new ReturnRequest(
+				renter.getMatriculationNumber(), devices, comments.getText()
+						.toString(), signature);
+
 		activity.showLoadingDialog("Returning devices");
-		service.returnDevices(request, new Callback<String>(){
+		service.returnDevices(request, new Callback<String>() {
 
 			@Override
 			public void onSuccess(String result) {
 				activity.hideLoadingDialog();
 				activity.showToast(result);
-				
-				//Update the device list
+
+				// Update the device list
 				activity.updateDevices(null, AfterDeviceUpdateAction.GO_TO_HOME);
-				
+
 			}
 
 			@Override
 			public void onFailure(int code, String error) {
 				activity.hideLoadingDialog();
 				activity.showToast(error);
-				
-				
+
+				if (code == 401 || code == 403) {
+
+					// Invalid session
+					// We need to login again
+					activity.sessionExpired();
+
+				}
+
 			}
-			
-			
-		});		
-	
-		
-		
+
+		});
+
 	}
-	
-	
-	private void showInformation(){
-		
+
+	private void showInformation() {
+
 		showDeviceInformation();
 		showRenterInformation();
-		
+
 	}
-	
+
 	private void showRenterInformation() {
 
 		if (renter == null) {
@@ -185,5 +190,5 @@ public class ReturnConfirmFragment extends Fragment {
 
 		deviceDetails.setText(temp);
 	}
-	
+
 }

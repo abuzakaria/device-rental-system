@@ -171,7 +171,7 @@ public class EditDeviceFragment extends Fragment {
 
 				Toast.makeText(getActivity(), error, Toast.LENGTH_SHORT).show();
 
-				if (code == 401) {
+				if (code == 401 || code == 403) {
 					((MainActivity) getActivity()).sessionExpired();
 				}
 

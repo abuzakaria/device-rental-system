@@ -92,8 +92,8 @@ public class RenterSelectionFragment extends Fragment {
 			@Override
 			public void onClick(View arg0) {
 
-				//Start the add renter fragment 
-				
+				// Start the add renter fragment
+
 				FragmentTransaction transaction = getFragmentManager()
 						.beginTransaction();
 				transaction.replace(R.id.frame_container,
@@ -118,13 +118,13 @@ public class RenterSelectionFragment extends Fragment {
 	private void populateList() {
 
 		if (activity.getRenters() != null) {
-			
-			//Renters are there, we can show them right away
+
+			// Renters are there, we can show them right away
 			adapter = new RentersListAdapter(activity, activity.getRenters());
 			list.setAdapter(adapter);
 		} else {
 
-			//Need first to fetch renters
+			// Need first to fetch renters
 			activity.showLoadingDialog("Loading renters");
 			service.getAllRenters(new Callback<List<Renter>>() {
 
@@ -140,6 +140,15 @@ public class RenterSelectionFragment extends Fragment {
 				@Override
 				public void onFailure(int code, String error) {
 					activity.hideLoadingDialog();
+					activity.showToast(error);
+
+					if (code == 401 || code == 403) {
+
+						// Invalid session
+						// We need to login again
+						activity.sessionExpired();
+
+					}
 
 				}
 
