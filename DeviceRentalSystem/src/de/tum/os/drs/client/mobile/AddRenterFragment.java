@@ -83,11 +83,13 @@ public class AddRenterFragment extends Fragment {
 
 			final Renter renter = new Renter(rName, mat, rEmail, rPhone, comm);
 
+			activity.showLoadingDialog("Adding renter");
 			service.addRenter(renter, new Callback<String>() {
 
 				@Override
 				public void onSuccess(String result) {
 
+					activity.hideLoadingDialog();
 					activity.showToast(result);
 					activity.updateRenters(renter.getMatriculationNumber());
 
@@ -95,6 +97,7 @@ public class AddRenterFragment extends Fragment {
 
 				@Override
 				public void onFailure(int code, String error) {
+					activity.hideLoadingDialog();
 					activity.showToast(error);
 
 				}

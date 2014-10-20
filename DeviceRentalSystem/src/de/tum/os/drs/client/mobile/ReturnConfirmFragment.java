@@ -79,10 +79,12 @@ public class ReturnConfirmFragment extends Fragment {
 		devices.add(device.getImei());
 		ReturnRequest request = new ReturnRequest(renter.getMatriculationNumber(), devices, comments.getText().toString(), signature);
 		
+		activity.showLoadingDialog("Returning devices");
 		service.returnDevices(request, new Callback<String>(){
 
 			@Override
 			public void onSuccess(String result) {
+				activity.hideLoadingDialog();
 				activity.showToast(result);
 				activity.updateDevices(null, AfterDeviceUpdateAction.GO_TO_HOME);
 				
@@ -90,6 +92,7 @@ public class ReturnConfirmFragment extends Fragment {
 
 			@Override
 			public void onFailure(int code, String error) {
+				activity.hideLoadingDialog();
 				activity.showToast(error);
 				
 				

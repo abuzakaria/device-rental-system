@@ -28,8 +28,6 @@ public class AddDeviceFragment extends Fragment {
 	private EditText deviceSerial, deviceDetails, deviceName;
 	private Spinner deviceType, deviceState;
 	private RentalService service;
-	private Boolean isDuplicate = true;
-
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -69,21 +67,22 @@ public class AddDeviceFragment extends Fragment {
 			}
 
 		});
-		
+
 		scanButton.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
-				
+
 				Bundle b = new Bundle();
 				b.putString("action", AfterScanAction.SET_IMEI_FILED.toString());
 				ScanFragment f = new ScanFragment();
 				f.setArguments(b);
-				
-				final FragmentTransaction ft = getFragmentManager().beginTransaction(); 
-				ft.replace(R.id.frame_container, f); 
+
+				final FragmentTransaction ft = getFragmentManager()
+						.beginTransaction();
+				ft.replace(R.id.frame_container, f);
 				ft.addToBackStack(null);
-				ft.commit();  
+				ft.commit();
 			}
 
 		});
@@ -107,7 +106,8 @@ public class AddDeviceFragment extends Fragment {
 								.toString()), null, true);
 
 		// Send the new device to the server
-		RentalService service = RentalServiceImpl.getInstance();
+		((MainActivity) getActivity()).showLoadingDialog("Adding the device");
+
 		service.addDevice(device, new Callback<String>() {
 
 			@Override
@@ -116,7 +116,9 @@ public class AddDeviceFragment extends Fragment {
 				Toast.makeText(getActivity(), result, Toast.LENGTH_SHORT)
 						.show();
 
-				onFinished();
+				MainActivity activity = (MainActivity) getActivity();
+				activity.updateDevices(s_deviceSerial,
+						AfterDeviceUpdateAction.OPEN_DEVICE);
 
 			}
 
@@ -128,31 +130,23 @@ public class AddDeviceFragment extends Fragment {
 				if (code == 401) {
 					((MainActivity) getActivity()).sessionExpired();
 				}
+				((MainActivity) getActivity()).hideLoadingDialog();
 
 			}
 		});
 	}
 
 	@Override
-	public void onResume()
-	{
+	public void onResume() {
 		super.onResume();
-		
+
 		String result = ((MainActivity) getActivity()).scanResult;
-		
-        if (result != null)   
-        {
-        	((MainActivity) getActivity()).scanResult = null;
-        	deviceSerial.setText(result);
-        	
-        }
-	}
-	
-	
-	private void onFinished() {
-		MainActivity activity = (MainActivity) getActivity();
-		activity.updateDevices(s_deviceSerial, AfterDeviceUpdateAction.OPEN_DEVICE);
-		
+
+		if (result != null) {
+			((MainActivity) getActivity()).scanResult = null;
+			deviceSerial.setText(result);
+
+		}
 	}
 
 }

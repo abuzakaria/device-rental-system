@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -70,6 +71,8 @@ public class MainActivity extends FragmentActivity {
 
 	// The server stub instance
 	private RentalService service;
+
+	private ProgressDialog dialog;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -411,6 +414,8 @@ public class MainActivity extends FragmentActivity {
 	public void updateDevices(final String newImei,
 			final AfterDeviceUpdateAction action) {
 
+		showLoadingDialog("Updating devices");
+
 		service.getAvailableDevices(new Callback<List<Device>>() {
 
 			@Override
@@ -418,11 +423,13 @@ public class MainActivity extends FragmentActivity {
 
 				availableDevices = result;
 				fetchRentedDevices(newImei, action);
+
 			}
 
 			@Override
 			public void onFailure(int code, String error) {
-				// TODO Auto-generated method stub
+				showToast(error);
+				hideLoadingDialog();
 
 			}
 
@@ -437,14 +444,14 @@ public class MainActivity extends FragmentActivity {
 
 			@Override
 			public void onSuccess(List<Device> result) {
-
+				hideLoadingDialog();
 				rentedDevices = result;
 				onListUpdateFinished(newImei, action);
 			}
 
 			@Override
 			public void onFailure(int code, String error) {
-				// TODO Auto-generated method stub
+				hideLoadingDialog();
 
 			}
 
@@ -454,12 +461,13 @@ public class MainActivity extends FragmentActivity {
 
 	public void updateRenters(final String mtrNr) {
 
+		showLoadingDialog("Updating renters");
 		service.getAllRenters(new Callback<List<Renter>>() {
 
 			@Override
 			public void onSuccess(List<Renter> result) {
+				hideLoadingDialog();
 				renters = result;
-
 				selectedRenter = getRenterFromMtrNr(mtrNr);
 
 				FragmentTransaction transaction = getSupportFragmentManager()
@@ -472,7 +480,7 @@ public class MainActivity extends FragmentActivity {
 
 			@Override
 			public void onFailure(int code, String error) {
-				// TODO Auto-generated method stub
+				hideLoadingDialog();
 
 			}
 
@@ -607,7 +615,7 @@ public class MainActivity extends FragmentActivity {
 			return;
 
 		}
-		
+
 		if (getSupportFragmentManager().getBackStackEntryCount() == 1) {
 
 			if (f instanceof HomeFragment) {
@@ -649,6 +657,27 @@ public class MainActivity extends FragmentActivity {
 		}
 
 		return r;
+
+	}
+
+	public void showLoadingDialog(String message) {
+
+		if (dialog != null) {
+
+			dialog.dismiss();
+		}
+
+		dialog = ProgressDialog.show(this, "Please wait ...", message, true);
+		dialog.setCancelable(false);
+	}
+
+	public void hideLoadingDialog() {
+
+		if (dialog != null) {
+
+			dialog.dismiss();
+
+		}
 
 	}
 

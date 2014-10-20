@@ -90,16 +90,15 @@ public class RentConfirmFragment extends Fragment {
 		devices.add(device.getImei());
 
 		Date returnDate = getDateFromDatePicker(datePicker);
-		Log.i("Test", returnDate.toLocaleString());
 
 		RentRequest request = new RentRequest(renter.getMatriculationNumber(),
 				devices, returnDate, comments.getText().toString(), signature);
 
+		activity.showLoadingDialog("Issuing rent request");
 		service.rentDevices(request, new Callback<String>() {
 
 			@Override
 			public void onSuccess(String result) {
-
 				activity.showToast(result);
 				activity.updateDevices(null, AfterDeviceUpdateAction.GO_TO_HOME);
 
@@ -107,6 +106,7 @@ public class RentConfirmFragment extends Fragment {
 
 			@Override
 			public void onFailure(int code, String error) {
+				activity.hideLoadingDialog();
 				activity.showToast(error);
 
 			}

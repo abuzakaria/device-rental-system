@@ -116,10 +116,12 @@ public class RenterSelectionFragment extends Fragment {
 			list.setAdapter(adapter);
 		} else {
 
+			activity.showLoadingDialog("Loading renters");
 			service.getAllRenters(new Callback<List<Renter>>() {
 
 				@Override
 				public void onSuccess(List<Renter> result) {
+					activity.hideLoadingDialog();
 					activity.setRenters(result);
 					adapter = new RentersListAdapter(activity, result);
 					list.setAdapter(adapter);
@@ -128,7 +130,7 @@ public class RenterSelectionFragment extends Fragment {
 
 				@Override
 				public void onFailure(int code, String error) {
-					// TODO Auto-generated method stub
+					activity.hideLoadingDialog();
 
 				}
 

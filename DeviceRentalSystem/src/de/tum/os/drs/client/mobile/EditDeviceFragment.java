@@ -37,8 +37,7 @@ public class EditDeviceFragment extends Fragment {
 	private RentalService service;
 	private DatePicker returnDate = null;
 	private String oldImei;
-	private ProgressDialog dialog;
-
+	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -142,24 +141,20 @@ public class EditDeviceFragment extends Fragment {
 		String state = deviceState.getSelectedItem().toString();
 		device.setState(state);
 
-		dialog = ProgressDialog.show(activity, "Please wait ...",
-				"Logging in..", true);
-		dialog.setCancelable(false);
-
+		activity.showLoadingDialog("Updating device");
 		service.updateDevice(oldImei, device, new Callback<String>() {
 
 			@Override
 			public void onSuccess(String result) {
 				Toast.makeText(getActivity(), result, Toast.LENGTH_SHORT)
 						.show();
-				dialog.dismiss();
 				activity.updateDevices(imei, AfterDeviceUpdateAction.OPEN_DEVICE);
 
 			}
 
 			@Override
 			public void onFailure(int code, String error) {
-				dialog.dismiss();
+				activity.hideLoadingDialog();
 
 				Toast.makeText(getActivity(), error, Toast.LENGTH_SHORT).show();
 

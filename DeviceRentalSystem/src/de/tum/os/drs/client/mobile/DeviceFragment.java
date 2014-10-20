@@ -85,15 +85,16 @@ public class DeviceFragment extends Fragment {
 
 				SignatureFragment f = new SignatureFragment();
 				Bundle b = new Bundle();
-				b.putString("action", AfterSignatureAction.OPEN_RETURN_CONFIRM.toString());
+				b.putString("action",
+						AfterSignatureAction.OPEN_RETURN_CONFIRM.toString());
 				f.setArguments(b);
-				
+
 				FragmentTransaction transaction = getFragmentManager()
 						.beginTransaction();
 				transaction.replace(R.id.frame_container, f);
 				transaction.addToBackStack(null);
 				transaction.commit();
-				
+
 			}
 		});
 
@@ -122,10 +123,12 @@ public class DeviceFragment extends Fragment {
 
 				if (activity.getRenters() == null) {
 
+					activity.showLoadingDialog("Loading renter information");
 					service.getAllRenters(new Callback<List<Renter>>() {
 
 						@Override
 						public void onSuccess(List<Renter> result) {
+							activity.hideLoadingDialog();
 							activity.setRenters(result);
 							showRenterDetails();
 
@@ -133,7 +136,7 @@ public class DeviceFragment extends Fragment {
 
 						@Override
 						public void onFailure(int code, String error) {
-							// TODO Auto-generated method stub
+							activity.hideLoadingDialog();
 
 						}
 
