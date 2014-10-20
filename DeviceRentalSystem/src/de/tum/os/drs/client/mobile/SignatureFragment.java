@@ -7,19 +7,20 @@ import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.util.Base64;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import de.tum.os.drs.client.mobile.model.AfterScanAction;
+import de.tum.os.drs.client.mobile.model.AfterSignatureAction;
 
 public class SignatureFragment extends Fragment {
 
 	private SignaturePad mSignaturePad;
 	private Button mClearButton, mSaveButton;
 	private MainActivity activity;
+	private AfterSignatureAction action;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -47,37 +48,14 @@ public class SignatureFragment extends Fragment {
 		mSaveButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				String base64 = getBase64FromBitmap(mSignaturePad.getSignatureBitmap());
-				//TODO serialize bitmap
-				activity.signature = "<img src=\"data:image/png;base64,"+ base64 + "\" />";
-				//Log.d("sig", activity.signature);
-				if (activity.rentingSignature) {
+				String base64 = getBase64FromBitmap(mSignaturePad
+						.getSignatureBitmap());
 
-					FragmentTransaction transaction = getFragmentManager()
-							.beginTransaction();
-					transaction.replace(R.id.frame_container,
-							new RentConfirmFragment());
-					transaction.addToBackStack(null);
-					transaction.commit();
+				String signature = "<img src=\"data:image/png;base64," + base64
+						+ "\" />";
 
-				} else {
-					FragmentTransaction transaction = getFragmentManager()
-							.beginTransaction();
-					transaction.replace(R.id.frame_container,
-							new ReturnConfirmFragment());
-					transaction.addToBackStack(null);
-					transaction.commit();
+				activity.onSignatureFinished(signature, action);
 
-				}
-
-			}
-
-			private String getBase64FromBitmap(Bitmap signatureBitmap) {
-				// TODO Auto-generated method stub
-				ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();  
-				signatureBitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
-				byte[] byteArray = byteArrayOutputStream.toByteArray(); 
-				return Base64.encodeToString(byteArray, Base64.NO_WRAP);
 			}
 
 		});
@@ -97,8 +75,19 @@ public class SignatureFragment extends Fragment {
 		});
 
 		activity = (MainActivity) getActivity();
-
+		
+		Bundle b = getArguments();
+		action = AfterSignatureAction.toScanAction(b.getString("action"));
 		return rootView;
+	}
+
+	private String getBase64FromBitmap(Bitmap signatureBitmap) {
+
+		ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+		signatureBitmap.compress(Bitmap.CompressFormat.PNG, 100,
+				byteArrayOutputStream);
+		byte[] byteArray = byteArrayOutputStream.toByteArray();
+		return Base64.encodeToString(byteArray, Base64.NO_WRAP);
 	}
 
 }

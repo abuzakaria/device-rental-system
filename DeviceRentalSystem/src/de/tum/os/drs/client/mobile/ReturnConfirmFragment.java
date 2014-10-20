@@ -32,6 +32,8 @@ public class ReturnConfirmFragment extends Fragment {
 	private Renter renter;
 	private Device device;
 	
+	private String signature;
+	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -51,7 +53,9 @@ public class ReturnConfirmFragment extends Fragment {
 		renter = activity.selectedRenter;
 		device = activity.selectedDevice;
 		service = RentalServiceImpl.getInstance();
-
+		
+		signature = getArguments().getString("signature");
+		
 		returnB = (Button) rootView.findViewById(R.id.return_conf_btn);
 		returnB.setOnClickListener(new OnClickListener() {
 
@@ -73,14 +77,14 @@ public class ReturnConfirmFragment extends Fragment {
 		
 		List<String> devices = new ArrayList<String>();
 		devices.add(device.getImei());
-		ReturnRequest request = new ReturnRequest(renter.getMatriculationNumber(), devices, comments.getText().toString(), activity.signature);
+		ReturnRequest request = new ReturnRequest(renter.getMatriculationNumber(), devices, comments.getText().toString(), signature);
 		
 		service.returnDevices(request, new Callback<String>(){
 
 			@Override
 			public void onSuccess(String result) {
 				activity.showToast(result);
-				activity.updateDevices(AfterDeviceUpdateAction.GO_TO_HOME);
+				activity.updateDevices(null, AfterDeviceUpdateAction.GO_TO_HOME);
 				
 			}
 

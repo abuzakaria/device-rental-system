@@ -66,8 +66,7 @@ public class RentedDevicesFragment extends Fragment {
 				final Device item = (Device) parent.getItemAtPosition(position);
 				activity.selectedDevice = item;
 
-				activity.startDeviceFragment(true);
-
+				activity.startDeviceFragment();
 			}
 
 		});

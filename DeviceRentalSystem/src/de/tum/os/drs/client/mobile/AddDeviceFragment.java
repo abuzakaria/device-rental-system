@@ -151,8 +151,7 @@ public class AddDeviceFragment extends Fragment {
 	
 	private void onFinished() {
 		MainActivity activity = (MainActivity) getActivity();
-		activity.newDeviceImei = s_deviceSerial;
-		activity.updateDevices(AfterDeviceUpdateAction.OPEN_DEVICE);
+		activity.updateDevices(s_deviceSerial, AfterDeviceUpdateAction.OPEN_DEVICE);
 		
 	}
 

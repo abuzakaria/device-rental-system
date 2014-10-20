@@ -18,6 +18,7 @@ import de.tum.os.drs.client.mobile.adapters.RentersListAdapter;
 import de.tum.os.drs.client.mobile.communication.Callback;
 import de.tum.os.drs.client.mobile.communication.RentalService;
 import de.tum.os.drs.client.mobile.communication.RentalServiceImpl;
+import de.tum.os.drs.client.mobile.model.AfterSignatureAction;
 import de.tum.os.drs.client.mobile.model.Device;
 import de.tum.os.drs.client.mobile.model.Renter;
 
@@ -71,8 +72,7 @@ public class DeviceFragment extends Fragment {
 			public void onClick(View v) {
 				final FragmentTransaction ft = getFragmentManager()
 						.beginTransaction();
-				ft.replace(R.id.frame_container, new RenterSelectionFragment(),
-						"NewFragmentTag");
+				ft.replace(R.id.frame_container, new RenterSelectionFragment());
 				ft.addToBackStack(null);
 				ft.commit();
 			}
@@ -83,12 +83,17 @@ public class DeviceFragment extends Fragment {
 			@Override
 			public void onClick(View v) {
 
-				activity.rentingSignature = false;
-				final FragmentTransaction ft = getFragmentManager()
+				SignatureFragment f = new SignatureFragment();
+				Bundle b = new Bundle();
+				b.putString("action", AfterSignatureAction.OPEN_RETURN_CONFIRM.toString());
+				f.setArguments(b);
+				
+				FragmentTransaction transaction = getFragmentManager()
 						.beginTransaction();
-				ft.replace(R.id.frame_container, new SignatureFragment());
-				ft.addToBackStack(null);
-				ft.commit();
+				transaction.replace(R.id.frame_container, f);
+				transaction.addToBackStack(null);
+				transaction.commit();
+				
 			}
 		});
 

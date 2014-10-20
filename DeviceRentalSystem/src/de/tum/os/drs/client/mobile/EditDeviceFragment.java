@@ -153,9 +153,7 @@ public class EditDeviceFragment extends Fragment {
 				Toast.makeText(getActivity(), result, Toast.LENGTH_SHORT)
 						.show();
 				dialog.dismiss();
-
-				activity.newDeviceImei = imei;
-				activity.updateDevices(AfterDeviceUpdateAction.OPEN_DEVICE);
+				activity.updateDevices(imei, AfterDeviceUpdateAction.OPEN_DEVICE);
 
 			}
 

@@ -37,6 +37,8 @@ public class RentConfirmFragment extends Fragment {
 
 	private MainActivity activity;
 
+	private String signature;
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -55,6 +57,8 @@ public class RentConfirmFragment extends Fragment {
 		activity = (MainActivity) getActivity();
 		service = RentalServiceImpl.getInstance();
 
+		signature = getArguments().getString("signature");
+
 		rent = (Button) rootView.findViewById(R.id.rent_conf_btn);
 		rent.setOnClickListener(new OnClickListener() {
 
@@ -72,7 +76,7 @@ public class RentConfirmFragment extends Fragment {
 
 	private void rentDevice() {
 
-		if (activity.signature == null || activity.selectedRenter == null
+		if (signature == null || activity.selectedRenter == null
 				|| activity.selectedDevice == null) {
 
 			return;
@@ -86,10 +90,10 @@ public class RentConfirmFragment extends Fragment {
 		devices.add(device.getImei());
 
 		Date returnDate = getDateFromDatePicker(datePicker);
+		Log.i("Test", returnDate.toLocaleString());
 
 		RentRequest request = new RentRequest(renter.getMatriculationNumber(),
-				devices, returnDate, comments.getText().toString(),
-				activity.signature);
+				devices, returnDate, comments.getText().toString(), signature);
 
 		service.rentDevices(request, new Callback<String>() {
 
@@ -97,7 +101,7 @@ public class RentConfirmFragment extends Fragment {
 			public void onSuccess(String result) {
 
 				activity.showToast(result);
-				activity.updateDevices(AfterDeviceUpdateAction.GO_TO_HOME);
+				activity.updateDevices(null, AfterDeviceUpdateAction.GO_TO_HOME);
 
 			}
 

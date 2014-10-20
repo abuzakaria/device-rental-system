@@ -89,8 +89,7 @@ public class AddRenterFragment extends Fragment {
 				public void onSuccess(String result) {
 
 					activity.showToast(result);
-					activity.newRenterMtr = renter.getMatriculationNumber();
-					activity.updateRenters();
+					activity.updateRenters(renter.getMatriculationNumber());
 
 				}
 

@@ -30,6 +30,7 @@ import de.tum.os.drs.client.mobile.communication.RentalService;
 import de.tum.os.drs.client.mobile.communication.RentalServiceImpl;
 import de.tum.os.drs.client.mobile.model.AfterDeviceUpdateAction;
 import de.tum.os.drs.client.mobile.model.AfterScanAction;
+import de.tum.os.drs.client.mobile.model.AfterSignatureAction;
 import de.tum.os.drs.client.mobile.model.CredentialStore;
 import de.tum.os.drs.client.mobile.model.Device;
 import de.tum.os.drs.client.mobile.model.NavDrawerItem;
@@ -43,38 +44,31 @@ public class MainActivity extends FragmentActivity {
 	private DrawerLayout mDrawerLayout;
 	private ListView mDrawerList;
 	private ActionBarDrawerToggle mDrawerToggle;
-
-	public String newDeviceImei;
-	public String newRenterMtr;
-
-	// The currently selected device and renter
-	public Device selectedDevice;
-	public Renter selectedRenter;
-
-	public String scanResult;
-
-	// The serialized signature as a string
-	public String signature;
-
-	public boolean rentingSignature;
+	private ArrayList<NavDrawerItem> navDrawerItems;
+	private NavDrawerListAdapter adapter;
 
 	// slide menu items
 	private String[] navMenuTitles;
 	private TypedArray navMenuIcons;
 
-	private ArrayList<NavDrawerItem> navDrawerItems;
-	private NavDrawerListAdapter adapter;
-
 	// Used to store access tokens
 	private CredentialStore store;
+
+	// The result of the barcode scanning
+	public String scanResult;
+
+	// The currently selected device and renter
+	public Device selectedDevice;
+	public Renter selectedRenter;
 
 	// List of fetched devices
 	private List<Device> availableDevices;
 	private List<Device> rentedDevices;
-	
-	//List of renters
+
+	// List of renters
 	private List<Renter> renters;
 
+	// The server stub instance
 	private RentalService service;
 
 	@Override
@@ -134,7 +128,7 @@ public class MainActivity extends FragmentActivity {
 				invalidateOptionsMenu();
 			}
 		};
-		
+
 		mDrawerLayout.setDrawerListener(mDrawerToggle);
 
 		setTitle(R.string.app_name);
@@ -144,7 +138,7 @@ public class MainActivity extends FragmentActivity {
 
 		service = RentalServiceImpl.getInstance();
 
-		updateDevices(AfterDeviceUpdateAction.GO_TO_HOME);
+		updateDevices(null, AfterDeviceUpdateAction.GO_TO_HOME);
 	}
 
 	private void startAuthenticationActivity() {
@@ -267,33 +261,24 @@ public class MainActivity extends FragmentActivity {
 		}
 	}
 
-	public void startDeviceFragment(boolean putInStack) {
+	public void startDeviceFragment() {
 
-		if (putInStack) {
-
-			FragmentManager fragmentManager = getSupportFragmentManager();
-			fragmentManager.beginTransaction()
-					.replace(R.id.frame_container, new DeviceFragment())
-					.addToBackStack(null).commit();
-
-		} else {
-
-			FragmentManager fragmentManager = getSupportFragmentManager();
-			fragmentManager.beginTransaction()
-					.replace(R.id.frame_container, new DeviceFragment())
-					.commit();
-		}
+		FragmentManager fragmentManager = getSupportFragmentManager();
+		fragmentManager.beginTransaction()
+				.replace(R.id.frame_container, new DeviceFragment())
+				.addToBackStack(null).commit();
 
 	}
 
-	public void onListUpdateFinished(final AfterDeviceUpdateAction action) {
+	public void onListUpdateFinished(final String newImei,
+			final AfterDeviceUpdateAction action) {
 
 		switch (action) {
 		case GO_TO_HOME:
 			returnToHome();
 			break;
 		case OPEN_DEVICE:
-			selectAndShowDevice(newDeviceImei);
+			selectAndShowDevice(newImei);
 			break;
 		default:
 			break;
@@ -323,13 +308,54 @@ public class MainActivity extends FragmentActivity {
 
 	}
 
+	public void onSignatureFinished(final String signature,
+			final AfterSignatureAction action) {
+
+		Bundle b = new Bundle();
+		b.putString("signature", signature);
+
+		switch (action) {
+
+		case OPEN_RENT_CONFIRM: {
+
+			RentConfirmFragment f = new RentConfirmFragment();
+			f.setArguments(b);
+
+			FragmentTransaction transaction = getSupportFragmentManager()
+					.beginTransaction();
+			transaction.replace(R.id.frame_container, f);
+			transaction.addToBackStack(null);
+			transaction.commit();
+
+		}
+			break;
+		case OPEN_RETURN_CONFIRM: {
+
+			ReturnConfirmFragment f = new ReturnConfirmFragment();
+			f.setArguments(b);
+
+			FragmentTransaction transaction = getSupportFragmentManager()
+					.beginTransaction();
+			transaction.replace(R.id.frame_container, f);
+			transaction.addToBackStack(null);
+			transaction.commit();
+
+		}
+			break;
+		default:
+			break;
+
+		}
+
+	}
+
 	private void selectAndShowDevice(String imei) {
 		Device d = getDeviceFromImei(imei);
 
 		if (d != null) {
 
 			selectedDevice = d;
-			startDeviceFragment(false);
+			startDeviceFragment();
 		} else {
 
 			this.getSupportFragmentManager().popBackStack();
@@ -366,23 +392,24 @@ public class MainActivity extends FragmentActivity {
 		return null;
 
 	}
-	
-	public Renter getRenterFromMtrNr(String mtr){
-		
-		for(Renter r : renters){
-			
-			if(r.getMatriculationNumber().equals(mtr)){
-				
+
+	public Renter getRenterFromMtrNr(String mtr) {
+
+		for (Renter r : renters) {
+
+			if (r.getMatriculationNumber().equals(mtr)) {
+
 				return r;
 			}
-			
+
 		}
-		
+
 		return null;
-		
+
 	}
 
-	public void updateDevices(final AfterDeviceUpdateAction action) {
+	public void updateDevices(final String newImei,
+			final AfterDeviceUpdateAction action) {
 
 		service.getAvailableDevices(new Callback<List<Device>>() {
 
@@ -390,7 +417,7 @@ public class MainActivity extends FragmentActivity {
 			public void onSuccess(List<Device> result) {
 
 				availableDevices = result;
-				fetchRentedDevices(action);
+				fetchRentedDevices(newImei, action);
 			}
 
 			@Override
@@ -402,46 +429,9 @@ public class MainActivity extends FragmentActivity {
 		});
 
 	}
-	
-	public void updateRenters(){
-		
-		service.getAllRenters(new Callback<List<Renter>>(){
 
-			@Override
-			public void onSuccess(List<Renter> result) {
-				renters = result;
-				
-				selectedRenter = getRenterFromMtrNr(newRenterMtr);
-				
-				FragmentTransaction transaction = getSupportFragmentManager()
-						.beginTransaction();
-				transaction.replace(R.id.frame_container,
-						new RenterFragment());
-				transaction.commit();
-				
-			}
-
-			@Override
-			public void onFailure(int code, String error) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-		});
-		
-	}
-	
-	public List<Renter> getRenters(){
-		return renters;
-		
-	}
-	
-	public void setRenters(List<Renter> r){
-		
-		renters = r;
-	}
-
-	private void fetchRentedDevices(final AfterDeviceUpdateAction action) {
+	private void fetchRentedDevices(final String newImei,
+			final AfterDeviceUpdateAction action) {
 
 		service.getRentedDevices(new Callback<List<Device>>() {
 
@@ -449,7 +439,7 @@ public class MainActivity extends FragmentActivity {
 			public void onSuccess(List<Device> result) {
 
 				rentedDevices = result;
-				onListUpdateFinished(action);
+				onListUpdateFinished(newImei, action);
 			}
 
 			@Override
@@ -460,6 +450,44 @@ public class MainActivity extends FragmentActivity {
 
 		});
 
+	}
+
+	public void updateRenters(final String mtrNr) {
+
+		service.getAllRenters(new Callback<List<Renter>>() {
+
+			@Override
+			public void onSuccess(List<Renter> result) {
+				renters = result;
+
+				selectedRenter = getRenterFromMtrNr(mtrNr);
+
+				FragmentTransaction transaction = getSupportFragmentManager()
+						.beginTransaction();
+				transaction.replace(R.id.frame_container, new RenterFragment());
+				transaction.addToBackStack(null);
+				transaction.commit();
+
+			}
+
+			@Override
+			public void onFailure(int code, String error) {
+				// TODO Auto-generated method stub
+
+			}
+
+		});
+
+	}
+
+	public List<Renter> getRenters() {
+		return renters;
+
+	}
+
+	public void setRenters(List<Renter> r) {
+
+		renters = r;
 	}
 
 	private void clearFragmentStack() {
@@ -518,10 +546,19 @@ public class MainActivity extends FragmentActivity {
 		startAuthenticationActivity();
 	}
 
+	/**
+	 * Clears the whole fragment stack and relaunches the HomeFragment
+	 * 
+	 */
 	public void returnToHome() {
-
-		clearStack();
-		//getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+		/*
+		 * //getSupportFragmentManager().popBackStack(); //clearFragmentStack();
+		 * Log.i(TAG, "Returning to home");
+		 * 
+		 * getSupportFragmentManager().popBackStack();
+		 */
+		getSupportFragmentManager().popBackStack(null,
+				FragmentManager.POP_BACK_STACK_INCLUSIVE);
 
 		displayView(0);
 
@@ -570,7 +607,7 @@ public class MainActivity extends FragmentActivity {
 			return;
 
 		}
-
+		
 		if (getSupportFragmentManager().getBackStackEntryCount() == 1) {
 
 			if (f instanceof HomeFragment) {

@@ -9,6 +9,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import de.tum.os.drs.client.mobile.model.AfterSignatureAction;
 import de.tum.os.drs.client.mobile.model.Renter;
 
 public class RenterFragment extends Fragment {
@@ -30,23 +31,28 @@ public class RenterFragment extends Fragment {
 		dump = (TextView) rootView.findViewById(R.id.renterDump);
 		activity = (MainActivity) getActivity();
 		renter = activity.selectedRenter;
-		
+
 		rentButton = (Button) rootView.findViewById(R.id.rentToRenter);
-		rentButton.setOnClickListener(new OnClickListener(){
+		rentButton.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View arg0) {
+
+				SignatureFragment f = new SignatureFragment();
+				Bundle b = new Bundle();
+				b.putString("action", AfterSignatureAction.OPEN_RENT_CONFIRM.toString());
+				f.setArguments(b);
 				
-				activity.rentingSignature = true;
-				FragmentTransaction transaction = getFragmentManager().beginTransaction();
-				transaction.replace(R.id.frame_container, new SignatureFragment());
+				FragmentTransaction transaction = getFragmentManager()
+						.beginTransaction();
+				transaction.replace(R.id.frame_container, f);
 				transaction.addToBackStack(null);
 				transaction.commit();
-				
+
 			}
-			
+
 		});
-		
+
 		showRenterInformation();
 		return rootView;
 	}
@@ -62,7 +68,8 @@ public class RenterFragment extends Fragment {
 		temp += "\n";
 
 		temp += "MatriculationNumber: ";
-		temp += renter.getMatriculationNumber() == null ? "<None>" : renter.getMatriculationNumber();
+		temp += renter.getMatriculationNumber() == null ? "<None>" : renter
+				.getMatriculationNumber();
 		temp += "\n";
 
 		temp += "Email: ";
@@ -70,7 +77,8 @@ public class RenterFragment extends Fragment {
 		temp += "\n";
 
 		temp += "Phone Number: ";
-		temp += renter.getPhoneNumber() == null ? "<None>" : renter.getPhoneNumber();
+		temp += renter.getPhoneNumber() == null ? "<None>" : renter
+				.getPhoneNumber();
 		temp += "\n";
 
 		temp += "Comments: \n";
