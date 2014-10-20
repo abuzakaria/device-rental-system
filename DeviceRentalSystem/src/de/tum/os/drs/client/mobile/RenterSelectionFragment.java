@@ -23,14 +23,14 @@ import de.tum.os.drs.client.mobile.communication.RentalServiceImpl;
 import de.tum.os.drs.client.mobile.model.Renter;
 
 public class RenterSelectionFragment extends Fragment {
-	
+
 	private RentalService service;
 	private MainActivity activity;
 	private ListView list;
 	private EditText inputSearch;
 	private ImageButton addRenterButton;
 	private ArrayAdapter<Renter> adapter;
-	
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -39,7 +39,7 @@ public class RenterSelectionFragment extends Fragment {
 		getActivity().setTitle("Select Renter");
 		View rootView = inflater.inflate(R.layout.fragment_select_renters,
 				container, false);
-		
+
 		list = (ListView) rootView.findViewById(R.id.renters_list);
 		list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
@@ -49,10 +49,9 @@ public class RenterSelectionFragment extends Fragment {
 				final Renter item = (Renter) parent.getItemAtPosition(position);
 				activity.selectedRenter = item;
 
-				//activity.startDeviceFragment();
-				
-				//Start the device fragment
-				FragmentTransaction transaction = getFragmentManager().beginTransaction();
+				// Start the device fragment
+				FragmentTransaction transaction = getFragmentManager()
+						.beginTransaction();
 				transaction.replace(R.id.frame_container, new RenterFragment());
 				transaction.addToBackStack(null);
 				transaction.commit();
@@ -60,10 +59,10 @@ public class RenterSelectionFragment extends Fragment {
 			}
 
 		});
-		
+
 		activity = (MainActivity) getActivity();
 		service = RentalServiceImpl.getInstance();
-		
+
 		inputSearch = (EditText) rootView.findViewById(R.id.inputSearchR);
 		inputSearch.addTextChangedListener(new TextWatcher() {
 
@@ -86,52 +85,56 @@ public class RenterSelectionFragment extends Fragment {
 				// TODO Auto-generated method stub
 			}
 		});
-		
+
 		addRenterButton = (ImageButton) rootView.findViewById(R.id.addRenter);
-		addRenterButton.setOnClickListener(new OnClickListener(){
+		addRenterButton.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View arg0) {
-				
-				FragmentTransaction transaction = getFragmentManager().beginTransaction();
-				transaction.replace(R.id.frame_container, new AddRenterFragment());
+
+				FragmentTransaction transaction = getFragmentManager()
+						.beginTransaction();
+				transaction.replace(R.id.frame_container,
+						new AddRenterFragment());
 				transaction.addToBackStack(null);
 				transaction.commit();
-				
+
 			}
-			
+
 		});
-		
+
 		populateList();
-		
+
 		return rootView;
-		
+
 	}
-	
-	private void populateList(){
-		
-		service.getAllRenters(new Callback<List<Renter>>(){
 
-			@Override
-			public void onSuccess(List<Renter> result) {
-				adapter = new RentersListAdapter(activity, result);
-				list.setAdapter(adapter);
-				
-			}
+	private void populateList() {
 
-			@Override
-			public void onFailure(int code, String error) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			
-			
-			
-			
-		});
-		
+		if (activity.getRenters() != null) {
+			adapter = new RentersListAdapter(activity, activity.getRenters());
+			list.setAdapter(adapter);
+		} else {
+
+			service.getAllRenters(new Callback<List<Renter>>() {
+
+				@Override
+				public void onSuccess(List<Renter> result) {
+					activity.setRenters(result);
+					adapter = new RentersListAdapter(activity, result);
+					list.setAdapter(adapter);
+
+				}
+
+				@Override
+				public void onFailure(int code, String error) {
+					// TODO Auto-generated method stub
+
+				}
+
+			});
+
+		}
+
 	}
-	
-
 }

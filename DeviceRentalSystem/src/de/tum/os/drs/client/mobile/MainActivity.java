@@ -7,7 +7,6 @@ import java.util.List;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.os.Bundle;
@@ -16,6 +15,7 @@ import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.Menu;
@@ -44,10 +44,8 @@ public class MainActivity extends FragmentActivity {
 	private ListView mDrawerList;
 	private ActionBarDrawerToggle mDrawerToggle;
 
-	// Actions to be performed after a certain event
-	public AfterScanAction scanAction;
-	public AfterDeviceUpdateAction updateAction;
 	public String newDeviceImei;
+	public String newRenterMtr;
 
 	// The currently selected device and renter
 	public Device selectedDevice;
@@ -73,6 +71,9 @@ public class MainActivity extends FragmentActivity {
 	// List of fetched devices
 	private List<Device> availableDevices;
 	private List<Device> rentedDevices;
+	
+	//List of renters
+	private List<Renter> renters;
 
 	private RentalService service;
 
@@ -133,18 +134,17 @@ public class MainActivity extends FragmentActivity {
 				invalidateOptionsMenu();
 			}
 		};
+		
 		mDrawerLayout.setDrawerListener(mDrawerToggle);
 
 		setTitle(R.string.app_name);
-		
+
 		store = new CredentialStore(
 				PreferenceManager.getDefaultSharedPreferences(this));
 
 		service = RentalServiceImpl.getInstance();
 
-		updateAction = AfterDeviceUpdateAction.GO_TO_HOME;
-		updateDevices();
-
+		updateDevices(AfterDeviceUpdateAction.GO_TO_HOME);
 	}
 
 	private void startAuthenticationActivity() {
@@ -182,13 +182,16 @@ public class MainActivity extends FragmentActivity {
 		switch (item.getItemId()) {
 		case R.id.action_about:
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
-			builder.setMessage("This app was developed as a project for Android Practical Summer School Course by Pablo Arias & Abu Zakaria")
-			       .setCancelable(false)
-			       .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-			           public void onClick(DialogInterface dialog, int id) {
-			                //do things
-			           }
-			       });
+			builder.setMessage(
+					"This app was developed as a project for Android Practical Summer School Course by Pablo Arias & Abu Zakaria")
+					.setCancelable(false)
+					.setPositiveButton("OK",
+							new DialogInterface.OnClickListener() {
+								public void onClick(DialogInterface dialog,
+										int id) {
+									// do things
+								}
+							});
 			AlertDialog alert = builder.create();
 			alert.show();
 			return true;
@@ -223,21 +226,23 @@ public class MainActivity extends FragmentActivity {
 			fragment = new AddDeviceFragment();
 			break;
 		case 2:
-			scanAction = AfterScanAction.OPEN_DEVICE;
 			fragment = new ScanFragment();
+			Bundle b = new Bundle();
+			b.putString("action", AfterScanAction.OPEN_DEVICE.toString());
+			fragment.setArguments(b);
 			break;
 		case 3:
 			logout();
 			break;
 		case 4:
-            System.exit(1);
-            
+			System.exit(1);
+
 		default:
 			break;
 		}
 
 		if (fragment != null) {
-			
+
 			FragmentManager manager = getSupportFragmentManager();
 			if (manager.getBackStackEntryCount() > 0) {
 				FragmentManager.BackStackEntry first = manager
@@ -281,9 +286,9 @@ public class MainActivity extends FragmentActivity {
 
 	}
 
-	public void onListUpdateFinished() {
+	public void onListUpdateFinished(final AfterDeviceUpdateAction action) {
 
-		switch (updateAction) {
+		switch (action) {
 		case GO_TO_HOME:
 			returnToHome();
 			break;
@@ -295,15 +300,13 @@ public class MainActivity extends FragmentActivity {
 
 		}
 
-		updateAction = null;
-
 	}
 
-	public void onScanFinished(String result) {
+	public void onScanFinished(AfterScanAction action, String result) {
 
 		Log.i(TAG, "Scan result:" + result);
-		
-		switch (scanAction) {
+
+		switch (action) {
 		case OPEN_DEVICE: {
 			selectAndShowDevice(result);
 			break;
@@ -317,8 +320,6 @@ public class MainActivity extends FragmentActivity {
 			break;
 
 		}
-
-		scanAction = null;
 
 	}
 
@@ -365,8 +366,23 @@ public class MainActivity extends FragmentActivity {
 		return null;
 
 	}
+	
+	public Renter getRenterFromMtrNr(String mtr){
+		
+		for(Renter r : renters){
+			
+			if(r.getMatriculationNumber().equals(mtr)){
+				
+				return r;
+			}
+			
+		}
+		
+		return null;
+		
+	}
 
-	public void updateDevices() {
+	public void updateDevices(final AfterDeviceUpdateAction action) {
 
 		service.getAvailableDevices(new Callback<List<Device>>() {
 
@@ -374,7 +390,7 @@ public class MainActivity extends FragmentActivity {
 			public void onSuccess(List<Device> result) {
 
 				availableDevices = result;
-				fetchRentedDevices();
+				fetchRentedDevices(action);
 			}
 
 			@Override
@@ -386,8 +402,46 @@ public class MainActivity extends FragmentActivity {
 		});
 
 	}
+	
+	public void updateRenters(){
+		
+		service.getAllRenters(new Callback<List<Renter>>(){
 
-	private void fetchRentedDevices() {
+			@Override
+			public void onSuccess(List<Renter> result) {
+				renters = result;
+				
+				selectedRenter = getRenterFromMtrNr(newRenterMtr);
+				
+				FragmentTransaction transaction = getSupportFragmentManager()
+						.beginTransaction();
+				transaction.replace(R.id.frame_container,
+						new RenterFragment());
+				transaction.commit();
+				
+			}
+
+			@Override
+			public void onFailure(int code, String error) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+		});
+		
+	}
+	
+	public List<Renter> getRenters(){
+		return renters;
+		
+	}
+	
+	public void setRenters(List<Renter> r){
+		
+		renters = r;
+	}
+
+	private void fetchRentedDevices(final AfterDeviceUpdateAction action) {
 
 		service.getRentedDevices(new Callback<List<Device>>() {
 
@@ -395,7 +449,7 @@ public class MainActivity extends FragmentActivity {
 			public void onSuccess(List<Device> result) {
 
 				rentedDevices = result;
-				onListUpdateFinished();
+				onListUpdateFinished(action);
 			}
 
 			@Override
@@ -408,7 +462,8 @@ public class MainActivity extends FragmentActivity {
 
 	}
 
-	public void clearFragmentStack() {
+	private void clearFragmentStack() {
+		Log.i(TAG, "Clearing");
 
 		FragmentManager fm = this.getSupportFragmentManager();
 		for (int i = 0; i < fm.getBackStackEntryCount(); ++i) {
@@ -466,6 +521,7 @@ public class MainActivity extends FragmentActivity {
 	public void returnToHome() {
 
 		clearStack();
+		//getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
 
 		displayView(0);
 
@@ -538,30 +594,28 @@ public class MainActivity extends FragmentActivity {
 		toast.show();
 
 	}
-	
-	
-	public int getDeviceImage(String name){
-		
+
+	public int getDeviceImage(String name) {
+
 		int r = unknown_device_picture;
-		
-		if(name == null){
-			
+
+		if (name == null) {
+
 			return r;
 		}
-		
+
 		String lower = name.toLowerCase().toString();
-		
-		
-		if(deviceNameToImageNameMap.containsKey(lower)){
+
+		if (deviceNameToImageNameMap.containsKey(lower)) {
 			r = deviceNameToImageNameMap.get(lower);
-			
+
 		}
-		
+
 		return r;
-		
+
 	}
-	
-	private int unknown_device_picture = R.drawable.ic_action_hardware_phone; 
+
+	private int unknown_device_picture = R.drawable.ic_action_hardware_phone;
 	private HashMap<String, Integer> deviceNameToImageNameMap = new HashMap<String, Integer>() {
 		private static final long serialVersionUID = -4645423715285941470L;
 		{

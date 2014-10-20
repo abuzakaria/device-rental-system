@@ -75,12 +75,15 @@ public class AddDeviceFragment extends Fragment {
 			@Override
 			public void onClick(View v) {
 				
-				MainActivity activity = (MainActivity) getActivity();
-				activity.scanAction = AfterScanAction.SET_IMEI_FILED;
+				Bundle b = new Bundle();
+				b.putString("action", AfterScanAction.SET_IMEI_FILED.toString());
+				ScanFragment f = new ScanFragment();
+				f.setArguments(b);
+				
 				final FragmentTransaction ft = getFragmentManager().beginTransaction(); 
-				ft.replace(R.id.frame_container, new ScanFragment()); 
+				ft.replace(R.id.frame_container, f); 
 				ft.addToBackStack(null);
-				ft.commit(); 
+				ft.commit();  
 			}
 
 		});
@@ -149,8 +152,7 @@ public class AddDeviceFragment extends Fragment {
 	private void onFinished() {
 		MainActivity activity = (MainActivity) getActivity();
 		activity.newDeviceImei = s_deviceSerial;
-		activity.updateAction = AfterDeviceUpdateAction.OPEN_DEVICE;
-		activity.updateDevices();
+		activity.updateDevices(AfterDeviceUpdateAction.OPEN_DEVICE);
 		
 	}
 

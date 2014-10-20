@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import de.tum.os.drs.client.mobile.adapters.RentersListAdapter;
 import de.tum.os.drs.client.mobile.communication.Callback;
 import de.tum.os.drs.client.mobile.communication.RentalService;
 import de.tum.os.drs.client.mobile.communication.RentalServiceImpl;
@@ -108,13 +109,36 @@ public class DeviceFragment extends Fragment {
 		if (device != null) {
 
 			fillDeviceTextDetails();
-			
+
 			deviceImage.setImageResource(activity.getDeviceImage(device
 					.getName()));
 
 			if (!device.isAvailable()) {
 
-				setRenter();
+				if (activity.getRenters() == null) {
+
+					service.getAllRenters(new Callback<List<Renter>>() {
+
+						@Override
+						public void onSuccess(List<Renter> result) {
+							activity.setRenters(result);
+							showRenterDetails();
+
+						}
+
+						@Override
+						public void onFailure(int code, String error) {
+							// TODO Auto-generated method stub
+
+						}
+
+					});
+
+				} else {
+
+					showRenterDetails();
+				}
+
 			}
 
 		} else {
@@ -123,32 +147,20 @@ public class DeviceFragment extends Fragment {
 
 	}
 
-	private void setRenter() {
+	private Renter getRenterFromDeviceImei(String imei) {
 
-		service.getAllActiveRenters(new Callback<List<Renter>>() {
-			@Override
-			public void onFailure(int code, String error) {
+		for (Renter r : activity.getRenters()) {
+			for (String d : r.getRentedDevices()) {
 
-			}
-
-			@Override
-			public void onSuccess(List<Renter> result) {
-				for (Renter r : result) {
-					for (String d : r.getRentedDevices()) {
-						if (d.trim().equals(device.getImei())) {
-							renter = r;
-							//Used by confirmation fragment
-							activity.selectedRenter = r;
-							Log.i("Test", "Renter found");
-							showRenterDetails();
-							return;
-						}
-					}
+				if (d.trim().equals(imei)) {
+					// Used by confirmation fragment
+					activity.selectedRenter = r;
+					return r;
 				}
 			}
+		}
 
-		});
-
+		return null;
 	}
 
 	private void fillDeviceTextDetails() {
@@ -185,6 +197,8 @@ public class DeviceFragment extends Fragment {
 
 		String temp = "";
 
+		Renter renter = getRenterFromDeviceImei(device.getImei());
+
 		if (renter != null) {
 			temp += "Renter: ";
 			temp += renter.getName();
@@ -198,10 +212,12 @@ public class DeviceFragment extends Fragment {
 			temp += device.getEstimatedReturnDate() == null ? "<Not found>"
 					: device.getEstimatedReturnDate().toString();
 			temp += "\n";
+		} else {
+
+			temp += "Renter not found";
 		}
 
 		renterDump.setText(temp);
 
 	}
-
 }

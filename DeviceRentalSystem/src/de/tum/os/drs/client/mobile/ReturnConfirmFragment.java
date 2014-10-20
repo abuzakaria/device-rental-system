@@ -80,8 +80,7 @@ public class ReturnConfirmFragment extends Fragment {
 			@Override
 			public void onSuccess(String result) {
 				activity.showToast(result);
-				activity.updateAction = AfterDeviceUpdateAction.GO_TO_HOME;
-				activity.updateDevices();
+				activity.updateDevices(AfterDeviceUpdateAction.GO_TO_HOME);
 				
 			}
 

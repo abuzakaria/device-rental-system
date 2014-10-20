@@ -10,11 +10,13 @@ import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import de.tum.os.drs.client.mobile.model.AfterScanAction;
 
 public class ScanFragment extends Fragment implements ScannerListener {
 	private boolean isResultReceived = false;
 
 	private MainActivity activity;
+	private AfterScanAction scanAction;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -29,7 +31,12 @@ public class ScanFragment extends Fragment implements ScannerListener {
 				.replace(R.id.sample, (Fragment) ssFrag).commit();
 		ssFrag.setScannerListener(this);
 
+		Bundle b = getArguments();
+		scanAction = AfterScanAction.toScanAction(b.getString("action"));
+		
 		activity = (MainActivity) getActivity();
+		
+		
 		return rootView;
 	}
 
@@ -37,13 +44,13 @@ public class ScanFragment extends Fragment implements ScannerListener {
 	public void onDataReceive(String result, int barcodeType) {
 		if (isResultReceived == false) {
 			isResultReceived = true;
-			
+
 			Vibrator v = (Vibrator) getActivity().getSystemService(
 					Context.VIBRATOR_SERVICE);
 			v.vibrate(50);
 
-			activity.onScanFinished(result);
-			
+			activity.onScanFinished(scanAction, result);
+
 		}
 	}
 

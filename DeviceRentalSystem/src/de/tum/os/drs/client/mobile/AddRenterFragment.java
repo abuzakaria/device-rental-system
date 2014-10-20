@@ -60,10 +60,10 @@ public class AddRenterFragment extends Fragment {
 	}
 
 	private void addRenter() {
-		
+
 		if (matrNr.getText().length() > 0 && name.getText().length() > 0
 				&& email.getText().length() > 0) {
-			
+
 			String mat = matrNr.getText().toString();
 
 			String rEmail = email.getText().toString();
@@ -89,14 +89,8 @@ public class AddRenterFragment extends Fragment {
 				public void onSuccess(String result) {
 
 					activity.showToast(result);
-
-					activity.selectedRenter = renter;
-
-					FragmentTransaction transaction = getFragmentManager()
-							.beginTransaction();
-					transaction.replace(R.id.frame_container,
-							new RenterFragment());
-					transaction.commit();
+					activity.newRenterMtr = renter.getMatriculationNumber();
+					activity.updateRenters();
 
 				}
 

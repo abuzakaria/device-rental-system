@@ -6,8 +6,6 @@ import java.util.List;
 
 import android.net.Uri;
 import android.util.Log;
-import android.widget.Toast;
-import de.tum.os.drs.client.mobile.MainActivity;
 import de.tum.os.drs.client.mobile.model.Device;
 import de.tum.os.drs.client.mobile.model.LoginRequest;
 import de.tum.os.drs.client.mobile.model.LoginResponse;
@@ -24,7 +22,7 @@ import de.tum.os.drs.client.mobile.parsers.SingleDeviceParser;
 public class RentalServiceImpl implements RentalService {
 
 
-	private static final String BASE_URL = "https://192.168.0.101:8443";
+	private static final String BASE_URL = "https://131.159.210.25:8443";
 	//public static  String BASE_URL;
 
 	private static  String BASE_PATH = "/rental-server-mobile/rest/";

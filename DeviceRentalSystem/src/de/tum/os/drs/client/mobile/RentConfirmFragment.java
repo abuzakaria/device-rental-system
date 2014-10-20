@@ -97,9 +97,7 @@ public class RentConfirmFragment extends Fragment {
 			public void onSuccess(String result) {
 
 				activity.showToast(result);
-
-				activity.updateAction = AfterDeviceUpdateAction.GO_TO_HOME;
-				activity.updateDevices();
+				activity.updateDevices(AfterDeviceUpdateAction.GO_TO_HOME);
 
 			}
 
@@ -110,12 +108,6 @@ public class RentConfirmFragment extends Fragment {
 			}
 
 		});
-
-	}
-
-	private void returnToHome() {
-
-		activity.returnToHome();
 
 	}
 
