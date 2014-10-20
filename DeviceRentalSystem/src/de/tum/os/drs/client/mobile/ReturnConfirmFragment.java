@@ -94,7 +94,7 @@ public class ReturnConfirmFragment extends Fragment {
 				activity.showToast(result);
 
 				// Update the device list
-				activity.updateDevices(null, AfterDeviceUpdateAction.GO_TO_HOME);
+				activity.updateSingleDevice(device.getImei(), renter.getMatriculationNumber(), AfterDeviceUpdateAction.UPDATE_RENTER);
 
 			}
 
@@ -126,31 +126,35 @@ public class ReturnConfirmFragment extends Fragment {
 
 	private void showRenterInformation() {
 
-		if (renter == null) {
-			return;
-		}
-
 		String temp = "Name: ";
-		temp += renter.getName() == null ? "<None>" : renter.getName();
-		temp += "\n";
 
-		temp += "MatriculationNumber: ";
-		temp += renter.getMatriculationNumber() == null ? "<None>" : renter
-				.getMatriculationNumber();
-		temp += "\n";
+		if (renter != null) {
+			temp += renter.getName() == null ? "<None>" : renter.getName();
+			temp += "\n";
 
-		temp += "Email: ";
-		temp += renter.getEmail() == null ? "<None>" : renter.getEmail();
-		temp += "\n";
+			temp += "MatriculationNumber: ";
+			temp += renter.getMatriculationNumber() == null ? "<None>" : renter
+					.getMatriculationNumber();
+			temp += "\n";
 
-		temp += "Phone Number: ";
-		temp += renter.getPhoneNumber() == null ? "<None>" : renter
-				.getPhoneNumber();
-		temp += "\n";
+			temp += "Email: ";
+			temp += renter.getEmail() == null ? "<None>" : renter.getEmail();
+			temp += "\n";
 
-		temp += "Comments: \n";
-		temp += renter.getComments() == null ? "<None>" : renter.getComments();
-		temp += "\n";
+			temp += "Phone Number: ";
+			temp += renter.getPhoneNumber() == null ? "<None>" : renter
+					.getPhoneNumber();
+			temp += "\n";
+
+			temp += "Comments: \n";
+			temp += renter.getComments() == null ? "<None>" : renter
+					.getComments();
+			temp += "\n";
+		} else {
+
+			temp += "Renter not found";
+
+		}
 
 		renterDetails.setText(temp);
 	}

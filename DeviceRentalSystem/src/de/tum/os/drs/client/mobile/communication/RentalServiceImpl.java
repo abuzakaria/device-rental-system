@@ -18,6 +18,7 @@ import de.tum.os.drs.client.mobile.parsers.ListRentersParser;
 import de.tum.os.drs.client.mobile.parsers.LoginResponseParser;
 import de.tum.os.drs.client.mobile.parsers.ServerRequestCallback;
 import de.tum.os.drs.client.mobile.parsers.SingleDeviceParser;
+import de.tum.os.drs.client.mobile.parsers.SingleRenterParser;
 
 /**
  * Implements the server interface.
@@ -332,6 +333,36 @@ public class RentalServiceImpl implements RentalService {
 		}
 
 	}
+	
+	@Override
+	public void getRenterFromMtrNr(String mtrNr, Callback<Renter> callback) {
+		
+		Uri.Builder builder = getBaseBuilder();
+		builder.appendPath("renters");
+		builder.appendPath(mtrNr);
+
+		URL url;
+
+		try {
+			url = new URL(builder.build().toString());
+
+			ServerRequestCallback<Renter> serverCallback = new SingleRenterParser(
+					callback);
+
+			ServerRequest request = new ServerRequest(url,
+					ServerRequest.HTTP_METHODS.GET);
+
+			new ServerCommunication(serverCallback).execute(request);
+
+		} catch (MalformedURLException e) {
+
+			e.printStackTrace();
+		}
+		
+		
+	}
+	
+	//---------------------Renting service-----------------
 
 	@Override
 	public void rentDevices(RentRequest request, Callback<String> callback) {

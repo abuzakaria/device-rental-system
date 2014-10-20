@@ -30,6 +30,7 @@ import de.tum.os.drs.client.mobile.communication.Callback;
 import de.tum.os.drs.client.mobile.communication.RentalService;
 import de.tum.os.drs.client.mobile.communication.RentalServiceImpl;
 import de.tum.os.drs.client.mobile.model.AfterDeviceUpdateAction;
+import de.tum.os.drs.client.mobile.model.AfterRentersUpdateAction;
 import de.tum.os.drs.client.mobile.model.AfterScanAction;
 import de.tum.os.drs.client.mobile.model.AfterSignatureAction;
 import de.tum.os.drs.client.mobile.model.CredentialStore;
@@ -300,18 +301,68 @@ public class MainActivity extends FragmentActivity {
 	 * @param action
 	 *            Action to be performed after the update has finished
 	 */
-	private void onListUpdateFinished(final String newImei,
+	private void onListUpdateFinished(final String newImei, final String mtrNr,
 			final AfterDeviceUpdateAction action) {
 
 		switch (action) {
-		case GO_TO_HOME:
-			// Just return to the home screen (e.g. when device was returned or
-			// rented)
-			returnToHome();
+		case UPDATE_RENTER:
+			// Called when device was returned or rented. Now update the renter.
+			updateSingleRenter(mtrNr, AfterRentersUpdateAction.GO_TO_HOME);
 			break;
 		case OPEN_DEVICE:
 			// Show a device (e.g. when device was added or updated)
 			selectAndShowDevice(newImei);
+			break;
+		case GO_TO_HOME:
+			// Return to the home fragment
+			returnToHome();
+			break;
+		default:
+			break;
+
+		}
+
+	}
+
+	/**
+	 * 
+	 * Callback for the renters update event
+	 * 
+	 * @param mtrNr
+	 * @param action
+	 *            Action to be performed afterwards
+	 */
+	private void onRentersUpdateFinished(final String mtrNr,
+			final AfterRentersUpdateAction action) {
+
+		switch (action) {
+		case GO_TO_HOME:
+			hideLoadingDialog();
+			returnToHome();
+			break;
+		case OPEN_RENTER_FRAGMENT: {
+
+			// Start the renter information fragment
+			Renter renter = getRenterFromMtrNr(mtrNr);
+
+			if (renter != null) {
+				selectedRenter = renter;
+
+				// Start renter fragment
+
+				FragmentTransaction transaction = getSupportFragmentManager()
+						.beginTransaction();
+				transaction.replace(R.id.frame_container, new RenterFragment());
+				transaction.addToBackStack(null);
+				transaction.commit();
+
+			} else {
+
+				Log.e(TAG, "Renter not found");
+
+			}
+
+		}
 			break;
 		default:
 			break;
@@ -532,6 +583,165 @@ public class MainActivity extends FragmentActivity {
 	}
 
 	/**
+	 * Updates a single device and refreshes the list
+	 * 
+	 * 
+	 * @param newImei
+	 * @param action
+	 */
+	public void updateSingleDevice(final String imei, final String mtrNr,
+			final AfterDeviceUpdateAction action) {
+
+		showLoadingDialog("Refreshing device");
+		service.getDeviceByImei(imei, new Callback<Device>() {
+
+			@Override
+			public void onSuccess(Device result) {
+				hideLoadingDialog();
+				updateSingleDeviceInList(imei, result);
+				onListUpdateFinished(imei, mtrNr, action);
+
+			}
+
+			@Override
+			public void onFailure(int code, String error) {
+				showToast(error);
+				hideLoadingDialog();
+
+				if (code == 401 || code == 403) {
+
+					// Invalid session
+					// We need to login again
+					sessionExpired();
+
+				}
+
+			}
+
+		});
+
+	}
+
+	private void updateSingleDeviceInList(String imei, Device newDevice) {
+
+		if (availableDevices != null) {
+
+			for (int i = 0; i < availableDevices.size(); i++) {
+
+				if (availableDevices.get(i).getImei().equals(imei)) {
+
+					availableDevices.remove(i);
+
+					if (newDevice.isAvailable()) {
+
+						availableDevices.add(newDevice);
+
+					} else {
+
+						rentedDevices.add(newDevice);
+					}
+
+					return;
+
+				}
+
+			}
+
+		}
+
+		if (rentedDevices != null) {
+
+			for (int i = 0; i < rentedDevices.size(); i++) {
+
+				if (rentedDevices.get(i).getImei().equals(imei)) {
+
+					rentedDevices.remove(i);
+
+					if (newDevice.isAvailable()) {
+
+						availableDevices.add(newDevice);
+
+					} else {
+
+						rentedDevices.add(newDevice);
+
+					}
+
+					return;
+
+				}
+
+			}
+
+		}
+
+		if (newDevice.isAvailable()) {
+
+			availableDevices.add(newDevice);
+
+		} else {
+
+			rentedDevices.add(newDevice);
+		}
+
+	}
+
+	public void updateSingleRenter(final String mtrNr,
+			final AfterRentersUpdateAction action) {
+
+		showLoadingDialog("Updating renter");
+		service.getRenterFromMtrNr(mtrNr, new Callback<Renter>() {
+
+			@Override
+			public void onSuccess(Renter result) {
+				hideLoadingDialog();
+				updateSingleRenterInList(result);
+				onRentersUpdateFinished(mtrNr, action);
+			}
+
+			@Override
+			public void onFailure(int code, String error) {
+
+				showToast(error);
+				hideLoadingDialog();
+
+				if (code == 401 || code == 403) {
+
+					// Invalid session
+					// We need to login again
+					sessionExpired();
+
+				}
+			}
+
+		});
+
+	}
+
+	private void updateSingleRenterInList(Renter newRenter) {
+
+		if (renters != null) {
+
+			for (int i = 0; i < renters.size(); i++) {
+
+				if (renters.get(i).getMatriculationNumber()
+						.equals(newRenter.getMatriculationNumber())) {
+
+					renters.remove(i);
+					renters.add(newRenter);
+					return;
+
+				}
+
+			}
+
+			renters.add(newRenter);
+
+		}
+
+	}
+
+	/**
 	 * Queries the rented devices from the server Updates the device list
 	 * 
 	 * 
@@ -548,7 +758,7 @@ public class MainActivity extends FragmentActivity {
 			public void onSuccess(List<Device> result) {
 				hideLoadingDialog();
 				rentedDevices = result;
-				onListUpdateFinished(newImei, action);
+				onListUpdateFinished(newImei, null, action);
 			}
 
 			@Override
@@ -577,7 +787,8 @@ public class MainActivity extends FragmentActivity {
 	 * @param mtrNr
 	 *            Renter to be shown afterwards
 	 */
-	public void updateRenters(final String mtrNr) {
+	public void updateRenters(final String mtrNr,
+			final AfterRentersUpdateAction action) {
 
 		showLoadingDialog("Updating renters");
 		service.getAllRenters(new Callback<List<Renter>>() {
@@ -588,24 +799,7 @@ public class MainActivity extends FragmentActivity {
 				// Update the local renters
 				renters = result;
 
-				// Start the renter information fragment
-				Renter renter = getRenterFromMtrNr(mtrNr);
-
-				if (renter != null) {
-					selectedRenter = renter;
-
-					FragmentTransaction transaction = getSupportFragmentManager()
-							.beginTransaction();
-					transaction.replace(R.id.frame_container,
-							new RenterFragment());
-					transaction.addToBackStack(null);
-					transaction.commit();
-
-				} else {
-
-					Log.e(TAG, "Renter not found");
-
-				}
+				onRentersUpdateFinished(mtrNr, action);
 
 			}
 
@@ -613,13 +807,13 @@ public class MainActivity extends FragmentActivity {
 			public void onFailure(int code, String error) {
 				hideLoadingDialog();
 				showToast(error);
-				
-				if(code == 401 || code == 403){
-					
-					//Invalid session
-					//We need to login again
+
+				if (code == 401 || code == 403) {
+
+					// Invalid session
+					// We need to login again
 					sessionExpired();
-					
+
 				}
 
 			}
@@ -678,7 +872,7 @@ public class MainActivity extends FragmentActivity {
 
 				Log.i(TAG, error);
 				showToast("Error code received: " + code + " " + error);
-				
+
 				// Clear the user's credentials
 				store.clearCredentials();
 
@@ -748,7 +942,7 @@ public class MainActivity extends FragmentActivity {
 
 	@Override
 	public void onBackPressed() {
-		
+
 		Fragment f = getSupportFragmentManager().findFragmentById(
 				R.id.frame_container);
 
@@ -768,7 +962,7 @@ public class MainActivity extends FragmentActivity {
 				mDrawerLayout.openDrawer(mDrawerList);
 			} else {
 
-				//Return to safe state
+				// Return to safe state
 				returnToHome();
 			}
 

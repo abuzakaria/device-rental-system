@@ -5,6 +5,7 @@ import java.util.List;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -181,17 +182,24 @@ public class DeviceFragment extends Fragment {
 	 */
 	private Renter getRenterFromDeviceImei(String imei) {
 
-		for (Renter r : activity.getRenters()) {
-			for (String d : r.getRentedDevices()) {
+		for(Renter r : activity.getRenters()) {
+			
+			//Log.i("Test", r.getName());
+			//Log.i("Test", r.getRentedDevices().toString());
+			for(String d : r.getRentedDevices()) {
 
-				if (d.trim().equals(imei)) {
+				//Log.i("Test", d + " " + imei);
+				
+				if (d.trim().equals(imei.trim())) {
 					// Used by confirmation fragment
 					activity.selectedRenter = r;
+					Log.i("Test", activity.selectedRenter.getName());
 					return r;
 				}
 			}
 		}
 
+		activity.selectedRenter = null;
 		return null;
 	}
 
@@ -245,7 +253,7 @@ public class DeviceFragment extends Fragment {
 		String temp = "";
 
 		Renter renter = getRenterFromDeviceImei(device.getImei());
-
+		
 		if (renter != null) {
 			temp += "Renter: ";
 			temp += renter.getName();
@@ -259,6 +267,7 @@ public class DeviceFragment extends Fragment {
 			temp += device.getEstimatedReturnDate() == null ? "<Not found>"
 					: device.getEstimatedReturnDate().toString();
 			temp += "\n";
+			
 		} else {
 
 			temp += "Renter not found";

@@ -47,6 +47,8 @@ public interface RentalService {
 	
 	void getAllActiveRenters(Callback<List<Renter>> callBack);
 	
+	void getRenterFromMtrNr(String mtrNr, Callback<Renter> callBack);
+	
 	//------------Renting Service-------------
 	
 	void rentDevices(RentRequest request, Callback<String> callBack);

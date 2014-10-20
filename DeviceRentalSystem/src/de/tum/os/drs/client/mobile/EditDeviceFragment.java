@@ -32,20 +32,20 @@ public class EditDeviceFragment extends Fragment {
 	private EditText deviceSerial, deviceDetails, deviceName;
 	private TextView dateTag;
 	private Spinner deviceType, deviceState;
-	
+
 	private MainActivity activity;
 	private RentalService service;
 	private DatePicker returnDate = null;
 	private String oldImei;
-	
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		
+
 		super.onCreateView(inflater, container, savedInstanceState);
 		View rootView = inflater.inflate(R.layout.fragment_edit_device,
 				container, false);
-		
+
 		getActivity().setTitle("Update device");
 
 		deviceSerial = (EditText) rootView.findViewById(R.id.device_serial);
@@ -72,7 +72,7 @@ public class EditDeviceFragment extends Fragment {
 
 			@Override
 			public void onClick(View v) {
-				
+
 				if (deviceSerial.getText().length() == 0) {
 					Toast.makeText(getActivity(),
 							"Device serial can not be empty",
@@ -142,8 +142,8 @@ public class EditDeviceFragment extends Fragment {
 				.getText().toString();
 		Date date = getDateFromDatePicker(returnDate);
 
-		//Update device information
-		
+		// Update device information
+
 		device.setImei(imei);
 		device.setDescription(description);
 		device.setName(name);
@@ -159,9 +159,10 @@ public class EditDeviceFragment extends Fragment {
 			public void onSuccess(String result) {
 				Toast.makeText(getActivity(), result, Toast.LENGTH_SHORT)
 						.show();
-				
-				//Refresh the list of devices and open the edited device
-				activity.updateDevices(imei, AfterDeviceUpdateAction.OPEN_DEVICE);
+				activity.hideLoadingDialog();
+				// Refresh the list of devices and open the edited device
+				activity.updateSingleDevice(imei, null,
+						AfterDeviceUpdateAction.OPEN_DEVICE);
 
 			}
 

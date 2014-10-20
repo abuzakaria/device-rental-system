@@ -124,13 +124,13 @@ public class AddDeviceFragment extends Fragment {
 
 			@Override
 			public void onSuccess(String result) {
-
+				((MainActivity) getActivity()).hideLoadingDialog();
 				Toast.makeText(getActivity(), result, Toast.LENGTH_SHORT)
 						.show();
 
 				// Update the device list
 				MainActivity activity = (MainActivity) getActivity();
-				activity.updateDevices(s_deviceSerial,
+				activity.updateSingleDevice(s_deviceSerial, null,
 						AfterDeviceUpdateAction.OPEN_DEVICE);
 
 			}

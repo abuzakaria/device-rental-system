@@ -11,6 +11,7 @@ import android.widget.EditText;
 import de.tum.os.drs.client.mobile.communication.Callback;
 import de.tum.os.drs.client.mobile.communication.RentalService;
 import de.tum.os.drs.client.mobile.communication.RentalServiceImpl;
+import de.tum.os.drs.client.mobile.model.AfterRentersUpdateAction;
 import de.tum.os.drs.client.mobile.model.Renter;
 
 public class AddRenterFragment extends Fragment {
@@ -99,7 +100,7 @@ public class AddRenterFragment extends Fragment {
 					activity.hideLoadingDialog();
 					activity.showToast(result);
 					//Update the local copy and show the renter in the information fragment
-					activity.updateRenters(renter.getMatriculationNumber());
+					activity.updateRenters(renter.getMatriculationNumber(), AfterRentersUpdateAction.OPEN_RENTER_FRAGMENT);
 
 				}
 

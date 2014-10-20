@@ -85,8 +85,8 @@ public class RentConfirmFragment extends Fragment {
 
 		}
 
-		Renter renter = activity.selectedRenter;
-		Device device = activity.selectedDevice;
+		final Renter renter = activity.selectedRenter;
+		final Device device = activity.selectedDevice;
 
 		List<String> devices = new ArrayList<String>();
 		devices.add(device.getImei());
@@ -102,10 +102,12 @@ public class RentConfirmFragment extends Fragment {
 
 			@Override
 			public void onSuccess(String result) {
+				
+				activity.hideLoadingDialog();
 				activity.showToast(result);
 				
 				//Update the device list
-				activity.updateDevices(null, AfterDeviceUpdateAction.GO_TO_HOME);
+				activity.updateSingleDevice(device.getImei(), renter.getMatriculationNumber(), AfterDeviceUpdateAction.UPDATE_RENTER);
 
 			}
 
