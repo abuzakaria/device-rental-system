@@ -3,7 +3,6 @@ package de.tum.os.drs.client.mobile;
 import java.util.Calendar;
 import java.util.Date;
 
-import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -33,6 +32,7 @@ public class EditDeviceFragment extends Fragment {
 	private EditText deviceSerial, deviceDetails, deviceName;
 	private TextView dateTag;
 	private Spinner deviceType, deviceState;
+	
 	private MainActivity activity;
 	private RentalService service;
 	private DatePicker returnDate = null;
@@ -41,10 +41,11 @@ public class EditDeviceFragment extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		Log.d("check", "on createview");
+		
 		super.onCreateView(inflater, container, savedInstanceState);
 		View rootView = inflater.inflate(R.layout.fragment_edit_device,
 				container, false);
+		
 		getActivity().setTitle("Update device");
 
 		deviceSerial = (EditText) rootView.findViewById(R.id.device_serial);
@@ -71,7 +72,7 @@ public class EditDeviceFragment extends Fragment {
 
 			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
+				
 				if (deviceSerial.getText().length() == 0) {
 					Toast.makeText(getActivity(),
 							"Device serial can not be empty",
@@ -87,6 +88,10 @@ public class EditDeviceFragment extends Fragment {
 		return rootView;
 	}
 
+	/**
+	 * Pre-fills the Edit texts with device information
+	 * 
+	 */
 	private void showDeviceInformation() {
 
 		if (device != null) {
@@ -122,6 +127,11 @@ public class EditDeviceFragment extends Fragment {
 
 	}
 
+	/**
+	 * Updates the device in the database
+	 * 
+	 * 
+	 */
 	private void editDevice() {
 
 		final String imei = (deviceSerial.getText().length() == 0) ? null
@@ -132,7 +142,8 @@ public class EditDeviceFragment extends Fragment {
 				.getText().toString();
 		Date date = getDateFromDatePicker(returnDate);
 
-		// Device device = new Device();
+		//Update device information
+		
 		device.setImei(imei);
 		device.setDescription(description);
 		device.setName(name);
@@ -148,6 +159,8 @@ public class EditDeviceFragment extends Fragment {
 			public void onSuccess(String result) {
 				Toast.makeText(getActivity(), result, Toast.LENGTH_SHORT)
 						.show();
+				
+				//Refresh the list of devices and open the edited device
 				activity.updateDevices(imei, AfterDeviceUpdateAction.OPEN_DEVICE);
 
 			}
@@ -166,6 +179,12 @@ public class EditDeviceFragment extends Fragment {
 		});
 	}
 
+	/**
+	 * Reads teh date from the picker
+	 * 
+	 * @param datePicker
+	 * @return
+	 */
 	private Date getDateFromDatePicker(DatePicker datePicker) {
 		int day = datePicker.getDayOfMonth();
 		int month = datePicker.getMonth();

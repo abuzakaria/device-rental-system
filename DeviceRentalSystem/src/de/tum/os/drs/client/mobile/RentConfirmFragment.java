@@ -7,9 +7,6 @@ import java.util.List;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -29,6 +26,7 @@ import de.tum.os.drs.client.mobile.model.Renter;
 public class RentConfirmFragment extends Fragment {
 
 	private RentalService service;
+	
 	private TextView deviceDetails;
 	private TextView renterDetails;
 	private DatePicker datePicker;
@@ -74,6 +72,10 @@ public class RentConfirmFragment extends Fragment {
 		return rootView;
 	}
 
+	/**
+	 * Sends the rent request to the server
+	 * 
+	 */
 	private void rentDevice() {
 
 		if (signature == null || activity.selectedRenter == null
@@ -91,6 +93,7 @@ public class RentConfirmFragment extends Fragment {
 
 		Date returnDate = getDateFromDatePicker(datePicker);
 
+		//Create a rent request
 		RentRequest request = new RentRequest(renter.getMatriculationNumber(),
 				devices, returnDate, comments.getText().toString(), signature);
 
@@ -100,6 +103,8 @@ public class RentConfirmFragment extends Fragment {
 			@Override
 			public void onSuccess(String result) {
 				activity.showToast(result);
+				
+				//Update the device list
 				activity.updateDevices(null, AfterDeviceUpdateAction.GO_TO_HOME);
 
 			}
@@ -115,6 +120,10 @@ public class RentConfirmFragment extends Fragment {
 
 	}
 
+	/**
+	 * Shows the rental transaction information
+	 * 
+	 */
 	private void showInformation() {
 
 		showDeviceInformation();
@@ -122,6 +131,10 @@ public class RentConfirmFragment extends Fragment {
 		setDatePicker();
 	}
 
+	/**
+	 * Sets the date picker 6 months in advance
+	 * 
+	 */
 	private void setDatePicker() {
 
 		Date date = new Date();
@@ -136,6 +149,10 @@ public class RentConfirmFragment extends Fragment {
 
 	}
 
+	/**
+	 * Fills up the information of the renter
+	 * 
+	 */
 	private void showRenterInformation() {
 
 		if (activity.selectedRenter == null) {
@@ -169,6 +186,10 @@ public class RentConfirmFragment extends Fragment {
 		renterDetails.setText(temp);
 	}
 
+	/**
+	 * Fills up the information of the device
+	 * 
+	 */
 	private void showDeviceInformation() {
 
 		if (activity.selectedDevice == null) {

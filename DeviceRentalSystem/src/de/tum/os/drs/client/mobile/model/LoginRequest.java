@@ -3,6 +3,12 @@ package de.tum.os.drs.client.mobile.model;
 import de.tum.os.drs.client.mobile.authentication.Authenticator;
 import de.tum.os.drs.client.mobile.parsers.GsonHelper;
 
+/**
+ * Send to server to requets a login.
+ * 
+ * @author pablo
+ *
+ */
 public class LoginRequest {
 
 	private String token;

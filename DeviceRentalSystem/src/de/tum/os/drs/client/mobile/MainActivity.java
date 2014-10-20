@@ -170,12 +170,18 @@ public class MainActivity extends FragmentActivity {
 	}
 
 	@Override
+	/**
+	 * Listens for menu item clicks.
+	 * 
+	 * 
+	 */
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// toggle nav drawer on selecting action bar app icon/title
 		if (mDrawerToggle.onOptionsItemSelected(item)) {
 			return true;
 		}
-		// Handle action bar actions click
+
+		// We only use an about dialog as menu item
 		switch (item.getItemId()) {
 		case R.id.action_about:
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -209,7 +215,8 @@ public class MainActivity extends FragmentActivity {
 	}
 
 	/**
-	 * Displaying fragment view for selected nav drawer list item
+	 * Displaying fragment view when selected from the navigation drawer list
+	 * item
 	 * */
 	private void displayView(int position) {
 		// update the main content by replacing fragments
@@ -224,14 +231,17 @@ public class MainActivity extends FragmentActivity {
 			break;
 		case 2:
 			fragment = new ScanFragment();
+			// Open a device after scanned
 			Bundle b = new Bundle();
 			b.putString("action", AfterScanAction.OPEN_DEVICE.toString());
 			fragment.setArguments(b);
 			break;
 		case 3:
+			// Log the user out
 			logout();
 			break;
 		case 4:
+			// Close the app
 			System.exit(1);
 
 		default:
@@ -240,6 +250,7 @@ public class MainActivity extends FragmentActivity {
 
 		if (fragment != null) {
 
+			// Clear the fragment stack.
 			FragmentManager manager = getSupportFragmentManager();
 			if (manager.getBackStackEntryCount() > 0) {
 				FragmentManager.BackStackEntry first = manager
@@ -248,6 +259,7 @@ public class MainActivity extends FragmentActivity {
 						FragmentManager.POP_BACK_STACK_INCLUSIVE);
 			}
 
+			// Start the selected fragment
 			FragmentManager fragmentManager = getSupportFragmentManager();
 			fragmentManager.beginTransaction()
 					.replace(R.id.frame_container, fragment)
@@ -264,6 +276,10 @@ public class MainActivity extends FragmentActivity {
 		}
 	}
 
+	/**
+	 * Starts the device fragment
+	 * 
+	 */
 	public void startDeviceFragment() {
 
 		FragmentManager fragmentManager = getSupportFragmentManager();
@@ -273,14 +289,28 @@ public class MainActivity extends FragmentActivity {
 
 	}
 
-	public void onListUpdateFinished(final String newImei,
+	/**
+	 * Callback for the device update action. Called after a successful fetching
+	 * of devices.
+	 * 
+	 * 
+	 * @param newImei
+	 *            The imei of the device to show. Null if no device is to be
+	 *            shown
+	 * @param action
+	 *            Action to be performed after the update has finished
+	 */
+	private void onListUpdateFinished(final String newImei,
 			final AfterDeviceUpdateAction action) {
 
 		switch (action) {
 		case GO_TO_HOME:
+			// Just return to the home screen (e.g. when device was returned or
+			// rented)
 			returnToHome();
 			break;
 		case OPEN_DEVICE:
+			// Show a device (e.g. when device was added or updated)
 			selectAndShowDevice(newImei);
 			break;
 		default:
@@ -290,6 +320,16 @@ public class MainActivity extends FragmentActivity {
 
 	}
 
+	/**
+	 * Callback for the scan event. Called after the scan fragment has finished
+	 * reading the barcode.
+	 * 
+	 * @param action
+	 *            Action to be performed after the scan
+	 * @param result
+	 *            The result of the scan.
+	 * 
+	 */
 	public void onScanFinished(AfterScanAction action, String result) {
 
 		Log.i(TAG, "Scan result:" + result);
@@ -311,9 +351,18 @@ public class MainActivity extends FragmentActivity {
 
 	}
 
+	/**
+	 * Callback for signature event. Called after a signature has been entered.
+	 * 
+	 * @param signature
+	 *            The serialized signature as base64
+	 * @param action
+	 *            Action to perform after the signature has been fetched
+	 */
 	public void onSignatureFinished(final String signature,
 			final AfterSignatureAction action) {
 
+		// Provide the signature to the confirmation fragment
 		Bundle b = new Bundle();
 		b.putString("signature", signature);
 
@@ -321,6 +370,7 @@ public class MainActivity extends FragmentActivity {
 
 		case OPEN_RENT_CONFIRM: {
 
+			// Open rent confirmation screen
 			RentConfirmFragment f = new RentConfirmFragment();
 			f.setArguments(b);
 
@@ -333,6 +383,7 @@ public class MainActivity extends FragmentActivity {
 		}
 			break;
 		case OPEN_RETURN_CONFIRM: {
+			// Open return confirmation screen
 
 			ReturnConfirmFragment f = new ReturnConfirmFragment();
 			f.setArguments(b);
@@ -352,6 +403,13 @@ public class MainActivity extends FragmentActivity {
 
 	}
 
+	/**
+	 * Queries a device by Imei and starts the DeviceFragment
+	 * 
+	 * 
+	 * @param imei
+	 *            The imei of the device to be shown
+	 */
 	private void selectAndShowDevice(String imei) {
 		Device d = getDeviceFromImei(imei);
 
@@ -368,13 +426,23 @@ public class MainActivity extends FragmentActivity {
 
 	}
 
-	private Device getDeviceFromImei(String result) {
+	/**
+	 * Returns a device matching the provided Imei
+	 * 
+	 * @param result
+	 *            The imei found
+	 * 
+	 * @return The found device. Null if not found
+	 * 
+	 * 
+	 */
+	private Device getDeviceFromImei(String imei) {
 
 		List<Device> available = getAvailableDevices();
 
 		for (Device d : available) {
 
-			if (d.getImei().equals(result)) {
+			if (d.getImei().equals(imei)) {
 
 				return d;
 			}
@@ -385,7 +453,7 @@ public class MainActivity extends FragmentActivity {
 
 		for (Device d : rented) {
 
-			if (d.getImei().equals(result)) {
+			if (d.getImei().equals(imei)) {
 
 				return d;
 			}
@@ -396,6 +464,13 @@ public class MainActivity extends FragmentActivity {
 
 	}
 
+	/**
+	 * Returns a renter matching the provided matr nr.
+	 * 
+	 * 
+	 * @param mtr
+	 * @return
+	 */
 	public Renter getRenterFromMtrNr(String mtr) {
 
 		for (Renter r : renters) {
@@ -411,17 +486,28 @@ public class MainActivity extends FragmentActivity {
 
 	}
 
+	/**
+	 * Updates the local device database Called when changes in the devices are
+	 * made, e.g. after renting or editing.
+	 * 
+	 * @param newImei
+	 *            Imei of the device to be shown
+	 * @param action
+	 *            Action to be performed after the update
+	 */
 	public void updateDevices(final String newImei,
 			final AfterDeviceUpdateAction action) {
 
 		showLoadingDialog("Updating devices");
 
+		// Get all available devices first
 		service.getAvailableDevices(new Callback<List<Device>>() {
 
 			@Override
 			public void onSuccess(List<Device> result) {
 
 				availableDevices = result;
+				// Now get the rented devices
 				fetchRentedDevices(newImei, action);
 
 			}
@@ -431,12 +517,28 @@ public class MainActivity extends FragmentActivity {
 				showToast(error);
 				hideLoadingDialog();
 
+				if (code == 401 || code == 403) {
+
+					// Invalid session
+					// We need to login again
+					sessionExpired();
+
+				}
+
 			}
 
 		});
 
 	}
 
+	/**
+	 * Queries the rented devices from the server Updates the device list
+	 * 
+	 * 
+	 * @param newImei
+	 * @param action
+	 *            Action to be performed after updating
+	 */
 	private void fetchRentedDevices(final String newImei,
 			final AfterDeviceUpdateAction action) {
 
@@ -453,12 +555,28 @@ public class MainActivity extends FragmentActivity {
 			public void onFailure(int code, String error) {
 				hideLoadingDialog();
 
+				if (code == 401 || code == 403) {
+
+					// Invalid session
+					// We need to login again
+					sessionExpired();
+
+				}
+
 			}
 
 		});
 
 	}
 
+	/**
+	 * Fetches the renters from the server and updates the database. Opens the
+	 * renter fragment with the provided renter
+	 * 
+	 * 
+	 * @param mtrNr
+	 *            Renter to be shown afterwards
+	 */
 	public void updateRenters(final String mtrNr) {
 
 		showLoadingDialog("Updating renters");
@@ -467,20 +585,42 @@ public class MainActivity extends FragmentActivity {
 			@Override
 			public void onSuccess(List<Renter> result) {
 				hideLoadingDialog();
+				// Update the local renters
 				renters = result;
-				selectedRenter = getRenterFromMtrNr(mtrNr);
 
-				FragmentTransaction transaction = getSupportFragmentManager()
-						.beginTransaction();
-				transaction.replace(R.id.frame_container, new RenterFragment());
-				transaction.addToBackStack(null);
-				transaction.commit();
+				// Start the renter information fragment
+				Renter renter = getRenterFromMtrNr(mtrNr);
+
+				if (renter != null) {
+					selectedRenter = renter;
+
+					FragmentTransaction transaction = getSupportFragmentManager()
+							.beginTransaction();
+					transaction.replace(R.id.frame_container,
+							new RenterFragment());
+					transaction.addToBackStack(null);
+					transaction.commit();
+
+				} else {
+
+					Log.e(TAG, "Renter not found");
+
+				}
 
 			}
 
 			@Override
 			public void onFailure(int code, String error) {
 				hideLoadingDialog();
+				showToast(error);
+				
+				if(code == 401 || code == 403){
+					
+					//Invalid session
+					//We need to login again
+					sessionExpired();
+					
+				}
 
 			}
 
@@ -498,16 +638,6 @@ public class MainActivity extends FragmentActivity {
 		renters = r;
 	}
 
-	private void clearFragmentStack() {
-		Log.i(TAG, "Clearing");
-
-		FragmentManager fm = this.getSupportFragmentManager();
-		for (int i = 0; i < fm.getBackStackEntryCount(); ++i) {
-			fm.popBackStack();
-		}
-
-	}
-
 	public List<Device> getAvailableDevices() {
 
 		return availableDevices;
@@ -519,6 +649,10 @@ public class MainActivity extends FragmentActivity {
 
 	}
 
+	/**
+	 * Logs the user out of the app
+	 * 
+	 */
 	private void logout() {
 
 		Log.i(TAG, "Loging out...");
@@ -529,8 +663,11 @@ public class MainActivity extends FragmentActivity {
 			public void onSuccess(final String result) {
 				Log.i(TAG, result);
 
+				// Clear the user's credentials
 				store.clearCredentials();
 				showToast(result);
+
+				// Close and start from the authentication activity
 				startAuthenticationActivity();
 				finish();
 
@@ -540,14 +677,26 @@ public class MainActivity extends FragmentActivity {
 			public void onFailure(int code, String error) {
 
 				Log.i(TAG, error);
-
 				showToast("Error code received: " + code + " " + error);
+				
+				// Clear the user's credentials
+				store.clearCredentials();
+
+				// Close and start from the authentication activity
+				startAuthenticationActivity();
+				finish();
+
 			}
 
 		});
 
 	}
 
+	/**
+	 * The app has an invalid token. Logout the user and refresh the session.
+	 * 
+	 * 
+	 */
 	public void sessionExpired() {
 
 		finish();
@@ -559,12 +708,7 @@ public class MainActivity extends FragmentActivity {
 	 * 
 	 */
 	public void returnToHome() {
-		/*
-		 * //getSupportFragmentManager().popBackStack(); //clearFragmentStack();
-		 * Log.i(TAG, "Returning to home");
-		 * 
-		 * getSupportFragmentManager().popBackStack();
-		 */
+
 		getSupportFragmentManager().popBackStack(null,
 				FragmentManager.POP_BACK_STACK_INCLUSIVE);
 
@@ -604,10 +748,11 @@ public class MainActivity extends FragmentActivity {
 
 	@Override
 	public void onBackPressed() {
-
+		
 		Fragment f = getSupportFragmentManager().findFragmentById(
 				R.id.frame_container);
 
+		// Return immediatelly to the home fragment. Don't go back the stack.
 		if (f instanceof DeviceFragment || f instanceof RentConfirmFragment
 				|| f instanceof ReturnConfirmFragment) {
 
@@ -619,12 +764,12 @@ public class MainActivity extends FragmentActivity {
 		if (getSupportFragmentManager().getBackStackEntryCount() == 1) {
 
 			if (f instanceof HomeFragment) {
-				// don't do anything if the current fragment is the
+				// Don't close the home fragment
 				mDrawerLayout.openDrawer(mDrawerList);
 			} else {
 
+				//Return to safe state
 				returnToHome();
-
 			}
 
 		} else {
@@ -640,6 +785,13 @@ public class MainActivity extends FragmentActivity {
 
 	}
 
+	/**
+	 * Returns the ID of the image assigned to the device name
+	 * 
+	 * 
+	 * @param name
+	 * @return
+	 */
 	public int getDeviceImage(String name) {
 
 		int r = unknown_device_picture;
@@ -681,6 +833,7 @@ public class MainActivity extends FragmentActivity {
 
 	}
 
+	// Image map for stored drawables
 	private int unknown_device_picture = R.drawable.ic_action_hardware_phone;
 	private HashMap<String, Integer> deviceNameToImageNameMap = new HashMap<String, Integer>() {
 		private static final long serialVersionUID = -4645423715285941470L;

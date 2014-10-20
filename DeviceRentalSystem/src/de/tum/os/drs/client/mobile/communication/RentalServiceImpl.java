@@ -19,13 +19,22 @@ import de.tum.os.drs.client.mobile.parsers.LoginResponseParser;
 import de.tum.os.drs.client.mobile.parsers.ServerRequestCallback;
 import de.tum.os.drs.client.mobile.parsers.SingleDeviceParser;
 
+/**
+ * Implements the server interface.
+ * For each methos it creates the URL and issues the server request
+ * 
+ * 
+ * @author pablo
+ *
+ */
 public class RentalServiceImpl implements RentalService {
 
+	//The backend address
+	//TODO changeme
+	private static final String BASE_URL = "https://192.168.2.3:8443";
 
-	private static final String BASE_URL = "https://131.159.210.25:8443";
-	//public static  String BASE_URL;
-
-	private static  String BASE_PATH = "/rental-server-mobile/rest/";
+	//Base path for server URLs
+	private static String BASE_PATH = "/rental-server-mobile/rest/";
 
 	// The singleton instance
 	private static RentalService theInstance = null;

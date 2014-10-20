@@ -3,6 +3,12 @@ package de.tum.os.drs.client.mobile.model;
 import android.content.SharedPreferences;
 import de.tum.os.drs.client.mobile.authentication.Authenticator;
 
+/**
+ * Used to store and retrieve credentials
+ * 
+ * @author pablo
+ *
+ */
 public class CredentialStore {
 
 	private SharedPreferences prefs;
@@ -53,6 +59,11 @@ public class CredentialStore {
 		}
 	}
 
+	/**
+	 * Replaces an old token by a new one
+	 * 
+	 * @param newToken
+	 */
 	public void refreshToken(String newToken) {
 
 		SharedPreferences.Editor editor = prefs.edit();

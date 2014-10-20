@@ -32,11 +32,13 @@ public class AddDeviceFragment extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		Log.d("check", "on createview");
 		super.onCreateView(inflater, container, savedInstanceState);
+
 		View rootView = inflater.inflate(R.layout.fragment_add_device,
 				container, false);
+
 		getActivity().setTitle("Add a device");
+
 		deviceSerial = ((EditText) rootView.findViewById(R.id.device_serial));
 		deviceName = ((EditText) rootView.findViewById(R.id.deviceName));
 		deviceDetails = ((EditText) rootView.findViewById(R.id.description));
@@ -44,6 +46,7 @@ public class AddDeviceFragment extends Fragment {
 		deviceState = ((Spinner) rootView.findViewById(R.id.devicestate));
 		add_btn = ((Button) rootView.findViewById(R.id.editdevice));
 		scanButton = (Button) rootView.findViewById(R.id.scan_add);
+
 		service = RentalServiceImpl.getInstance();
 
 		deviceSerial.setText("");
@@ -61,6 +64,7 @@ public class AddDeviceFragment extends Fragment {
 							"Device serial can not be empty",
 							Toast.LENGTH_SHORT).show();
 				} else {
+
 					addDevice();
 				}
 
@@ -73,11 +77,13 @@ public class AddDeviceFragment extends Fragment {
 			@Override
 			public void onClick(View v) {
 
+				// Set the imei field after completion
 				Bundle b = new Bundle();
 				b.putString("action", AfterScanAction.SET_IMEI_FILED.toString());
 				ScanFragment f = new ScanFragment();
 				f.setArguments(b);
 
+				// Start the scanfragment
 				final FragmentTransaction ft = getFragmentManager()
 						.beginTransaction();
 				ft.replace(R.id.frame_container, f);
@@ -90,6 +96,12 @@ public class AddDeviceFragment extends Fragment {
 		return rootView;
 	}
 
+	/**
+	 * 
+	 * Adds a device to the database. Fetches the provided information from the
+	 * fields.
+	 * 
+	 */
 	private void addDevice() {
 
 		s_deviceSerial = (deviceSerial.getText().length() == 0) ? null
@@ -116,6 +128,7 @@ public class AddDeviceFragment extends Fragment {
 				Toast.makeText(getActivity(), result, Toast.LENGTH_SHORT)
 						.show();
 
+				// Update the device list
 				MainActivity activity = (MainActivity) getActivity();
 				activity.updateDevices(s_deviceSerial,
 						AfterDeviceUpdateAction.OPEN_DEVICE);
@@ -125,12 +138,15 @@ public class AddDeviceFragment extends Fragment {
 			@Override
 			public void onFailure(int code, String error) {
 
+				((MainActivity) getActivity()).hideLoadingDialog();
 				Toast.makeText(getActivity(), error, Toast.LENGTH_SHORT).show();
 
-				if (code == 401) {
+				if (code == 403 || code == 401) {
+
+					// The client has an invalid session. Logout to refresh the
+					// session id.
 					((MainActivity) getActivity()).sessionExpired();
 				}
-				((MainActivity) getActivity()).hideLoadingDialog();
 
 			}
 		});
@@ -139,6 +155,9 @@ public class AddDeviceFragment extends Fragment {
 	@Override
 	public void onResume() {
 		super.onResume();
+
+		// The fragment was in the background during the scanning
+		// Set the scan results in the field
 
 		String result = ((MainActivity) getActivity()).scanResult;
 

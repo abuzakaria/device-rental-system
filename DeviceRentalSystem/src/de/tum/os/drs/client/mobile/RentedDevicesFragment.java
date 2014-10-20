@@ -39,7 +39,8 @@ public class RentedDevicesFragment extends Fragment {
 			@Override
 			public void onTextChanged(CharSequence cs, int arg1, int arg2,
 					int arg3) {
-				// When user changed the Text
+				
+				//Filter input
 				adapter.getFilter().filter(cs);
 			}
 
@@ -64,8 +65,9 @@ public class RentedDevicesFragment extends Fragment {
 			public void onItemClick(AdapterView<?> parent, final View view,
 					int position, long id) {
 				final Device item = (Device) parent.getItemAtPosition(position);
+				
+				//Show the selected device
 				activity.selectedDevice = item;
-
 				activity.startDeviceFragment();
 			}
 

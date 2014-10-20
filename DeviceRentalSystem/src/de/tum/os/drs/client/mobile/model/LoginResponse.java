@@ -1,6 +1,12 @@
 package de.tum.os.drs.client.mobile.model;
 
 
+/**
+ * Returned by the server after a login request
+ * 
+ * @author pablo
+ *
+ */
 public class LoginResponse {
 
 	private int sessionId;

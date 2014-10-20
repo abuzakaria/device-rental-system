@@ -59,10 +59,15 @@ import de.tum.os.drs.client.mobile.model.LoginResponse;
 public class AuthenticationActivity extends Activity {
 
 	private static final String TAG = "Authentication Activity";
-	private String s_ip = null, s_port = null;
+
+	// The webview to ge the users credentials
 	private WebView mWebView;
 	private LinearLayout loginOptions;
+
+	// The authenticator used: google or facebook
 	private Authenticator mAuthenticator;
+
+	// Store for storing and retrieving saved craedentials
 	private CredentialStore store;
 	private ProgressDialog dialog;
 
@@ -79,6 +84,7 @@ public class AuthenticationActivity extends Activity {
 
 			@Override
 			public void onClick(View arg0) {
+
 				mAuthenticator = Authenticator.google;
 				startAuthenticationFlow();
 			}
@@ -90,6 +96,7 @@ public class AuthenticationActivity extends Activity {
 
 			@Override
 			public void onClick(View arg0) {
+
 				mAuthenticator = Authenticator.facebook;
 				startAuthenticationFlow();
 			}
@@ -104,13 +111,7 @@ public class AuthenticationActivity extends Activity {
 		mWebView.setWebViewClient(mWebViewClient);
 
 		loginOptions = (LinearLayout) findViewById(R.id.login_buttons);
-		/*if(RentalServiceImpl.BASE_URL == null)
-		{
-			SharedPreferences prefs = getSharedPreferences("Rental_pref", MODE_PRIVATE);
-			String url = prefs.getString("BASE_URL", null);
-			if(url!=null)
-				RentalServiceImpl.BASE_URL = url;
-		}*/
+
 		store = new CredentialStore(
 				PreferenceManager.getDefaultSharedPreferences(this));
 
@@ -152,7 +153,7 @@ public class AuthenticationActivity extends Activity {
 	}
 
 	/**
-	 * Checks whether a given token is still
+	 * Checks whether a given token is still valid
 	 * 
 	 * 
 	 * @param currentToken
@@ -187,13 +188,12 @@ public class AuthenticationActivity extends Activity {
 					if (conn.getResponseCode() >= 200
 							&& conn.getResponseCode() < 300) {
 
-						InputStream in = new BufferedInputStream(
-								conn.getInputStream());
-						// Log.i(TAG, getResponseText(in));
-
+						// Token is valid!
+						Log.i(TAG, "Valid token found");
 						return true;
 
 					} else if (conn.getResponseCode() == 401) {
+
 						// The token was invalid.
 						Log.i(TAG, "Inavlid token found. We have to refresh it");
 
@@ -201,21 +201,11 @@ public class AuthenticationActivity extends Activity {
 
 					}
 
-					// The token is invalid. We got most likely a 401
-					/*
-					 * InputStream in = new BufferedInputStream(
-					 * conn.getErrorStream()); String error =
-					 * getResponseText(in);
-					 */
-					// Log.e(TAG, error);
-
 					return false;
 
 				} catch (MalformedURLException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} catch (IOException e) {
-
 					e.printStackTrace();
 				} finally {
 					if (conn != null) {
@@ -248,18 +238,30 @@ public class AuthenticationActivity extends Activity {
 		}).execute();
 	}
 
+	/**
+	 * Starts the authentication flow with the set authenticator
+	 * 
+	 */
 	private void startAuthenticationFlow() {
 
 		showLoadingDialog();
+
+		// Get the authorization code and prompt the user
 		getAuthorizationCode();
 
 	}
 
+	/**
+	 * Prompts the user for credentials in the webview
+	 * 
+	 */
 	private void getAuthorizationCode() {
 
+		// Get the authenticator specific authorization URL
 		String url = getAuthorizationURL(mAuthenticator);
 		Log.i(TAG, "Authorization URL: " + url);
 
+		// Load the authorization URL
 		mWebView.loadUrl(url);
 		showWebView();
 	}
@@ -273,23 +275,30 @@ public class AuthenticationActivity extends Activity {
 				// Hide the callback webpage
 				mWebView.setVisibility(View.INVISIBLE);
 				mWebView.loadUrl("about:blank");
+
+				// Authentication code is embedded in the callback URL
 				parseAuthenticationCode(url);
 
 			} else {
-				super.onPageStarted(view, url, favicon);				
+				super.onPageStarted(view, url, favicon);
 			}
 		}
-		
+
 		@Override
-		public void onPageFinished(WebView view, String url){
+		public void onPageFinished(WebView view, String url) {
 			hideLoadingDialog();
 		}
 	};
 
+	/**
+	 * Parses the authentication code from the URL and fetches the token
+	 * 
+	 * @param redirectUrl
+	 */
 	private void parseAuthenticationCode(String redirectUrl) {
 
-		//showLoadingDialog();
-		
+		// showLoadingDialog();
+
 		Uri uri = Uri.parse(redirectUrl);
 
 		if (uri.getQueryParameterNames().contains("error")) {
@@ -298,7 +307,6 @@ public class AuthenticationActivity extends Activity {
 					"An error ocurred while fetchign the auth code: "
 							+ uri.getQueryParameter("error"));
 
-			
 			hideLoadingDialog();
 			showLoginOptions();
 
@@ -313,8 +321,15 @@ public class AuthenticationActivity extends Activity {
 
 	}
 
+	/**
+	 * Fetches an access token using the authorization code
+	 * 
+	 * 
+	 * @param code
+	 */
 	private void getToken(String code) {
 
+		// Create a queryparams data to send along with the POST request
 		List<NameValuePair> queryParams = new ArrayList<NameValuePair>();
 		queryParams.add(new BasicNameValuePair("code", code));
 		queryParams.add(new BasicNameValuePair("client_id", mAuthenticator
@@ -326,6 +341,7 @@ public class AuthenticationActivity extends Activity {
 		queryParams.add(new BasicNameValuePair("grant_type",
 				"authorization_code"));
 
+		// Issue the POST request
 		POSTRequestListener listener = new POSTRequestListener() {
 
 			@Override
@@ -340,6 +356,12 @@ public class AuthenticationActivity extends Activity {
 				queryParams)).execute();
 	}
 
+	/**
+	 * Receives a newly fetched token and forwards it to the authenticator
+	 * specific parser
+	 * 
+	 * @param response
+	 */
 	private void processToken(String response) {
 
 		switch (mAuthenticator) {
@@ -356,11 +378,17 @@ public class AuthenticationActivity extends Activity {
 
 	}
 
+	/**
+	 * Parses the provided Google JSON and stores the token. Sends the token to
+	 * the rental server.
+	 * 
+	 * @param json
+	 */
 	private void processGoogleToken(String json) {
 
-		Log.i(TAG, "Token recieved : " + json);
-
 		try {
+
+			// Parse JSON
 			JSONObject obj = new JSONObject(json);
 
 			String access_token = obj.getString("access_token");
@@ -372,12 +400,19 @@ public class AuthenticationActivity extends Activity {
 			sendTokenToServer(access_token);
 
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
+
 			e.printStackTrace();
 		}
 
 	}
 
+	/**
+	 * Parses the provided Facebook JSON and stores the token. Sends the token
+	 * to the rental server.
+	 * 
+	 * 
+	 * @param json
+	 */
 	private void processFacebookToken(String response) {
 
 		Log.i(TAG, response);
@@ -392,12 +427,19 @@ public class AuthenticationActivity extends Activity {
 		sendTokenToServer(access_token);
 	}
 
+	/**
+	 * 
+	 * Sends the retrieved token to the server. Receives the session Id and sets
+	 * it to be used in further requests.
+	 * 
+	 * @param currentToken
+	 */
 	private void sendTokenToServer(String currentToken) {
 
 		Log.i(TAG, "Sending token to server...");
 
 		showLoadingDialog();
-		
+
 		RentalService service = RentalServiceImpl.getInstance();
 
 		service.login(new LoginRequest(currentToken, mAuthenticator),
@@ -407,6 +449,9 @@ public class AuthenticationActivity extends Activity {
 					public void onSuccess(LoginResponse result) {
 
 						hideLoadingDialog();
+
+						// Store the session Id to be sent along future
+						// requests.
 
 						SessionManager.currentSession = result.getSessionId();
 						Log.i(TAG, result.getMessage());
@@ -423,38 +468,50 @@ public class AuthenticationActivity extends Activity {
 					public void onFailure(int code, String error) {
 
 						hideLoadingDialog();
+
 						Log.i(TAG, error);
 						showToast(error);
 
-						store.clearCredentials();
-						showLoginOptions();
+						if (code != 800) {
+							store.clearCredentials();
+						}
 
+						showLoginOptions();
 					}
 
 				});
 	}
 
+	/**
+	 * Called after a successful authentication. Starts the app and allows the
+	 * user to use it.
+	 * 
+	 */
 	private void startMainActivity() {
 
 		Intent in = new Intent(getApplicationContext(), MainActivity.class);
 		startActivity(in);
 	}
-	
+
 	@Override
 	public void onBackPressed() {
-		
-		if(mWebView.getVisibility() == View.VISIBLE){
-			
+
+		if (mWebView.getVisibility() == View.VISIBLE) {
+
 			showLoginOptions();
 			mWebView.loadUrl("about:blank");
-			
-			
-		}else {
+
+		} else {
 			super.onBackPressed();
 		}
 	}
 
-
+	/**
+	 * Creates the authentication URL
+	 * 
+	 * @param auth
+	 * @return
+	 */
 	private String getAuthorizationURL(Authenticator auth) {
 
 		Uri.Builder builder = Uri.parse(auth.getAuthorizationURL()).buildUpon();
@@ -474,6 +531,13 @@ public class AuthenticationActivity extends Activity {
 
 	}
 
+	/**
+	 * Helper class used to make custom POST requests
+	 * 
+	 * 
+	 * @author pablo
+	 *
+	 */
 	private class POSTRequest extends AsyncTask<Void, Void, String> {
 
 		private final String url;
@@ -560,6 +624,14 @@ public class AuthenticationActivity extends Activity {
 		}
 	}
 
+	/**
+	 * Creates a string from th eprovided query parameter map
+	 * 
+	 * 
+	 * @param params
+	 * @return
+	 * @throws UnsupportedEncodingException
+	 */
 	private String getQuery(List<NameValuePair> params)
 			throws UnsupportedEncodingException {
 		StringBuilder result = new StringBuilder();
@@ -586,6 +658,9 @@ public class AuthenticationActivity extends Activity {
 		return json;
 	}
 
+	/**
+	 * Shows the login buttons
+	 */
 	private void showLoginOptions() {
 
 		mWebView.setVisibility(View.INVISIBLE);
@@ -593,6 +668,9 @@ public class AuthenticationActivity extends Activity {
 
 	}
 
+	/**
+	 * Shows the webview
+	 */
 	private void showWebView() {
 
 		mWebView.setVisibility(View.VISIBLE);
@@ -602,7 +680,12 @@ public class AuthenticationActivity extends Activity {
 
 	private void showLoadingDialog() {
 
-		dialog = ProgressDialog.show(this, "Please wait ...", "Logging in..", true);
+		if (dialog != null) {
+			dialog.dismiss();
+		}
+
+		dialog = ProgressDialog.show(this, "Please wait ...", "Logging in..",
+				true);
 		dialog.setCancelable(false);
 	}
 
@@ -621,66 +704,4 @@ public class AuthenticationActivity extends Activity {
 		toast.show();
 
 	}
-	/*
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.authentication, menu);
-		return true;
-	}
-	
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle action bar actions click
-		switch (item.getItemId()) {
-		case R.id.action_address:
-			showIPalert();
-			return true;
-		default:
-			return super.onOptionsItemSelected(item);
-		}
-	}
-	
-	public void showIPalert()
-	{
-		AlertDialog.Builder alert = new AlertDialog.Builder(this);
-
-		alert.setTitle("Server address");
-		alert.setMessage("Input ip & port");
-		
-		LinearLayout layout = new LinearLayout(this);
-		layout.setOrientation(LinearLayout.VERTICAL);
-
-		// Set  EditText view to get ip port 
-		final EditText ip = new EditText(this);
-		ip.setHint("IP e.g., localhost, 192.168.0.1");
-		if(s_ip!=null)
-			ip.setText(s_ip);
-		layout.addView(ip);
-		
-		final EditText port = new EditText(this);
-		port.setHint("Port e.g., 8443");
-		if(s_port!=null)
-			port.setText(s_port);
-		port.setInputType(InputType.TYPE_CLASS_NUMBER);
-		layout.addView(port);
-		alert.setView(layout);
-		alert.setPositiveButton("Save", new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int whichButton) {
-			  s_ip = ip.getText().toString().trim();
-			  s_port = port.getText().toString().trim();
-			  String url = "https://" + s_ip + ":" + s_port;
-			  SharedPreferences.Editor editor = getSharedPreferences("Rental_pref", MODE_PRIVATE).edit();
-			  editor.putString("BASE_URL",url);
-			  editor.commit();
-			  }
-		});
-		alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-		  public void onClick(DialogInterface dialog, int whichButton) {
-		    // Canceled.
-		  }
-		});
-		alert.show();
-
-	}*/
-
 }

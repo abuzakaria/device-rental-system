@@ -33,10 +33,9 @@ public class ScanFragment extends Fragment implements ScannerListener {
 
 		Bundle b = getArguments();
 		scanAction = AfterScanAction.toScanAction(b.getString("action"));
-		
+
 		activity = (MainActivity) getActivity();
-		
-		
+
 		return rootView;
 	}
 

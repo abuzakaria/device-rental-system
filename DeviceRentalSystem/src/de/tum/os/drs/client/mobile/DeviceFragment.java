@@ -2,11 +2,9 @@ package de.tum.os.drs.client.mobile;
 
 import java.util.List;
 
-import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -14,7 +12,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import de.tum.os.drs.client.mobile.adapters.RentersListAdapter;
 import de.tum.os.drs.client.mobile.communication.Callback;
 import de.tum.os.drs.client.mobile.communication.RentalService;
 import de.tum.os.drs.client.mobile.communication.RentalServiceImpl;
@@ -25,14 +22,17 @@ import de.tum.os.drs.client.mobile.model.Renter;
 public class DeviceFragment extends Fragment {
 
 	private MainActivity activity;
+
 	private Button updateButton;
 	private Button rentButton;
 	private Button returnButton;
 	private ImageView deviceImage;
 	private TextView devicedump;
 	private TextView renterDump;
+
 	private Renter renter;
 	private Device device;
+
 	private RentalService service;
 
 	@Override
@@ -58,6 +58,7 @@ public class DeviceFragment extends Fragment {
 			@Override
 			public void onClick(View v) {
 
+				// Start the edit fragment
 				final FragmentTransaction ft = getFragmentManager()
 						.beginTransaction();
 				ft.replace(R.id.frame_container, new EditDeviceFragment());
@@ -70,6 +71,8 @@ public class DeviceFragment extends Fragment {
 		rentButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
+
+				// Start the renter selection fragment
 				final FragmentTransaction ft = getFragmentManager()
 						.beginTransaction();
 				ft.replace(R.id.frame_container, new RenterSelectionFragment());
@@ -83,7 +86,12 @@ public class DeviceFragment extends Fragment {
 			@Override
 			public void onClick(View v) {
 
+				// Start the signature fragment
+
 				SignatureFragment f = new SignatureFragment();
+
+				// Open the return confirmation after the signature has been
+				// fetched
 				Bundle b = new Bundle();
 				b.putString("action",
 						AfterSignatureAction.OPEN_RETURN_CONFIRM.toString());
@@ -101,6 +109,8 @@ public class DeviceFragment extends Fragment {
 		if (device.isAvailable()) {
 			rentButton.setVisibility(View.VISIBLE);
 		} else {
+
+			// Show renter if device is rented
 			returnButton.setVisibility(View.VISIBLE);
 			renterDump.setVisibility(View.VISIBLE);
 		}
@@ -110,6 +120,10 @@ public class DeviceFragment extends Fragment {
 		return rootView;
 	}
 
+	/**
+	 * Fills up the TextViews with the device and renter details
+	 * 
+	 */
 	private void showDeviceDetails() {
 
 		if (device != null) {
@@ -123,6 +137,8 @@ public class DeviceFragment extends Fragment {
 
 				if (activity.getRenters() == null) {
 
+					//The renters gaven't been fetched yet
+					 
 					activity.showLoadingDialog("Loading renter information");
 					service.getAllRenters(new Callback<List<Renter>>() {
 
@@ -130,6 +146,8 @@ public class DeviceFragment extends Fragment {
 						public void onSuccess(List<Renter> result) {
 							activity.hideLoadingDialog();
 							activity.setRenters(result);
+							
+							//Fills up the text view with the information of the renter
 							showRenterDetails();
 
 						}
@@ -143,18 +161,24 @@ public class DeviceFragment extends Fragment {
 					});
 
 				} else {
+					
+					//Renters are there, we can show the information right away
 
 					showRenterDetails();
 				}
 
 			}
 
-		} else {
-
 		}
-
 	}
 
+	/**
+	 * Returns a renter from a device Imei
+	 * 
+	 * @param imei
+	 * @return
+	 * 	
+	 */
 	private Renter getRenterFromDeviceImei(String imei) {
 
 		for (Renter r : activity.getRenters()) {
@@ -171,7 +195,18 @@ public class DeviceFragment extends Fragment {
 		return null;
 	}
 
+	/**
+	 * Sets the device information
+	 * 
+	 * 
+	 */
 	private void fillDeviceTextDetails() {
+		
+		if(device == null){
+			
+			return;
+		}
+			
 		String temp = "Name: ";
 		temp += device.getName() == null ? "<None>" : device.getName();
 		temp += "\n";
@@ -201,6 +236,10 @@ public class DeviceFragment extends Fragment {
 		devicedump.setText(temp);
 	}
 
+	/**
+	 * Fills the renter details
+	 * 
+	 */
 	private void showRenterDetails() {
 
 		String temp = "";

@@ -6,6 +6,10 @@ import com.google.gson.annotations.SerializedName;
 
 import de.tum.os.drs.client.mobile.parsers.GsonHelper;
 
+/**
+ * Taken from original implementation 
+ * 
+ */
 public class Device {
 
 	/**

@@ -73,6 +73,10 @@ public class ReturnConfirmFragment extends Fragment {
 
 	}
 	
+	/**
+	 * Sends the return message to the server
+	 * 
+	 */
 	private void returnDevice(){
 		
 		List<String> devices = new ArrayList<String>();
@@ -86,6 +90,8 @@ public class ReturnConfirmFragment extends Fragment {
 			public void onSuccess(String result) {
 				activity.hideLoadingDialog();
 				activity.showToast(result);
+				
+				//Update the device list
 				activity.updateDevices(null, AfterDeviceUpdateAction.GO_TO_HOME);
 				
 			}
@@ -106,7 +112,6 @@ public class ReturnConfirmFragment extends Fragment {
 	}
 	
 	
-	
 	private void showInformation(){
 		
 		showDeviceInformation();
@@ -114,7 +119,6 @@ public class ReturnConfirmFragment extends Fragment {
 		
 	}
 	
-
 	private void showRenterInformation() {
 
 		if (renter == null) {

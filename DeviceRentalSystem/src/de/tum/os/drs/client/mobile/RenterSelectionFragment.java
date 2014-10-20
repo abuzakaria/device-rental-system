@@ -69,7 +69,7 @@ public class RenterSelectionFragment extends Fragment {
 			@Override
 			public void onTextChanged(CharSequence cs, int arg1, int arg2,
 					int arg3) {
-				// When user changed the Text
+				// Filter input
 				adapter.getFilter().filter(cs);
 			}
 
@@ -92,6 +92,8 @@ public class RenterSelectionFragment extends Fragment {
 			@Override
 			public void onClick(View arg0) {
 
+				//Start the add renter fragment 
+				
 				FragmentTransaction transaction = getFragmentManager()
 						.beginTransaction();
 				transaction.replace(R.id.frame_container,
@@ -109,13 +111,20 @@ public class RenterSelectionFragment extends Fragment {
 
 	}
 
+	/**
+	 * Fill the list with renters. If no renters found update the list.
+	 * 
+	 */
 	private void populateList() {
 
 		if (activity.getRenters() != null) {
+			
+			//Renters are there, we can show them right away
 			adapter = new RentersListAdapter(activity, activity.getRenters());
 			list.setAdapter(adapter);
 		} else {
 
+			//Need first to fetch renters
 			activity.showLoadingDialog("Loading renters");
 			service.getAllRenters(new Callback<List<Renter>>() {
 

@@ -1,6 +1,15 @@
 package de.tum.os.drs.client.mobile.authentication;
 
+/**
+ * This class contains the parameters of the authenticators. 
+ * 
+ * 
+ * @author pablo
+ *
+ */
 public enum Authenticator {
+	
+	//TODO changeme
 	google(
 			"155367116448-2teug5re8bb7bthani6hv0ohvgcisq1a.apps.googleusercontent.com",
 			"MgCyA66FP-j1bkijAnObLYb4",

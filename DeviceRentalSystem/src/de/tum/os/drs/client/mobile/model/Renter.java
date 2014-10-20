@@ -4,6 +4,13 @@ import java.util.List;
 
 import de.tum.os.drs.client.mobile.parsers.GsonHelper;
 
+/**
+ * Represents a renter.
+ * Taken from orginal server implementation
+ * 
+ * @author pablo
+ *
+ */
 public class Renter {
 
 	/**

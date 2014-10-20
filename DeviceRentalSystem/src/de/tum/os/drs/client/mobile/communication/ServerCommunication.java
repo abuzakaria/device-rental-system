@@ -30,6 +30,13 @@ import android.os.AsyncTask;
 import android.util.Log;
 import de.tum.os.drs.client.mobile.parsers.ServerRequestCallback;
 
+/**
+ * Class responsible for the actual communication with the backend.
+ * It receives ServerRequest and returns ServerResponse objects.
+ * 
+ * @author pablo
+ *
+ */
 public class ServerCommunication extends
 		AsyncTask<ServerRequest, Void, ServerResponse> {
 
@@ -37,7 +44,7 @@ public class ServerCommunication extends
 	private int CONNECTION_TIMEOUT = 10000;
 	private int DATARETRIEVAL_TIMEOUT = 15000;
 
-	// Used to ignore certificate erros when using self-signed certs
+	// Used for debugging purposes. It accepts all certificates
 	public class NullHostNameVerifier implements HostnameVerifier {
 
 	    public boolean verify(String hostname, SSLSession session) {
@@ -46,6 +53,7 @@ public class ServerCommunication extends
 	    }
 	}
 	
+	//Used to accept all certificates while debugging
 	TrustManager[] trustAllCerts = new TrustManager[] { new X509TrustManager() {
         public java.security.cert.X509Certificate[] getAcceptedIssuers() {
                 return new java.security.cert.X509Certificate[] {};
@@ -60,10 +68,11 @@ public class ServerCommunication extends
         }
     } };
 
+	
 	public ServerCommunication(ServerRequestCallback callback) {
 		this.callback = callback;
 
-
+		//TODO comment this for disabling automatic cret validation
 		try {
 			HttpsURLConnection.setDefaultHostnameVerifier(new NullHostNameVerifier());
 			SSLContext context = SSLContext.getInstance("TLS");
@@ -77,18 +86,13 @@ public class ServerCommunication extends
 			e.printStackTrace();
 		}
 
-		
-
-	}
-
-	@Override
-	protected void onPreExecute() {
-		// TODO show progress dialog here
 	}
 
 	@Override
 	protected ServerResponse doInBackground(ServerRequest... request) {
 
+		//Issue an http rquest 
+		
 		HttpsURLConnection urlConnection = null;
 		ServerResponse response = new ServerResponse();
 
@@ -98,6 +102,8 @@ public class ServerCommunication extends
 					.openConnection();
 			urlConnection.setConnectTimeout(CONNECTION_TIMEOUT);
 			urlConnection.setReadTimeout(DATARETRIEVAL_TIMEOUT);
+			
+			//Set the authentication
 			urlConnection.setRequestProperty("Authorization", (new Integer(
 					request[0].getSessionId()).toString()));
 			urlConnection.setDoOutput(false);
@@ -154,8 +160,9 @@ public class ServerCommunication extends
 			}
 
 		} catch (ConnectException e) {
-			// URL is invalid
-			response.setStatusCode(HttpURLConnection.HTTP_BAD_REQUEST);
+			
+			//Custom code we use to identify server reachability problems
+			response.setStatusCode(800);
 			response.setErrorMessage("The server can't be reached.");
 			e.printStackTrace();
 		} catch (MalformedURLException e) {
@@ -164,8 +171,8 @@ public class ServerCommunication extends
 			response.setErrorMessage(e.getMessage());
 			e.printStackTrace();
 		} catch (SocketTimeoutException e) {
-			// data retrieval or connection timed out
-			response.setStatusCode(HttpURLConnection.HTTP_BAD_REQUEST);
+			// //Custom code we use to identify server reachability problems
+			response.setStatusCode(800);
 			response.setErrorMessage("The server can't be reached");
 			e.printStackTrace();
 		} catch (IOException e) {

@@ -39,7 +39,8 @@ public class AvailableDevicesFragment extends Fragment {
 			@Override
 			public void onTextChanged(CharSequence cs, int arg1, int arg2,
 					int arg3) {
-				// When user changed the Text
+				
+				//Filter input
 				adapter.getFilter().filter(cs);
 			}
 
@@ -64,8 +65,9 @@ public class AvailableDevicesFragment extends Fragment {
 			public void onItemClick(AdapterView<?> parent, final View view,
 					int position, long id) {
 				final Device item = (Device) parent.getItemAtPosition(position);
+			
+				//Start the device fragment
 				activity.selectedDevice = item;
-
 				activity.startDeviceFragment();
 
 			}
@@ -78,6 +80,10 @@ public class AvailableDevicesFragment extends Fragment {
 
 	}
 
+	/**
+	 * Fills up the list of available devices
+	 * 
+	 */
 	private void populateList() {
 
 		adapter = new DeviceListAdapter(activity,

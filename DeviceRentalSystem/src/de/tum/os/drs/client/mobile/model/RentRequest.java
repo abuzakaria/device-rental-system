@@ -5,6 +5,12 @@ import java.util.List;
 
 import de.tum.os.drs.client.mobile.parsers.GsonHelper;
 
+/**
+ * Sent to the server for issuing a rent request
+ * 
+ * @author pablo
+ *
+ */
 public class RentRequest {
 
 	String renterMatrNr;

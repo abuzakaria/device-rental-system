@@ -9,6 +9,14 @@ import de.tum.os.drs.client.mobile.model.RentRequest;
 import de.tum.os.drs.client.mobile.model.Renter;
 import de.tum.os.drs.client.mobile.model.ReturnRequest;
 
+/**
+ * The rental service interface.
+ * Defines the methods of the serve interface
+ * 
+ * 
+ * @author pablo
+ *
+ */
 public interface RentalService {
 	
 	//--------------Session------------------

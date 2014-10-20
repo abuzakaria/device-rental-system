@@ -2,6 +2,12 @@ package de.tum.os.drs.client.mobile.model;
 
 import de.tum.os.drs.client.mobile.authentication.Authenticator;
 
+/**
+ * Represents the persisted credentials of a loged in user
+ * 
+ * @author pablo
+ *
+ */
 public class Credentials {
 
 	private String token;

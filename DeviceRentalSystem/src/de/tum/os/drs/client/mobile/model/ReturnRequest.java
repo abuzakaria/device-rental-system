@@ -4,6 +4,12 @@ import java.util.List;
 
 import de.tum.os.drs.client.mobile.parsers.GsonHelper;
 
+/**
+ * Is sent to the server for request a device return
+ * 
+ * @author pablo
+ *
+ */
 public class ReturnRequest {
 
 	private String renterMatrNr;

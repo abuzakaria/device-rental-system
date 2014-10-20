@@ -48,6 +48,8 @@ public class SignatureFragment extends Fragment {
 		mSaveButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
+				
+				//Serialize the signature
 				String base64 = getBase64FromBitmap(mSignaturePad
 						.getSignatureBitmap());
 

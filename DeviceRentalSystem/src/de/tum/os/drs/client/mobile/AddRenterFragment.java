@@ -2,7 +2,6 @@ package de.tum.os.drs.client.mobile;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -25,7 +24,6 @@ public class AddRenterFragment extends Fragment {
 	private Button add;
 
 	private RentalService service;
-
 	private MainActivity activity;
 
 	@Override
@@ -34,6 +32,7 @@ public class AddRenterFragment extends Fragment {
 		super.onCreateView(inflater, container, savedInstanceState);
 		View rootView = inflater.inflate(R.layout.fragment_add_renter,
 				container, false);
+		
 		getActivity().setTitle("Add renter");
 
 		name = (EditText) rootView.findViewById(R.id.renterNameAdd);
@@ -59,8 +58,14 @@ public class AddRenterFragment extends Fragment {
 
 	}
 
+	/**
+	 * 
+	 * Adds a renter to the database. 
+	 * 
+	 */
 	private void addRenter() {
 
+		//Matr Nr., Name, and email are mandatory
 		if (matrNr.getText().length() > 0 && name.getText().length() > 0
 				&& email.getText().length() > 0) {
 
@@ -81,6 +86,8 @@ public class AddRenterFragment extends Fragment {
 				comm = comments.getText().toString();
 			}
 
+			
+			//Construct new renter from provided data
 			final Renter renter = new Renter(rName, mat, rEmail, rPhone, comm);
 
 			activity.showLoadingDialog("Adding renter");
@@ -91,14 +98,24 @@ public class AddRenterFragment extends Fragment {
 
 					activity.hideLoadingDialog();
 					activity.showToast(result);
+					//Update the local copy and show the renter in the information fragment
 					activity.updateRenters(renter.getMatriculationNumber());
 
 				}
 
 				@Override
 				public void onFailure(int code, String error) {
+					
 					activity.hideLoadingDialog();
 					activity.showToast(error);
+					
+					if(code == 401 || code == 403){
+						
+						//Invalid session
+						//We need to login again
+						activity.sessionExpired();
+						
+					}
 
 				}
 
